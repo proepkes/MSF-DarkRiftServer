@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rooms", "Rooms\Rooms.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spawner", "Spawner\Spawner.csproj", "{2AE16356-5D7B-44F9-9192-41850A52DEF4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityClientExample", "UnityClientExample\UnityClientExample.csproj", "{293D0BB8-6F23-47E0-8047-DEF7AFE92464}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TundraClient", "UnityClientExample\TundraClient.csproj", "{293D0BB8-6F23-47E0-8047-DEF7AFE92464}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpawnerHandler", "SpawnerHandler\SpawnerHandler.csproj", "{EC723E20-EDBF-49C0-B85F-3355E52E5A2D}"
 EndProject

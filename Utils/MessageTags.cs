@@ -20,7 +20,7 @@
 
         public const ushort ResetPassword = 2101;
         public const ushort ResetPasswordFailed = 2102;
-        public const ushort ResetPasswordPasswordSuccess = 2103;
+        public const ushort ResetPasswordSuccess = 2103;
 
         public const ushort ConfirmEmail = 2150;
         public const ushort ConfirmEmailFailed = 2151;

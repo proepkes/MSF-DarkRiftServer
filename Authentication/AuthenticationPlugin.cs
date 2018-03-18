@@ -205,7 +205,7 @@ namespace Authentication
 
             account.Password = Security.CreateHash(data.NewPassword);
             _database.UpdateAccount(account);
-            client.SendMessage(Message.CreateEmpty(MessageTags.ResetPasswordPasswordSuccess), SendMode.Reliable);
+            client.SendMessage(Message.CreateEmpty(MessageTags.ResetPasswordSuccess), SendMode.Reliable);
         }
 
         private void HandleRequestPasswordResetCode(Message message)

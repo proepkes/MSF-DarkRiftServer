@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using DarkRift;
 using DarkRift.Client;
-using UnityEngine;
+using UnityClientExample;
 using Utils;
 using Utils.Extensions;
 using Utils.Messages.Requests;
@@ -15,40 +14,35 @@ using Message = DarkRift.Message;
 using MessageReceivedEventArgs = DarkRift.Client.MessageReceivedEventArgs;
 using Security = Utils.Security;
 
-namespace UnityClientExample
+namespace Tundra
 {
-    public class ExampleClient : MonoBehaviour
+    class TundraClient : ITundraClient
     {
-        //BEFORE YOU USE THIS CLASS IN YOUR UNITY-PROJECT: Change the type of Client from UnityClientMock to DarkRift's original "UnityClient"
-        public UnityClientMock Client;
-        public bool RequestAESKey;
-
-
         public event Action LoggedIn;
         public event Action<ResponseStatus, string> LogInFailed;
         public event Action Registered;
         public event Action LoggedOut;
 
+        private readonly IDarkRiftUnityClient _client;
         private int RsaKeySize = 512;
         private bool _isLoggingIn;
         private RSACryptoServiceProvider _clientsCsp;
         private RSAParameters _parameters;
-        private string _aesKey = String.Empty;
+        private string _aesKey = string.Empty;
+
+        public bool Connected => _client.Connected;
 
         public bool IsLoggedIn { get; protected set; }
 
-        private void Awake()
+        public TundraClient(IDarkRiftUnityClient darkRiftUnityClient)
         {
-            DontDestroyOnLoad(transform.gameObject);
+            _client = darkRiftUnityClient;
         }
 
         void Start()
         {
-            Client.MessageReceived += ClientOnMessageReceived;
-            Client.Disconnected += ClientOnDisconnected;
-
-            if (RequestAESKey)
-                StartCoroutine(RequestAesKey());
+            _client.MessageReceived += ClientOnMessageReceived;
+            _client.Disconnected += ClientOnDisconnected;
         }
 
         private void ClientOnDisconnected(object sender, DisconnectedEventArgs disconnectedEventArgs)
@@ -77,7 +71,7 @@ namespace UnityClientExample
                     case MessageTags.RegisterAccountFailed:
                         HandleRegisterAccountFailed(message);
                         break;
-                    case MessageTags.ResetPasswordPasswordSuccess:
+                    case MessageTags.ResetPasswordSuccess:
                         HandlePasswordResetSuccess();
                         break;
                     case MessageTags.ResetPasswordFailed:
@@ -168,14 +162,9 @@ namespace UnityClientExample
             }
         }
 
-        private IEnumerator RequestAesKey()
+        public void RequestAesKey()
         {
-            while (!Client.Connected)
-            {
-                yield return new WaitForSeconds(.2f);
-            }
-
-            if (Client.Connected)
+            if (_client.Connected)
             {
                 //Request AES key
                 _clientsCsp = new RSACryptoServiceProvider(RsaKeySize);
@@ -189,14 +178,14 @@ namespace UnityClientExample
                 using (var writer = DarkRiftWriter.Create(Encoding.Unicode))
                 {
                     writer.Write(sw.ToString());
-                    Client.SendMessage(Message.Create(MessageTags.RequestAesKey, writer), SendMode.Reliable);
+                    _client.SendMessage(Message.Create(MessageTags.RequestAesKey, writer), SendMode.Reliable);
                 }
             }
         }
 
         public void LogIn(string email, string password)
         {
-            if (!Client.Connected)
+            if (!_client.Connected)
             {
                 return;
             }
@@ -218,18 +207,18 @@ namespace UnityClientExample
             using (var writer = DarkRiftWriter.Create())
             {
                 writer.Write(encryptedData);
-                Client.SendMessage(Message.Create(MessageTags.LogIn, writer), SendMode.Reliable);
+                _client.SendMessage(Message.Create(MessageTags.LogIn, writer), SendMode.Reliable);
             }
         }
 
         public void LogOut()
         {
-            if (!Client.Connected)
+            if (!_client.Connected)
             {
                 return;
             }
 
-            Client.Disconnect();
+            _client.Disconnect();
             if (LoggedOut != null)
             {
                 LoggedOut.Invoke();
@@ -248,13 +237,13 @@ namespace UnityClientExample
             using (var writer = DarkRiftWriter.Create())
             {
                 writer.Write(encryptedData);
-                Client.SendMessage(Message.Create(MessageTags.RegisterAccount, writer), SendMode.Reliable);
+                _client.SendMessage(Message.Create(MessageTags.RegisterAccount, writer), SendMode.Reliable);
             }
         }
 
         public void RequestPasswordReset(string eMail, string code, string newPassword)
         {
-            Client.SendMessage(
+            _client.SendMessage(
                 Message.Create(MessageTags.ResetPassword,
                     new RequestResetPasswordMessage { EMail = eMail, Code = code, NewPassword = newPassword }),
                 SendMode.Reliable);
@@ -263,21 +252,21 @@ namespace UnityClientExample
         public void RequestPasswordResetCode(string eMail)
         {
             //Fire & Forget
-            Client.SendMessage(
+            _client.SendMessage(
                 Message.Create(MessageTags.RequestPasswordResetCode, new RequestWithEmailMessage { EMail = eMail }),
                 SendMode.Reliable);
         }
 
         public void ConfirmEmail(string email, string code)
         {
-            Client.SendMessage(
+            _client.SendMessage(
                 Message.Create(MessageTags.ConfirmEmail, new RequestEmailConfirmationMessage { EMail = email, Code = code }),
                 SendMode.Reliable);
         }
 
         public void RequestNewEmailConfirmationCode(string email)
         {
-            Client.SendMessage(
+            _client.SendMessage(
                 Message.Create(MessageTags.RequestNewEmailConfirmationCode, new RequestWithEmailMessage { EMail = email }),
                 SendMode.Reliable);
         }

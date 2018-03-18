@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using DarkRift;
 using DarkRift.Server;
 using SpawnerHandler.Packets;
@@ -29,11 +31,17 @@ namespace SpawnerHandler
         public event Action<RegisteredSpawner> SpawnerDestroyed;
         public event SpawnedProcessRegistrationHandler SpawnedProcessRegistered;
 
+        //ClientID -> SpawnTask
         private readonly Dictionary<int, SpawnTask> _pendingSpawnTasks;
+
+        //TaskID -> RegisteredSpawner
         private readonly Dictionary<int, RegisteredSpawner> _spawners;
+
+        //TaskID -> SpawnTask
         private readonly Dictionary<int, SpawnTask> _spawnTasks;
 
         public bool EnableClientSpawnRequests { get; set; }
+        public int QueueUpdateFrequency { get; set; }
 
         public SpawnerHandlerPlugin(PluginLoadData pluginLoadData) : base(pluginLoadData)
         {
@@ -42,10 +50,36 @@ namespace SpawnerHandler
             _pendingSpawnTasks = new Dictionary<int, SpawnTask>();
 
             EnableClientSpawnRequests = Convert.ToBoolean(pluginLoadData.Settings.Get(nameof(EnableClientSpawnRequests)));
+            QueueUpdateFrequency = Convert.ToInt32(pluginLoadData.Settings.Get(nameof(QueueUpdateFrequency)));
 
             ClientManager.ClientConnected += OnClientConnected;
             ClientManager.ClientDisconnected += OnClientDisconnected;
+
+            Task.Run(() =>
+            {
+                while (true)
+                {
+                    Thread.Sleep(QueueUpdateFrequency);
+
+                    foreach (var spawner in _spawners.Values)
+                    {
+                        try
+                        {
+                            spawner.UpdateQueue();
+                        }
+                        catch (Exception e)
+                        {
+                            Dispatcher.InvokeWait(() =>
+                            {
+                                WriteEvent("Failed to update spawnerqueue", LogType.Error, e);
+                            });
+                        }
+                    }
+                }
+            });
         }
+
+        
 
         private void OnClientDisconnected(object sender, ClientDisconnectedEventArgs e)
         {
@@ -121,7 +155,6 @@ namespace SpawnerHandler
 
                 if (task == null)
                 {   
-                    // Client has unfinished request
                     client.SendMessage(Message.Create(MessageTags.RequestClientSpawnFailed,
                             new RequestFailedMessage
                             {
@@ -140,12 +173,15 @@ namespace SpawnerHandler
                 // Listen to status changes
                 task.StatusChanged += (status) =>
                 {
-                    // Send status update
-                    client.SendMessage(Message.Create(MessageTags.SpawnStatusChanged, new SpawnStatusPacket
+                    if (client.IsConnected)
                     {
-                        SpawnId = task.SpawnId,
-                        Status = status
-                    }), SendMode.Reliable);
+                        // Send status update
+                        client.SendMessage(Message.Create(MessageTags.SpawnStatusChanged, new SpawnStatusPacket
+                        {
+                            SpawnId = task.SpawnId,
+                            Status = status
+                        }), SendMode.Reliable);
+                    }
                 };
 
                 client.SendMessage(Message.Create(MessageTags.RequestClientSpawnSuccess, new RequestClientSpawnSuccess {TaskID = task.SpawnId, Status = ResponseStatus.Success}), SendMode.Reliable);
@@ -229,8 +265,6 @@ namespace SpawnerHandler
 
             return task;
         }
-
-        
 
         public virtual List<RegisteredSpawner> GetFilteredSpawners(string region)
         {
