@@ -375,7 +375,7 @@ namespace Authentication
 
                     LoggedInClients.Add(client, accountData);
 
-                    client.SendMessage(Message.Create(MessageTags.LoginSuccessResponse, new LoginSuccessMessage { Status = ResponseStatus.Success, IsAdmin = accountData.IsAdmin }), SendMode.Reliable);
+                    client.SendMessage(Message.Create(MessageTags.LoginSuccessResponse, new LoginSuccessMessage { Status = ResponseStatus.Success, IsAdmin = accountData.IsAdmin, IsGuest = accountData.IsGuest }), SendMode.Reliable);
                 }
                 else
                 {
