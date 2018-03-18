@@ -23,18 +23,18 @@ namespace UnityClientExample
         public UnityClientMock Client;
         public bool RequestAESKey;
 
-        private int RsaKeySize = 512;
-        private string _clientAesKey;
-
-        private bool _isLoggingIn, _aesKeyPending;
-        private RSACryptoServiceProvider clientsCsp;
-        private RSAParameters parameters;
-        private string aesKey = String.Empty;
 
         public event Action LoggedIn;
         public event Action<ResponseStatus, string> LogInFailed;
         public event Action Registered;
         public event Action LoggedOut;
+
+        private int RsaKeySize = 512;
+        private bool _isLoggingIn;
+        private RSACryptoServiceProvider _clientsCsp;
+        private RSAParameters _parameters;
+        private string _aesKey = String.Empty;
+
         public bool IsLoggedIn { get; protected set; }
 
         private void Awake()
@@ -154,8 +154,8 @@ namespace UnityClientExample
                     return;
                 }
 
-                var decrypted = clientsCsp.Decrypt(response, false);
-                aesKey = Encoding.Unicode.GetString(decrypted);
+                var decrypted = _clientsCsp.Decrypt(response, false);
+                _aesKey = Encoding.Unicode.GetString(decrypted);
             }
         }
 
@@ -169,13 +169,13 @@ namespace UnityClientExample
             if (Client.Connected)
             {
                 //Request AES key
-                clientsCsp = new RSACryptoServiceProvider(RsaKeySize);
-                parameters = clientsCsp.ExportParameters(false);
+                _clientsCsp = new RSACryptoServiceProvider(RsaKeySize);
+                _parameters = _clientsCsp.ExportParameters(false);
 
                 // Serialize public key
                 var sw = new StringWriter();
                 var xs = new System.Xml.Serialization.XmlSerializer(typeof(RSAParameters));
-                xs.Serialize(sw, parameters);
+                xs.Serialize(sw, _parameters);
 
                 using (var writer = DarkRiftWriter.Create(Encoding.Unicode))
                 {
@@ -205,7 +205,7 @@ namespace UnityClientExample
                 {"password", password}
             };
 
-            var encryptedData = Security.EncryptAES(data.ToBytes(), aesKey);
+            var encryptedData = Security.EncryptAES(data.ToBytes(), _aesKey);
             using (var writer = DarkRiftWriter.Create())
             {
                 writer.Write(encryptedData);
@@ -233,7 +233,7 @@ namespace UnityClientExample
                 {"password", password},
             };
 
-            var encryptedData = Security.EncryptAES(data.ToBytes(), aesKey);
+            var encryptedData = Security.EncryptAES(data.ToBytes(), _aesKey);
             using (var writer = DarkRiftWriter.Create())
             {
                 writer.Write(encryptedData);
