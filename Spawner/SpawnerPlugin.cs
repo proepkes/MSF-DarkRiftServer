@@ -9,7 +9,7 @@ namespace Spawner
 {
     public class SpawnerPlugin : Plugin
     {
-        private DarkRiftClient client;
+        private DarkRiftClient _client;
         public override Version Version => new Version(1, 0, 0);
         public override bool ThreadSafe => true;
 
@@ -27,7 +27,8 @@ namespace Spawner
         protected override void Loaded(LoadedEventArgs args)
         {
             base.Loaded(args);
-            client.ConnectInBackground(MasterIpAddress, MasterPort, IPVersion.IPv4, OnConnectedToMaster);
+            _client = new DarkRiftClient();
+            _client.ConnectInBackground(MasterIpAddress, MasterPort, IPVersion.IPv4, OnConnectedToMaster);
         }
 
         private void OnConnectedToMaster(Exception exception)
@@ -39,7 +40,7 @@ namespace Spawner
             }
 
             WriteEvent("Connected to master", LogType.Info);
-            client.MessageReceived += OnMessageFromMaster;
+            _client.MessageReceived += OnMessageFromMaster;
         }
 
         private void OnMessageFromMaster(object sender, MessageReceivedEventArgs messageReceivedEventArgs)
