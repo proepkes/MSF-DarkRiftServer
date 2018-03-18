@@ -113,7 +113,10 @@ namespace UnityClientExample
 
         private void HandleRegisterAccountSuccess()
         {
-            Registered?.Invoke();
+            if (Registered != null)
+            {
+                Registered.Invoke();
+            }
 
             _isLoggingIn = false;
         }
@@ -123,7 +126,10 @@ namespace UnityClientExample
             var msg = message.Deserialize<RequestFailedMessage>();
             if (msg != null)
             {
-                LogInFailed?.Invoke(msg.Status, msg.Reason);
+                if (LogInFailed != null)
+                {
+                    LogInFailed.Invoke(msg.Status, msg.Reason);
+                }
             }
             _isLoggingIn = false;
         }
@@ -136,7 +142,10 @@ namespace UnityClientExample
                 if (msg.Status == ResponseStatus.Success)
                 {
                     IsLoggedIn = true;
-                    LoggedIn?.Invoke();
+                    if (LoggedIn != null)
+                    {
+                        LoggedIn.Invoke();
+                    }
                 }
                 _isLoggingIn = false;
             }
@@ -221,8 +230,10 @@ namespace UnityClientExample
             }
 
             Client.Disconnect();
-
-            LoggedOut?.Invoke();
+            if (LoggedOut != null)
+            {
+                LoggedOut.Invoke();
+            }
         }
 
         public void Register(string email, string password)
