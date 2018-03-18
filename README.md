@@ -5,6 +5,8 @@
 What is that "Tundra" thingy in this project? Glad you asked. It's my hobby project, for more info click here:
 [![patreon_logo](https://user-images.githubusercontent.com/1029673/28471651-be40a2ea-6e35-11e7-9b01-e1b4a7d533b3.png)](https://www.patreon.com/proepkes)
 
+Discord? Yes! https://discordapp.com/invite/F9hJhcX
+
 ### Instructions:
 
 See "Example.config" in the root directory for Plugin- and Database-configuration
