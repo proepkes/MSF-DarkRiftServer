@@ -1,5 +1,10 @@
 # MSF-DarkRiftServer
 
+
+### FAQ:
+What is that "Tundra" thingy in this project? Glad you asked. It's my hobby project, for more info click here:
+[![patreon_logo](https://user-images.githubusercontent.com/1029673/28471651-be40a2ea-6e35-11e7-9b01-e1b4a7d533b3.png)](https://www.patreon.com/proepkes)
+
 ### Instructions:
 
 See "Example.config" in the root directory for Plugin- and Database-configuration
@@ -28,7 +33,3 @@ Final steps:
 ### Warning:
 
 Even though this project is programmed with great care, I take no responsibility for any (security) issues. It's still in the very early development and there will be breaking changes every now and then. This project will be field-tested by my other projects.
-
-### FAQ:
-What is that "Tundra" thingy in this project? Glad you asked. It's my hobby project, for more info click here:
-[![patreon_logo](https://user-images.githubusercontent.com/1029673/28471651-be40a2ea-6e35-11e7-9b01-e1b4a7d533b3.png)](https://www.patreon.com/proepkes)
