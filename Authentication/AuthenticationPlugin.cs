@@ -75,6 +75,9 @@ namespace Authentication
                     case MessageTags.RequestAesKey:
                         HandleRequestAesKey(e.Client, message);
                         break;
+                    case MessageTags.RequestPermissionLevel:
+                        HandleRequestPermissionLevel(e.Client, message);
+                        break;
                     case MessageTags.LogIn:
                         HandleLogin(e.Client, message);
                         break;
@@ -84,7 +87,7 @@ namespace Authentication
                     case MessageTags.RequestPasswordResetCode:
                         HandleRequestPasswordResetCode(message);
                         break;
-                    case MessageTags.RequestPasswordReset:
+                    case MessageTags.ResetPassword:
                         HandleRequestPasswordReset(e.Client, message);
                         break;
                     case MessageTags.ConfirmEmail:
@@ -97,12 +100,17 @@ namespace Authentication
             }
         }
 
+        private void HandleRequestPermissionLevel(IClient client, Message message)
+        {
+            throw new NotImplementedException();
+        }
+
         private void HandleRequestNewEmailConfirmationCode(Message message)
         {
-            var msg = message.Deserialize<RequestWithEmailMessage>();
-            if (msg != null)
+            var data = message.Deserialize<RequestWithEmailMessage>();
+            if (data != null)
             {
-                var account = _database.GetAccount(msg.EMail);
+                var account = _database.GetAccount(data.EMail);
 
                 //Only send to registered accounts
                 if (account == null || account.IsEmailConfirmed)
@@ -114,12 +122,12 @@ namespace Authentication
 
         private void HandleConfirmEmail(IClient client, Message message)
         {
-            var msg = message.Deserialize<RequestEmailConfirmationMessage>();
-            if (msg != null)
+            var data = message.Deserialize<RequestEmailConfirmationMessage>();
+            if (data != null)
             {
-                var code = msg.Code;
+                var code = data.Code;
 
-                var account = _database.GetAccount(msg.EMail);
+                var account = _database.GetAccount(data.EMail);
                 if (account == null)
                 {
                     client.SendMessage(
@@ -138,7 +146,7 @@ namespace Authentication
                     return;
                 }
                 
-                var requiredCode = _database.GetEmailConfirmationCode(msg.EMail);
+                var requiredCode = _database.GetEmailConfirmationCode(data.EMail);
                 if (requiredCode != code)
                 {
                     client.SendMessage(
@@ -164,11 +172,11 @@ namespace Authentication
 
         private void HandleRequestPasswordReset(IClient client, Message message)
         {
-            var msg = message.Deserialize<RequestResetPasswordMessage>();
-            if (string.IsNullOrEmpty(msg?.EMail) || string.IsNullOrEmpty(msg.Code) || string.IsNullOrEmpty(msg.NewPassword))
+            var data = message.Deserialize<RequestResetPasswordMessage>();
+            if (string.IsNullOrEmpty(data?.EMail) || string.IsNullOrEmpty(data.Code) || string.IsNullOrEmpty(data.NewPassword))
             {
                 client.SendMessage(
-                    Message.Create(MessageTags.RequestPasswordResetFailedResponse,
+                    Message.Create(MessageTags.ResetPasswordFailed,
                         new RequestFailedMessage
                         {
                             Status = ResponseStatus.Unauthorized,
@@ -177,11 +185,11 @@ namespace Authentication
                 return;
             }
             
-            var resetData = _database.GetPasswordResetData(msg.EMail);
-            if (resetData?.Code == null || !resetData.Code.Equals(msg.Code))
+            var resetData = _database.GetPasswordResetData(data.EMail);
+            if (resetData?.Code == null || !resetData.Code.Equals(data.Code))
             {
                 client.SendMessage(
-                    Message.Create(MessageTags.RequestPasswordResetFailedResponse,
+                    Message.Create(MessageTags.ResetPasswordFailed,
                         new RequestFailedMessage
                         {
                             Status = ResponseStatus.Unauthorized,
@@ -190,22 +198,22 @@ namespace Authentication
                 return;
             }
 
-            var account = _database.GetAccount(msg.EMail);
+            var account = _database.GetAccount(data.EMail);
 
             // Delete (overwrite) code used
             _database.SavePasswordResetCode(account, null);
 
-            account.Password = Security.CreateHash(msg.NewPassword);
+            account.Password = Security.CreateHash(data.NewPassword);
             _database.UpdateAccount(account);
-            client.SendMessage(Message.CreateEmpty(MessageTags.RequestPasswordResetSuccessResponse), SendMode.Reliable);
+            client.SendMessage(Message.CreateEmpty(MessageTags.ResetPasswordPasswordSuccess), SendMode.Reliable);
         }
 
         private void HandleRequestPasswordResetCode(Message message)
         {
-            var msg = message.Deserialize<RequestWithEmailMessage>();
-            if (msg != null)
+            var data = message.Deserialize<RequestWithEmailMessage>();
+            if (data != null)
             {
-                var email = msg.EMail;
+                var email = data.EMail;
 
                 var account = _database.GetAccount(email);
 
@@ -226,7 +234,7 @@ namespace Authentication
         {
             if (!_encryptionData.ContainsKey(client) || _encryptionData[client] == null)
             {
-                client.SendMessage(Message.Create(MessageTags.RegisterAccountFailedResponse, new RequestFailedMessage { Status = ResponseStatus.Error, Reason = "Insecure request" }), SendMode.Reliable);
+                client.SendMessage(Message.Create(MessageTags.RegisterAccountFailed, new RequestFailedMessage { Status = ResponseStatus.Error, Reason = "Insecure request" }), SendMode.Reliable);
                 return;
             }
 
@@ -239,7 +247,7 @@ namespace Authentication
 
                 if (!data.ContainsKey("email") || !data.ContainsKey("password"))
                 {
-                    client.SendMessage(Message.Create(MessageTags.RegisterAccountFailedResponse, new RequestFailedMessage { Status = ResponseStatus.Error, Reason = "Invalid registration request" }), SendMode.Reliable);
+                    client.SendMessage(Message.Create(MessageTags.RegisterAccountFailed, new RequestFailedMessage { Status = ResponseStatus.Error, Reason = "Invalid registration request" }), SendMode.Reliable);
                     return;
                 }
 
@@ -248,14 +256,14 @@ namespace Authentication
 
                 if (!IsEmailValid(email))
                 {
-                    client.SendMessage(Message.Create(MessageTags.RegisterAccountFailedResponse, new RequestFailedMessage { Status = ResponseStatus.Error, Reason = "Invalid or forbidden words in email" }), SendMode.Reliable);
+                    client.SendMessage(Message.Create(MessageTags.RegisterAccountFailed, new RequestFailedMessage { Status = ResponseStatus.Error, Reason = "Invalid or forbidden words in email" }), SendMode.Reliable);
                     return;
                 }
 
                 if (email.Length < EMailMinChars || email.Length > EMailMaxChars)
                 {
                     // Check if username length is good
-                    client.SendMessage(Message.Create(MessageTags.RegisterAccountFailedResponse, new RequestFailedMessage { Status = ResponseStatus.Error, Reason = "Invalid email length" }), SendMode.Reliable);
+                    client.SendMessage(Message.Create(MessageTags.RegisterAccountFailed, new RequestFailedMessage { Status = ResponseStatus.Error, Reason = "Invalid email length" }), SendMode.Reliable);
                     return;
                 }
 
@@ -268,12 +276,12 @@ namespace Authentication
                     _database.InsertNewAccount(account);
                     SendEmailConfirmationCode(account);
 
-                    client.SendMessage(Message.CreateEmpty(MessageTags.RegisterAccountSuccessResponse), SendMode.Reliable);
+                    client.SendMessage(Message.CreateEmpty(MessageTags.RegisterAccountSuccess), SendMode.Reliable);
                 }
                 catch (Exception e)
                 {
                     WriteEvent("Account already registered", LogType.Error, e);
-                    client.SendMessage(Message.Create(MessageTags.RegisterAccountFailedResponse, new RequestFailedMessage { Status = ResponseStatus.Error, Reason = "Already registered" }), SendMode.Reliable);
+                    client.SendMessage(Message.Create(MessageTags.RegisterAccountFailed, new RequestFailedMessage { Status = ResponseStatus.Error, Reason = "Already registered" }), SendMode.Reliable);
                 }
             }
         }

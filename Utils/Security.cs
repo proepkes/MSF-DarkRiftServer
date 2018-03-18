@@ -9,7 +9,7 @@ namespace Utils
 {
     public class Security
     {
-        private static byte[] _salt = Encoding.ASCII.GetBytes("o6806642kbM7c5");
+        private static readonly byte[] Salt = Encoding.ASCII.GetBytes("o6806642kbM7c5");
 
         #region Password hashing
         // The following constants may be changed without breaking existing hashes.
@@ -23,7 +23,6 @@ namespace Utils
         #endregion
 
         //Anti time-attacks
-
         public static bool SlowEquals(byte[] a, byte[] b)
         {
             var diff = (uint)a.Length ^ (uint)b.Length;
@@ -70,7 +69,7 @@ namespace Utils
             using (var aesAlg = new RijndaelManaged())
             {
                 // generate the key from the shared secret and the salt
-                Rfc2898DeriveBytes key = new Rfc2898DeriveBytes(sharedSecret, _salt);
+                Rfc2898DeriveBytes key = new Rfc2898DeriveBytes(sharedSecret, Salt);
 
                 using (MemoryStream msDecrypt = new MemoryStream(encryptedData))
                 {
@@ -97,7 +96,7 @@ namespace Utils
             using (var aesAlg = new RijndaelManaged())
             {
                 // generate the key from the shared secret and the salt
-                Rfc2898DeriveBytes key = new Rfc2898DeriveBytes(sharedSecret, _salt);
+                Rfc2898DeriveBytes key = new Rfc2898DeriveBytes(sharedSecret, Salt);
 
                 // Create a RijndaelManaged object
                 aesAlg.Key = key.GetBytes(aesAlg.KeySize / 8);

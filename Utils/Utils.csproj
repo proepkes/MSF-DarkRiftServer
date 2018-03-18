@@ -36,9 +36,6 @@
     <Reference Include="DarkRift">
       <HintPath>..\Lib\DarkRift.dll</HintPath>
     </Reference>
-    <Reference Include="DarkRift.Server">
-      <HintPath>..\Lib\DarkRift.Server.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -59,13 +56,16 @@
     <Compile Include="Messages\Requests\RequestEmailConfirmationMessage.cs" />
     <Compile Include="Messages\Requests\RequestWithEmailMessage.cs" />
     <Compile Include="Messages\RequestMessage.cs" />
+    <Compile Include="Messages\Response\RequestClientSpawnSuccess.cs" />
     <Compile Include="Messages\Response\LoginSuccessMessage.cs" />
     <Compile Include="Messages\Response\RequestFailedMessage.cs" />
     <Compile Include="Messages\ResponseMessage.cs" />
+    <Compile Include="Messages\Response\RegisterSpawnerSuccessMessage.cs" />
     <Compile Include="ResponseStatus.cs" />
     <Compile Include="Security.cs" />
     <Compile Include="MessageTags.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SpawnerOptions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

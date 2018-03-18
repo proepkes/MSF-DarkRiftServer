@@ -71,16 +71,16 @@ namespace UnityClientExample
                     case MessageTags.LoginFailedResponse:
                         HandleLoginFailed(message);
                         break;
-                    case MessageTags.RegisterAccountSuccessResponse:
+                    case MessageTags.RegisterAccountSuccess:
                         HandleRegisterAccountSuccess();
                         break;
-                    case MessageTags.RegisterAccountFailedResponse:
+                    case MessageTags.RegisterAccountFailed:
                         HandleRegisterAccountFailed(message);
                         break;
-                    case MessageTags.RequestPasswordResetSuccessResponse:
+                    case MessageTags.ResetPasswordPasswordSuccess:
                         HandlePasswordResetSuccess();
                         break;
-                    case MessageTags.RequestPasswordResetFailedResponse:
+                    case MessageTags.ResetPasswordFailed:
                         HandlePasswordResetFailed(message);
                         break;
                 }
@@ -90,8 +90,8 @@ namespace UnityClientExample
         #region AUTH
         private void HandlePasswordResetFailed(Message message)
         {
-            var msg = message.Deserialize<RequestFailedMessage>();
-            if (msg != null)
+            var data = message.Deserialize<RequestFailedMessage>();
+            if (data != null)
             {
                 //Handle
             }
@@ -104,8 +104,8 @@ namespace UnityClientExample
 
         private void HandleRegisterAccountFailed(Message message)
         {
-            var msg = message.Deserialize<RequestFailedMessage>();
-            if (msg != null)
+            var data = message.Deserialize<RequestFailedMessage>();
+            if (data != null)
             {
                 //Handle
             }
@@ -123,12 +123,12 @@ namespace UnityClientExample
 
         private void HandleLoginFailed(Message message)
         {
-            var msg = message.Deserialize<RequestFailedMessage>();
-            if (msg != null)
+            var data = message.Deserialize<RequestFailedMessage>();
+            if (data != null)
             {
                 if (LogInFailed != null)
                 {
-                    LogInFailed.Invoke(msg.Status, msg.Reason);
+                    LogInFailed.Invoke(data.Status, data.Reason);
                 }
             }
             _isLoggingIn = false;
@@ -136,10 +136,10 @@ namespace UnityClientExample
 
         private void HandleLoginSuccess(Message message)
         {
-            var msg = message.Deserialize<LoginSuccessMessage>();
-            if (msg != null)
+            var data = message.Deserialize<LoginSuccessMessage>();
+            if (data != null)
             {
-                if (msg.Status == ResponseStatus.Success)
+                if (data.Status == ResponseStatus.Success)
                 {
                     IsLoggedIn = true;
                     if (LoggedIn != null)
@@ -255,7 +255,7 @@ namespace UnityClientExample
         public void RequestPasswordReset(string eMail, string code, string newPassword)
         {
             Client.SendMessage(
-                Message.Create(MessageTags.RequestPasswordReset,
+                Message.Create(MessageTags.ResetPassword,
                     new RequestResetPasswordMessage { EMail = eMail, Code = code, NewPassword = newPassword }),
                 SendMode.Reliable);
         }
