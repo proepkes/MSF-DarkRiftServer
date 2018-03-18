@@ -79,8 +79,6 @@ namespace SpawnerHandler
             });
         }
 
-        
-
         private void OnClientDisconnected(object sender, ClientDisconnectedEventArgs e)
         {
             if (_spawners.ContainsKey(e.Client.ID))
@@ -112,7 +110,7 @@ namespace SpawnerHandler
                     case MessageTags.RegisterSpawner:
                         HandleRegisterSpawner(e.Client, message);
                         break;
-                    case MessageTags.RequestClientSpawn:
+                    case MessageTags.RequestSpawnFromClientToMaster:
                         HandleClientsSpawnRequest(e.Client, message);
                         break;
                 }
@@ -121,13 +119,13 @@ namespace SpawnerHandler
 
         private void HandleClientsSpawnRequest(IClient client, Message message)
         {
-            var data = message.Deserialize<ClientsSpawnRequestPacket>();
+            var data = message.Deserialize<RequestSpawnFromClientToMasterMessage>();
             if (data != null)
             {
                 if (!CanClientSpawn(client, data))
                 {
                     // Client can't spawn
-                    client.SendMessage(Message.Create(MessageTags.RequestClientSpawnFailed,
+                    client.SendMessage(Message.Create(MessageTags.RequestSpawnFromClientToMasterFailed,
                             new RequestFailedMessage
                             {
                                 Status = ResponseStatus.Unauthorized,
@@ -140,7 +138,7 @@ namespace SpawnerHandler
                 if (_pendingSpawnTasks.ContainsKey(client.ID) && !_pendingSpawnTasks[client.ID].IsDoneStartingProcess)
                 {
                     // Client has unfinished request
-                    client.SendMessage(Message.Create(MessageTags.RequestClientSpawnFailed,
+                    client.SendMessage(Message.Create(MessageTags.RequestSpawnFromClientToMasterFailed,
                             new RequestFailedMessage
                             {
                                 Status = ResponseStatus.Failed,
@@ -155,7 +153,7 @@ namespace SpawnerHandler
 
                 if (task == null)
                 {   
-                    client.SendMessage(Message.Create(MessageTags.RequestClientSpawnFailed,
+                    client.SendMessage(Message.Create(MessageTags.RequestSpawnFromClientToMasterFailed,
                             new RequestFailedMessage
                             {
                                 Status = ResponseStatus.Failed,
@@ -184,7 +182,7 @@ namespace SpawnerHandler
                     }
                 };
 
-                client.SendMessage(Message.Create(MessageTags.RequestClientSpawnSuccess, new RequestClientSpawnSuccess {TaskID = task.SpawnId, Status = ResponseStatus.Success}), SendMode.Reliable);
+                client.SendMessage(Message.Create(MessageTags.RequestSpawnFromClientToMasterSuccess, new RequestClientSpawnSuccess {TaskID = task.SpawnId, Status = ResponseStatus.Success}), SendMode.Reliable);
             }
         }
 
@@ -231,7 +229,7 @@ namespace SpawnerHandler
             return spawner;
         }
 
-        public virtual SpawnTask Spawn(string region = "", string customArgs = "")
+        public virtual SpawnTask Spawn(string region = "")
         {
             var spawners = GetFilteredSpawners(region);
 
@@ -250,12 +248,12 @@ namespace SpawnerHandler
             if (availableSpawner == null)
                 return null;
 
-            return Spawn(customArgs, availableSpawner);
+            return Spawn(availableSpawner);
         }
 
-        public virtual SpawnTask Spawn(string customArgs, RegisteredSpawner spawner)
+        public virtual SpawnTask Spawn(RegisteredSpawner spawner)
         {
-            var task = new SpawnTask(GenerateSpawnTaskId(), spawner, customArgs);
+            var task = new SpawnTask(GenerateSpawnTaskId(), spawner);
 
             _spawnTasks[task.SpawnId] = task;
 
@@ -304,7 +302,7 @@ namespace SpawnerHandler
             return _spawnTaskId++;
         }
 
-        protected virtual bool CanClientSpawn(IClient client, ClientsSpawnRequestPacket data)
+        protected virtual bool CanClientSpawn(IClient client, RequestSpawnFromClientToMasterMessage data)
         {
             return EnableClientSpawnRequests;
         }

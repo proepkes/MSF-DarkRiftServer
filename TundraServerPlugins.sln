@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TundraClient", "UnityClient
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpawnerHandler", "SpawnerHandler\SpawnerHandler.csproj", "{EC723E20-EDBF-49C0-B85F-3355E52E5A2D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpawnerLib", "SpawnerLib\SpawnerLib.csproj", "{D3BB32F0-2351-4B69-B522-AB4225EBC0AB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +59,10 @@ Global
 		{EC723E20-EDBF-49C0-B85F-3355E52E5A2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC723E20-EDBF-49C0-B85F-3355E52E5A2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EC723E20-EDBF-49C0-B85F-3355E52E5A2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3BB32F0-2351-4B69-B522-AB4225EBC0AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3BB32F0-2351-4B69-B522-AB4225EBC0AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3BB32F0-2351-4B69-B522-AB4225EBC0AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3BB32F0-2351-4B69-B522-AB4225EBC0AB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

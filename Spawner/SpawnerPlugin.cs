@@ -3,6 +3,7 @@ using DarkRift.Client;
 using DarkRift.Server;
 using System;
 using System.Net;
+using SpawnerHandler.Packets;
 using Utils;
 using Utils.Messages.Response;
 using MessageReceivedEventArgs = DarkRift.Client.MessageReceivedEventArgs;
@@ -76,8 +77,16 @@ namespace Spawner
                     case MessageTags.RegisterSpawnerFailed:
                         HandleRegisterSpawnerFailed(message);
                         break;
+                    case MessageTags.RequestSpawnFromMasterToSpawner:
+                        HandleRequestSpawnFromMaster(message);
+                        break;
                 }
             }
+        }
+
+        private void HandleRequestSpawnFromMaster(Message message)
+        {
+            var data = message.Deserialize<SpawnRequestPacket>();
         }
 
         private void HandleRegisterSpawnerSuccess(Message message)

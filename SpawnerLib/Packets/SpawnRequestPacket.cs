@@ -7,7 +7,6 @@ namespace SpawnerHandler.Packets
         public int SpawnerId;
         public int SpawnId;
         public string SpawnCode = "";
-        public string CustomArgs = "";
         public string OverrideExePath = "";
 
         public void Deserialize(DeserializeEvent e)
@@ -15,7 +14,6 @@ namespace SpawnerHandler.Packets
             SpawnerId = e.Reader.ReadInt32();
             SpawnId = e.Reader.ReadInt32();
             SpawnCode = e.Reader.ReadString();
-            CustomArgs = e.Reader.ReadString();
             OverrideExePath = e.Reader.ReadString();
         }
 
@@ -24,7 +22,6 @@ namespace SpawnerHandler.Packets
             e.Writer.Write(SpawnerId);
             e.Writer.Write(SpawnId);
             e.Writer.Write(SpawnCode);
-            e.Writer.Write(CustomArgs);
             e.Writer.Write(OverrideExePath);
         }
     }

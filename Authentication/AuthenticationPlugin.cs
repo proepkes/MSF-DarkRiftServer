@@ -107,10 +107,10 @@ namespace Authentication
 
         private void HandleRequestNewEmailConfirmationCode(Message message)
         {
-            var data = message.Deserialize<RequestWithEmailMessage>();
+            var data = message.Deserialize<RequestWithStringMessage>();
             if (data != null)
             {
-                var account = _database.GetAccount(data.EMail);
+                var account = _database.GetAccount(data.String);
 
                 //Only send to registered accounts
                 if (account == null || account.IsEmailConfirmed)
@@ -127,7 +127,7 @@ namespace Authentication
             {
                 var code = data.Code;
 
-                var account = _database.GetAccount(data.EMail);
+                var account = _database.GetAccount(data.String);
                 if (account == null)
                 {
                     client.SendMessage(
@@ -146,7 +146,7 @@ namespace Authentication
                     return;
                 }
                 
-                var requiredCode = _database.GetEmailConfirmationCode(data.EMail);
+                var requiredCode = _database.GetEmailConfirmationCode(data.String);
                 if (requiredCode != code)
                 {
                     client.SendMessage(
@@ -210,10 +210,10 @@ namespace Authentication
 
         private void HandleRequestPasswordResetCode(Message message)
         {
-            var data = message.Deserialize<RequestWithEmailMessage>();
+            var data = message.Deserialize<RequestWithStringMessage>();
             if (data != null)
             {
-                var email = data.EMail;
+                var email = data.String;
 
                 var account = _database.GetAccount(email);
 

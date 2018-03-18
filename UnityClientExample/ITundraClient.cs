@@ -19,5 +19,6 @@ namespace Tundra
         void RequestPasswordResetCode(string eMail);
         void ConfirmEmail(string email, string code);
         void RequestNewEmailConfirmationCode(string email);
+        void RequestSpawn(string region);
     }
 }

@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2AE16356-5D7B-44F9-9192-41850A52DEF4}</ProjectGuid>
+    <ProjectGuid>{D3BB32F0-2351-4B69-B522-AB4225EBC0AB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Spawner</RootNamespace>
-    <AssemblyName>Spawner</AssemblyName>
+    <RootNamespace>SpawnerLib</RootNamespace>
+    <AssemblyName>SpawnerLib</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -33,12 +33,6 @@
     <Reference Include="DarkRift">
       <HintPath>..\Lib\DarkRift.dll</HintPath>
     </Reference>
-    <Reference Include="DarkRift.Client">
-      <HintPath>..\Lib\DarkRift.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="DarkRift.Server">
-      <HintPath>..\Lib\DarkRift.Server.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -47,22 +41,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SpawnerPlugin.cs" />
+    <Compile Include="Packets\KillSpawnedProcessPacket.cs" />
+    <Compile Include="Packets\RegisterSpawnedProcessPacket.cs" />
+    <Compile Include="Packets\SpawnedProcessStartedPacket.cs" />
+    <Compile Include="Packets\SpawnFinalizationPacket.cs" />
+    <Compile Include="Packets\SpawnRequestPacket.cs" />
+    <Compile Include="Packets\SpawnStatusPacket.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SpawnerLib\SpawnerLib.csproj">
-      <Project>{d3bb32f0-2351-4b69-b522-ab4225ebc0ab}</Project>
-      <Name>SpawnerLib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Utils\Utils.csproj">
-      <Project>{73957A5C-7298-4BD7-97A7-6E572B50D155}</Project>
-      <Name>Utils</Name>
-    </ProjectReference>
+    <Compile Include="SpawnStatus.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>xcopy /y $(TargetDir)$(TargetName).dll E:\UnityProjects\DarkRiftServer\Plugins
-xcopy /y $(TargetDir)$(TargetName).pdb E:\UnityProjects\DarkRiftServer\Plugins</PostBuildEvent>
-  </PropertyGroup>
 </Project>

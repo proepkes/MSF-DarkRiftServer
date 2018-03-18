@@ -31,11 +31,11 @@
         public const ushort RegisterSpawner = 2200;
         public const ushort RegisterSpawnerFailed = 2201;
         public const ushort RegisterSpawnerSuccess = 2202;
-        public const ushort RequestSpawn = 2250;
+        public const ushort RequestSpawnFromMasterToSpawner = 2250;
         public const ushort SpawnStatusChanged = 2251;
         public const ushort KillSpawn = 2252;
-        public const ushort RequestClientSpawn = 2253;
-        public const ushort RequestClientSpawnFailed = 2254;
-        public const ushort RequestClientSpawnSuccess = 2255;
+        public const ushort RequestSpawnFromClientToMaster = 2253;
+        public const ushort RequestSpawnFromClientToMasterFailed = 2254;
+        public const ushort RequestSpawnFromClientToMasterSuccess = 2255;
     }
 }

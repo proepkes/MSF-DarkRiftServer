@@ -52,9 +52,10 @@
     <Compile Include="Extensions\SerializationExtensions.cs" />
     <Compile Include="IO\EndianBinaryReader.cs" />
     <Compile Include="IO\EndianBinaryWriter.cs" />
-    <Compile Include="Messages\Requests\RequestResetPasswordMessage.cs" />
     <Compile Include="Messages\Requests\RequestEmailConfirmationMessage.cs" />
-    <Compile Include="Messages\Requests\RequestWithEmailMessage.cs" />
+    <Compile Include="Messages\Requests\RequestResetPasswordMessage.cs" />
+    <Compile Include="Messages\Requests\RequestSpawnFromClientToMasterMessage.cs" />
+    <Compile Include="Messages\Requests\RequestWithStringMessage.cs" />
     <Compile Include="Messages\RequestMessage.cs" />
     <Compile Include="Messages\Response\RequestClientSpawnSuccess.cs" />
     <Compile Include="Messages\Response\LoginSuccessMessage.cs" />

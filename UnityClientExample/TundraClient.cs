@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using DarkRift;
 using DarkRift.Client;
+using SpawnerHandler.Packets;
 using UnityClientExample;
 using Utils;
 using Utils.Extensions;
@@ -253,27 +254,34 @@ namespace Tundra
         {
             //Fire & Forget
             _client.SendMessage(
-                Message.Create(MessageTags.RequestPasswordResetCode, new RequestWithEmailMessage { EMail = eMail }),
+                Message.Create(MessageTags.RequestPasswordResetCode, new RequestWithStringMessage { String = eMail }),
                 SendMode.Reliable);
         }
 
         public void ConfirmEmail(string email, string code)
         {
             _client.SendMessage(
-                Message.Create(MessageTags.ConfirmEmail, new RequestEmailConfirmationMessage { EMail = email, Code = code }),
+                Message.Create(MessageTags.ConfirmEmail, new RequestEmailConfirmationMessage { String = email, Code = code }),
                 SendMode.Reliable);
         }
 
         public void RequestNewEmailConfirmationCode(string email)
         {
             _client.SendMessage(
-                Message.Create(MessageTags.RequestNewEmailConfirmationCode, new RequestWithEmailMessage { EMail = email }),
+                Message.Create(MessageTags.RequestNewEmailConfirmationCode, new RequestWithStringMessage { String = email }),
                 SendMode.Reliable);
         }
-
         #endregion
 
-        #region ROOM
+        #region SPAWNING
+
+        public void RequestSpawn(string region="")
+        {
+            _client.SendMessage(Message.Create(MessageTags.RequestSpawnFromClientToMaster, new RequestSpawnFromClientToMasterMessage 
+            {
+                Region = region
+            }), SendMode.Reliable);
+        }
 
         #endregion
     }

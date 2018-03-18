@@ -12,7 +12,6 @@ namespace SpawnerHandler
     public class SpawnTask
     {
         public RegisteredSpawner Spawner { get; private set; }
-        public string CustomArgs { get; private set; }
 
         public int SpawnId { get; private set; }
         public event Action<SpawnStatus> StatusChanged;
@@ -25,12 +24,11 @@ namespace SpawnerHandler
 
         protected List<Action<SpawnTask>> WhenDoneCallbacks;
 
-        public SpawnTask(int spawnId, RegisteredSpawner spawner, string customArgs) {
+        public SpawnTask(int spawnId, RegisteredSpawner spawner) {
 
             SpawnId = spawnId;
 
             Spawner = spawner;
-            CustomArgs = customArgs;
 
             UniqueCode = Utils.Security.CreateRandomString(6);
             WhenDoneCallbacks = new List<Action<SpawnTask>>();

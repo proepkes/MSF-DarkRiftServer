@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-using DarkRift;
-using Utils.IO;
+﻿using DarkRift;
 
 namespace SpawnerHandler.Packets
 {
-    public class ClientsSpawnRequestPacket : IDarkRiftSerializable
+    public class RequestSpawnFromClientToMasterMessage : IDarkRiftSerializable
     {
         public string Region = "";
 

@@ -47,20 +47,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Packets\ClientsSpawnRequestPacket.cs" />
-    <Compile Include="Packets\KillSpawnedProcessPacket.cs" />
-    <Compile Include="Packets\RegisterSpawnedProcessPacket.cs" />
-    <Compile Include="Packets\SpawnedProcessStartedPacket.cs" />
-    <Compile Include="Packets\SpawnFinalizationPacket.cs" />
-    <Compile Include="Packets\SpawnRequestPacket.cs" />
-    <Compile Include="Packets\SpawnStatusPacket.cs" />
     <Compile Include="RegisteredSpawner.cs" />
     <Compile Include="SpawnerHandlerPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SpawnStatus.cs" />
     <Compile Include="SpawnTask.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\SpawnerLib\SpawnerLib.csproj">
+      <Project>{d3bb32f0-2351-4b69-b522-ab4225ebc0ab}</Project>
+      <Name>SpawnerLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Utils\Utils.csproj">
       <Project>{73957A5C-7298-4BD7-97A7-6E572B50D155}</Project>
       <Name>Utils</Name>

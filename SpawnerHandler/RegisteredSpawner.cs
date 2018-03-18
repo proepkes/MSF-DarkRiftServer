@@ -86,12 +86,11 @@ namespace SpawnerHandler
             var data = new SpawnRequestPacket
             {
                 SpawnerId = ID,
-                CustomArgs = task.CustomArgs,
                 SpawnId = task.SpawnId,
                 SpawnCode = task.UniqueCode
             };
 
-            Client.SendMessage(Message.Create(MessageTags.RequestSpawn, data), SendMode.Reliable);
+            Client.SendMessage(Message.Create(MessageTags.RequestSpawnFromMasterToSpawner, data), SendMode.Reliable);
         }
 
         public void SendKillRequest(int spawnId, KillRequestCallback callback)
