@@ -29,6 +29,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="DarkRift">
       <HintPath>..\Lib\DarkRift.dll</HintPath>
@@ -48,7 +51,17 @@
     <Compile Include="Packets\SpawnRequestPacket.cs" />
     <Compile Include="Packets\SpawnStatusPacket.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SpawnStatus.cs" />
+    <Compile Include="SpawnerOptions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Utils\Utils.csproj">
+      <Project>{73957A5C-7298-4BD7-97A7-6E572B50D155}</Project>
+      <Name>Utils</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /y $(TargetDir)$(TargetName).dll E:\UnityProjects\DarkRiftServer\Plugins
+xcopy /y $(TargetDir)$(TargetName).pdb E:\UnityProjects\DarkRiftServer\Plugins</PostBuildEvent>
+  </PropertyGroup>
 </Project>

@@ -221,7 +221,7 @@ namespace SpawnerHandler
             
             // Add the spawner to a list of all spawners
             _spawners[client.ID] = spawner;
-
+            
             // Invoke the event
             if (SpawnerRegistered != null)
                 SpawnerRegistered.Invoke(spawner);
@@ -304,6 +304,7 @@ namespace SpawnerHandler
 
         protected virtual bool CanClientSpawn(IClient client, RequestSpawnFromClientToMasterMessage data)
         {
+            //TODO: Setting: Only allow logged in clients to spawn & check here
             return EnableClientSpawnRequests;
         }
     }
