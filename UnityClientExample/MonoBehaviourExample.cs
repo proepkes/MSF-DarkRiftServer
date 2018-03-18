@@ -7,61 +7,51 @@
 //using UnityClientExample;
 //using UnityEngine;
 
-//public class TundraNetClient : MonoBehaviour
+//public class TundraNetClient : MonoBehaviour, IDarkRiftUnityClient
 //{
-//    private class TundraNetClientAdapter : IDarkRiftUnityClient
-//    {
-//        private readonly UnityClient _client;
-
-//        public event EventHandler<DisconnectedEventArgs> Disconnected;
-//        public event EventHandler<MessageReceivedEventArgs> MessageReceived;
-
-//        public TundraNetClientAdapter(UnityClient client)
-//        {
-//            _client = client;
-//            _client.MessageReceived += (sender, args) =>
-//            {
-//                if (MessageReceived != null)
-//                    MessageReceived.Invoke(sender, args);
-//            };
-//            _client.Disconnected += (sender, args) =>
-//            {
-//                if (Disconnected != null)
-//                    Disconnected.Invoke(sender, args);
-//            };
-//        }
-//        public bool SendMessage(Message create, SendMode reliable)
-//        {
-//            return _client.SendMessage(create, reliable);
-//        }
-
-//        public bool Disconnect()
-//        {
-//            return _client.Disconnect();
-//        }
-
-//        public bool Connected
-//        {
-//            get
-//            {
-//                return _client.Connected;
-//            }
-//        }
-//    }
-
 //    public bool RequestAESKeyOnStart;
 //    public UnityClient UnityClient;
 //    public ITundraClient Client;
 
+//    public event EventHandler<DisconnectedEventArgs> Disconnected;
+//    public event EventHandler<MessageReceivedEventArgs> MessageReceived;
+
+//    public bool Connected
+//    {
+//        get
+//        {
+//            return UnityClient.Connected;
+//        }
+//    }
 
 //    private void Awake()
 //    {
 //        DontDestroyOnLoad(transform.gameObject);
 //    }
+//    public bool SendMessage(Message create, SendMode reliable)
+//    {
+//        return UnityClient.SendMessage(create, reliable);
+//    }
+
+//    public bool Disconnect()
+//    {
+//        return UnityClient.Disconnect();
+//    }
 
 //    void Start()
 //    {
-//        Client = TundraClientFactory.Create(new TundraNetClientAdapter(UnityClient));
+//        Client = TundraClientFactory.Create(this);
+
+//        UnityClient.MessageReceived += (sender, args) =>
+//        {
+//            if (MessageReceived != null)
+//                MessageReceived.Invoke(sender, args);
+//        };
+//        UnityClient.Disconnected += (sender, args) =>
+//        {
+//            if (Disconnected != null)
+//                Disconnected.Invoke(sender, args);
+//        };
 
 //        if (RequestAESKeyOnStart)
 //            StartCoroutine(GetAesKey());
