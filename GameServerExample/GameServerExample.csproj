@@ -4,15 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2AE16356-5D7B-44F9-9192-41850A52DEF4}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Spawner</RootNamespace>
-    <AssemblyName>Spawner</AssemblyName>
+    <ProjectGuid>{12D26F01-4678-4360-93F7-B3562272BC3B}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>GameServerExample</RootNamespace>
+    <AssemblyName>GameServerExample</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,6 +22,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -29,16 +30,10 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DarkRift">
-      <HintPath>..\Lib\DarkRift.dll</HintPath>
-    </Reference>
-    <Reference Include="DarkRift.Client">
-      <HintPath>..\Lib\DarkRift.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="DarkRift.Server">
-      <HintPath>..\Lib\DarkRift.Server.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -47,22 +42,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SpawnerPlugin.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SpawnerLib\SpawnerLib.csproj">
-      <Project>{d3bb32f0-2351-4b69-b522-ab4225ebc0ab}</Project>
-      <Name>SpawnerLib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Utils\Utils.csproj">
-      <Project>{73957A5C-7298-4BD7-97A7-6E572B50D155}</Project>
-      <Name>Utils</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /d /y  $(ProjectDir)bin\$(ConfigurationName) E:\UnityProjects\DarkRiftServer\Plugins
+    <PostBuildEvent>xcopy /d /y  $(ProjectDir)bin\$(ConfigurationName) E:\UnityProjects\DarkRiftServer\GameServer\
 </PostBuildEvent>
   </PropertyGroup>
 </Project>

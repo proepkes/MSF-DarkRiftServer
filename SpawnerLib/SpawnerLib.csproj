@@ -46,7 +46,6 @@
   <ItemGroup>
     <Compile Include="Packets\KillSpawnedProcessPacket.cs" />
     <Compile Include="Packets\RegisterSpawnedProcessPacket.cs" />
-    <Compile Include="Packets\SpawnedProcessStartedPacket.cs" />
     <Compile Include="Packets\SpawnFinalizationPacket.cs" />
     <Compile Include="Packets\SpawnRequestPacket.cs" />
     <Compile Include="Packets\SpawnStatusPacket.cs" />
@@ -61,7 +60,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /y $(TargetDir)$(TargetName).dll E:\UnityProjects\DarkRiftServer\Plugins
-xcopy /y $(TargetDir)$(TargetName).pdb E:\UnityProjects\DarkRiftServer\Plugins</PostBuildEvent>
+    <PostBuildEvent>xcopy /d /y  $(ProjectDir)bin\$(ConfigurationName) E:\UnityProjects\DarkRiftServer\Plugins
+</PostBuildEvent>
   </PropertyGroup>
 </Project>

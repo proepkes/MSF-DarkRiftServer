@@ -182,7 +182,7 @@ namespace SpawnerHandler
                     }
                 };
 
-                client.SendMessage(Message.Create(MessageTags.RequestSpawnFromClientToMasterSuccess, new RequestClientSpawnSuccess {TaskID = task.SpawnId, Status = ResponseStatus.Success}), SendMode.Reliable);
+                client.SendMessage(Message.Create(MessageTags.RequestSpawnFromClientToMasterSuccess, new RequestClientSpawnSuccessMessage {TaskID = task.SpawnId, Status = ResponseStatus.Success}), SendMode.Reliable);
             }
         }
 
@@ -259,7 +259,8 @@ namespace SpawnerHandler
 
             spawner.AddTaskToQueue(task);
 
-            WriteEvent("Spawner was found, and spawn task created: " + task, LogType.Trace);
+            Dispatcher.InvokeWait(() =>
+                WriteEvent("Spawner was found, and spawn task created: " + task, LogType.Trace));
 
             return task;
         }

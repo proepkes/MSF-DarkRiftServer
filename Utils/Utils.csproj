@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArgNames.cs" />
     <Compile Include="Conversion\BigEndianBitConverter.cs" />
     <Compile Include="Conversion\DoubleConverter.cs" />
     <Compile Include="Conversion\EndianBitConverter.cs" />
@@ -52,27 +53,30 @@
     <Compile Include="Extensions\SerializationExtensions.cs" />
     <Compile Include="IO\EndianBinaryReader.cs" />
     <Compile Include="IO\EndianBinaryWriter.cs" />
+    <Compile Include="Messages\Notifications\SpawnerKilledProcessNotificationMessage.cs" />
+    <Compile Include="Messages\NotificationMessage.cs" />
     <Compile Include="Messages\Requests\RequestEmailConfirmationMessage.cs" />
     <Compile Include="Messages\Requests\RequestResetPasswordMessage.cs" />
     <Compile Include="Messages\Requests\RequestSpawnFromClientToMasterMessage.cs" />
     <Compile Include="Messages\Requests\RequestWithStringMessage.cs" />
     <Compile Include="Messages\RequestMessage.cs" />
-    <Compile Include="Messages\Response\RequestClientSpawnSuccess.cs" />
-    <Compile Include="Messages\Response\LoginSuccessMessage.cs" />
-    <Compile Include="Messages\Response\RequestFailedMessage.cs" />
+    <Compile Include="Messages\Responses\RequestSpawnFromMasterToSpawnerSuccessMessage.cs" />
+    <Compile Include="Messages\Responses\RequestClientSpawnSuccessMessage.cs" />
+    <Compile Include="Messages\Responses\LoginSuccessMessage.cs" />
+    <Compile Include="Messages\Responses\RequestFailedMessage.cs" />
     <Compile Include="Messages\ResponseMessage.cs" />
-    <Compile Include="Messages\Response\RegisterSpawnerSuccessMessage.cs" />
+    <Compile Include="Messages\Responses\RegisterSpawnerSuccessMessage.cs" />
     <Compile Include="ResponseStatus.cs" />
     <Compile Include="Security.cs" />
     <Compile Include="MessageTags.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SpawnStatus.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /y $(TargetDir)$(TargetName).dll E:\UnityProjects\DarkRiftServer\Plugins
-xcopy /y $(TargetDir)$(TargetName).pdb E:\UnityProjects\DarkRiftServer\Plugins
-xcopy /y $(TargetDir)$(TargetName).dll E:\UnityProjects\Tundra\Assets\Game\ServerPlugins
-xcopy /y $(TargetDir)$(TargetName).pdb E:\UnityProjects\Tundra\Assets\Game\ServerPlugins</PostBuildEvent>
+    <PostBuildEvent>xcopy /d /y  $(ProjectDir)bin\$(ConfigurationName) E:\UnityProjects\DarkRiftServer\Plugins
+xcopy /d /y $(TargetDir)$(TargetName).dll E:\UnityProjects\Tundra\Assets\Game\ServerPlugins
+xcopy /d /y $(TargetDir)$(TargetName).pdb E:\UnityProjects\Tundra\Assets\Game\ServerPlugins</PostBuildEvent>
   </PropertyGroup>
 </Project>

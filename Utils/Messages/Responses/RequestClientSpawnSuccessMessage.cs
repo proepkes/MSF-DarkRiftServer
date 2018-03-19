@@ -2,7 +2,7 @@
 
 namespace Utils.Messages.Response
 {
-    public class RequestClientSpawnSuccess : ResponseMessage
+    public class RequestClientSpawnSuccessMessage : ResponseMessage
     {
         public int TaskID;
 

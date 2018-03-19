@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpawnerHandler", "SpawnerHa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpawnerLib", "SpawnerLib\SpawnerLib.csproj", "{D3BB32F0-2351-4B69-B522-AB4225EBC0AB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameServerExample", "GameServerExample\GameServerExample.csproj", "{12D26F01-4678-4360-93F7-B3562272BC3B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{D3BB32F0-2351-4B69-B522-AB4225EBC0AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D3BB32F0-2351-4B69-B522-AB4225EBC0AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D3BB32F0-2351-4B69-B522-AB4225EBC0AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12D26F01-4678-4360-93F7-B3562272BC3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12D26F01-4678-4360-93F7-B3562272BC3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12D26F01-4678-4360-93F7-B3562272BC3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12D26F01-4678-4360-93F7-B3562272BC3B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
