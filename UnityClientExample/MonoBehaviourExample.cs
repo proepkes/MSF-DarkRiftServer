@@ -203,6 +203,12 @@
 //            return;
 //        }
 
+//        if (string.IsNullOrEmpty(_aesKey))
+//        {
+//            Debug.Log("You have to request an AES-Key before you can login");
+//            return;
+//        }
+
 //        if (_isLoggingIn)
 //        {
 //            return;
