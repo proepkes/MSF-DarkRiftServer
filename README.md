@@ -4,6 +4,7 @@ Planned architecture:
 
 [![architecture](https://i.imgur.com/GB7qwSg.png)](https://i.imgur.com/GB7qwSg.png)
         
+[![Discord](https://img.shields.io/discord/102860784329052160.svg)](https://discord.gg/F9hJhcX)
 
 [![discord_logo](https://discordapp.com/assets/2c21aeda16de354ba5334551a883b481.png)](https://discordapp.com/invite/F9hJhcX)
 
