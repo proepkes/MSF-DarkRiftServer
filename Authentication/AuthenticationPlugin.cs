@@ -322,7 +322,11 @@ namespace Authentication
                         using (var writer = DarkRiftWriter.Create())
                         {
                             writer.Write(encryptedAes);
-                            client.SendMessage(Message.Create(MessageTags.RequestAesKeyResponse, writer), SendMode.Reliable);
+                            if (!client.SendMessage(Message.Create(MessageTags.RequestAesKeyResponse, writer),
+                                SendMode.Reliable))
+                            {
+                                WriteEvent("Failed to send AES key", LogType.Fatal);
+                            }
                         }
                     }
                 }

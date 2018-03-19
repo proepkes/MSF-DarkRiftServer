@@ -47,12 +47,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ITundraClient.cs" />
     <Compile Include="MonoBehaviourExample.cs" />
-    <Compile Include="TundraClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="IDarkRiftUnityClient.cs" />
-    <Compile Include="TundraClientFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Utils\Utils.csproj">
