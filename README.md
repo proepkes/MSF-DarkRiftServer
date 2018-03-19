@@ -3,10 +3,9 @@
 Planned architecture:
 
 [![architecture](https://i.imgur.com/GB7qwSg.png)](https://i.imgur.com/GB7qwSg.png)
-        
-[![Discord](https://img.shields.io/discord/102860784329052160.svg)](https://discord.gg/F9hJhcX)
+        <a href="https://discord.gg/F9hJhcX">
 
-[![discord_logo](https://discordapp.com/assets/2c21aeda16de354ba5334551a883b481.png)](https://discordapp.com/invite/F9hJhcX)
+[![Chat](https://img.shields.io/badge/chat-on%20discord-7289da.svg)](https://discord.gg/F9hJhcX)
 
 [![patreon_logo](https://user-images.githubusercontent.com/1029673/28471651-be40a2ea-6e35-11e7-9b01-e1b4a7d533b3.png)](https://www.patreon.com/proepkes)
 
