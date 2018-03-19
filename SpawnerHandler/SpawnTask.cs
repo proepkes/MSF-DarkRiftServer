@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using DarkRift.Server;
-using SpawnerHandler.Packets;
+using SpawnerLib.Packets;
+using Utils;
 
 namespace SpawnerHandler
 {
@@ -13,7 +14,7 @@ namespace SpawnerHandler
     {
         public RegisteredSpawner Spawner { get; private set; }
 
-        public int SpawnId { get; private set; }
+        public int ID { get; private set; }
         public event Action<SpawnStatus> StatusChanged;
 
         private SpawnStatus _status;
@@ -24,9 +25,9 @@ namespace SpawnerHandler
 
         protected List<Action<SpawnTask>> WhenDoneCallbacks;
 
-        public SpawnTask(int spawnId, RegisteredSpawner spawner) {
+        public SpawnTask(int id, RegisteredSpawner spawner) {
 
-            SpawnId = spawnId;
+            ID = id;
 
             Spawner = spawner;
 
@@ -73,6 +74,7 @@ namespace SpawnerHandler
             if (!IsAborted && Status < SpawnStatus.WaitingForProcess)
             {
                 Status = SpawnStatus.WaitingForProcess;
+                Spawner.OnProcessStarted();
             }
         }
 
@@ -102,7 +104,7 @@ namespace SpawnerHandler
 
         public override string ToString()
         {
-            return string.Format("[SpawnTask: id - {0}]", SpawnId);
+            return string.Format("[SpawnTask: id - {0}]", ID);
         }
 
         protected void NotifyDoneListeners()
@@ -138,7 +140,7 @@ namespace SpawnerHandler
 
         public void KillSpawnedProcess()
         {
-            Spawner.SendKillRequest(SpawnId, killed =>
+            Spawner.SendKillRequest(ID, killed =>
             {
                 Status = SpawnStatus.Aborted;
 

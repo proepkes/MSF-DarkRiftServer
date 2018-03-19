@@ -1,7 +1,7 @@
-﻿using DarkRift;
-using System.Text;
+﻿using System.Text;
+using DarkRift;
 
-namespace Utils.Messages.Response
+namespace Utils.Messages.Responses
 {
     public class RequestFailedMessage : ResponseMessage
     {

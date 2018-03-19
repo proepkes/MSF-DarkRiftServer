@@ -31,6 +31,9 @@
         public const ushort RegisterSpawner = 2200;
         public const ushort RegisterSpawnerFailed = 2201;
         public const ushort RegisterSpawnerSuccess = 2202;
+        public const ushort RegisterSpawnedProcess = 2205;
+        public const ushort RegisterSpawnedProcessSuccess = 2206;
+        public const ushort RegisterSpawnedProcessFailed = 2207;
         public const ushort RequestSpawnFromClientToMaster = 2250;
         public const ushort RequestSpawnFromClientToMasterFailed = 2251;
         public const ushort RequestSpawnFromClientToMasterSuccess = 2252;

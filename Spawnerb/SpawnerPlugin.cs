@@ -38,6 +38,11 @@ namespace Spawner
 
         public bool AutoStartSpawner { get; set; }
 
+        protected override void Dispose(bool disposing)
+        {
+            WriteEvent("Disposing", LogType.Info);
+            base.Dispose(disposing);
+        }
 
         public SpawnerPlugin(PluginLoadData pluginLoadData) : base(pluginLoadData)
         {
@@ -112,7 +117,7 @@ namespace Spawner
                 {
                     CreateNoWindow = true,
                     UseShellExecute = false,
-                    Arguments = //"-batchmode -nographics " +
+                    Arguments = "-batchmode -nographics " +
                                 $"{ArgNames.LoadScene} {data.SceneName} " +
                                 $"{ArgNames.MasterIp} {MasterIpAddress} " +
                                 $"{ArgNames.MasterPort} {MasterPort} " +
@@ -149,7 +154,7 @@ namespace Spawner
                                 Dispatcher.InvokeWait(() =>
                                 {
                                     _client.SendMessage(Message.Create(MessageTags.RequestSpawnFromMasterToSpawnerSuccess,
-                                            new RequestSpawnFromMasterToSpawnerSuccessMessage { SpawnID = data.SpawnId, ProcessID = processId, Arguments = startProcessInfo.Arguments, Status = ResponseStatus.Success}), SendMode.Reliable);
+                                            new RequestSpawnFromMasterToSpawnerSuccessMessage { SpawnTaskID = data.SpawnId, ProcessID = processId, Arguments = startProcessInfo.Arguments, Status = ResponseStatus.Success}), SendMode.Reliable);
 
                                 });
 
@@ -200,7 +205,7 @@ namespace Spawner
             if (data != null)
             {
                 _spawnerId = data.SpawnerID;
-                WriteEvent("Spawner " + Region + "-" + _spawnerId + " connected to master: " + MasterIpAddress + ":" + MasterPort, LogType.Info);
+                WriteEvent("Spawner " + Region + "-" + _spawnerId + " registered to master: " + MasterIpAddress + ":" + MasterPort, LogType.Info);
             }
         }
 

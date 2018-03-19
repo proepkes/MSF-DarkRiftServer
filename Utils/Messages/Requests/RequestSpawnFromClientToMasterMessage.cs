@@ -1,6 +1,6 @@
 ﻿using DarkRift;
 
-namespace SpawnerHandler.Packets
+namespace Utils.Messages.Requests
 {
     public class RequestSpawnFromClientToMasterMessage : IDarkRiftSerializable
     {

@@ -1,10 +1,10 @@
-﻿using DarkRift.Server;
-using Rooms.Packets;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DarkRift.Server;
+using Room.Packets;
 
-namespace Rooms
+namespace Room
 {
     /// <summary>
     /// This is an instance of the room in master server

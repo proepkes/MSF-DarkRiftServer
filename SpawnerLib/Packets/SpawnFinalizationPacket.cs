@@ -1,6 +1,6 @@
 ﻿using DarkRift;
 
-namespace SpawnerHandler.Packets
+namespace SpawnerLib.Packets
 {
     public class SpawnFinalizationPacket : IDarkRiftSerializable
     {

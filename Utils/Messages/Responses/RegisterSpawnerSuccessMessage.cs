@@ -1,6 +1,6 @@
 ﻿using DarkRift;
 
-namespace Utils.Messages.Response
+namespace Utils.Messages.Responses
 {
     public class RegisterSpawnerSuccessMessage : ResponseMessage
     {

@@ -1,4 +1,4 @@
-﻿namespace SpawnerHandler
+﻿namespace Utils
 {
     public enum SpawnStatus
     {

@@ -11,9 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utils", "Utils\Utils.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Database", "Database\Database.csproj", "{13AED4CA-C0B1-4917-A627-98864B8E58D8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rooms", "Rooms\Rooms.csproj", "{BC54A8B2-C1CE-42EC-AD5F-A1E09496C0DB}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spawner", "Spawner\Spawner.csproj", "{2AE16356-5D7B-44F9-9192-41850A52DEF4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Room", "Room\Room.csproj", "{BC54A8B2-C1CE-42EC-AD5F-A1E09496C0DB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TundraClient", "UnityClientExample\TundraClient.csproj", "{293D0BB8-6F23-47E0-8047-DEF7AFE92464}"
 EndProject
@@ -21,7 +19,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpawnerHandler", "SpawnerHa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpawnerLib", "SpawnerLib\SpawnerLib.csproj", "{D3BB32F0-2351-4B69-B522-AB4225EBC0AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameServerExample", "GameServerExample\GameServerExample.csproj", "{12D26F01-4678-4360-93F7-B3562272BC3B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spawner", "Spawner\Spawner.csproj", "{733A5630-DEE5-4AC2-8445-7886D853A349}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,10 +47,6 @@ Global
 		{BC54A8B2-C1CE-42EC-AD5F-A1E09496C0DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC54A8B2-C1CE-42EC-AD5F-A1E09496C0DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BC54A8B2-C1CE-42EC-AD5F-A1E09496C0DB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2AE16356-5D7B-44F9-9192-41850A52DEF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2AE16356-5D7B-44F9-9192-41850A52DEF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2AE16356-5D7B-44F9-9192-41850A52DEF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2AE16356-5D7B-44F9-9192-41850A52DEF4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{293D0BB8-6F23-47E0-8047-DEF7AFE92464}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{293D0BB8-6F23-47E0-8047-DEF7AFE92464}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{293D0BB8-6F23-47E0-8047-DEF7AFE92464}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -65,10 +59,10 @@ Global
 		{D3BB32F0-2351-4B69-B522-AB4225EBC0AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D3BB32F0-2351-4B69-B522-AB4225EBC0AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D3BB32F0-2351-4B69-B522-AB4225EBC0AB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{12D26F01-4678-4360-93F7-B3562272BC3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{12D26F01-4678-4360-93F7-B3562272BC3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{12D26F01-4678-4360-93F7-B3562272BC3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{12D26F01-4678-4360-93F7-B3562272BC3B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{733A5630-DEE5-4AC2-8445-7886D853A349}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{733A5630-DEE5-4AC2-8445-7886D853A349}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{733A5630-DEE5-4AC2-8445-7886D853A349}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{733A5630-DEE5-4AC2-8445-7886D853A349}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,6 +1,6 @@
 ﻿using DarkRift;
 
-namespace Rooms.Packets
+namespace Room.Packets
 {
     public class RoomAccessProvideCheckPacket : IDarkRiftSerializable
     {

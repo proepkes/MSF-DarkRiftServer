@@ -1,6 +1,6 @@
 ﻿using DarkRift;
 
-namespace Utils
+namespace SpawnerLib
 {
     public class SpawnerOptions : IDarkRiftSerializable
     {

@@ -50,12 +50,6 @@
     <Compile Include="MonoBehaviourExample.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Utils\Utils.csproj">
-      <Project>{73957a5c-7298-4bd7-97a7-6e572b50d155}</Project>
-      <Name>Utils</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy /y $(TargetDir)$(TargetName).dll E:\UnityProjects\Tundra\Assets\Game\ServerPlugins

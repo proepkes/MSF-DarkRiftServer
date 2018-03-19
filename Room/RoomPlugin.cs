@@ -1,4 +1,4 @@
-﻿namespace Rooms
+﻿namespace Room
 {
     public class RoomPlugin
     {

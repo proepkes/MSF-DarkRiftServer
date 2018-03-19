@@ -60,6 +60,7 @@
     <Compile Include="Messages\Requests\RequestSpawnFromClientToMasterMessage.cs" />
     <Compile Include="Messages\Requests\RequestWithStringMessage.cs" />
     <Compile Include="Messages\RequestMessage.cs" />
+    <Compile Include="Messages\Responses\RequestSpawnFromMasterToSpawnerFailedMessage.cs" />
     <Compile Include="Messages\Responses\RequestSpawnFromMasterToSpawnerSuccessMessage.cs" />
     <Compile Include="Messages\Responses\RequestClientSpawnSuccessMessage.cs" />
     <Compile Include="Messages\Responses\LoginSuccessMessage.cs" />

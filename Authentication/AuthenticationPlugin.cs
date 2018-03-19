@@ -10,7 +10,7 @@ using System.Text;
 using Utils;
 using Utils.Extensions;
 using Utils.Messages.Requests;
-using Utils.Messages.Response;
+using Utils.Messages.Responses;
 
 namespace Authentication
 {

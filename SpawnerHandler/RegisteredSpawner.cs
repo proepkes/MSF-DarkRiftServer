@@ -2,7 +2,8 @@
 using System.Linq;
 using DarkRift;
 using DarkRift.Server;
-using SpawnerHandler.Packets;
+using SpawnerLib;
+using SpawnerLib.Packets;
 using Utils;
 
 namespace SpawnerHandler
@@ -86,7 +87,7 @@ namespace SpawnerHandler
             var data = new SpawnRequestPacket
             {
                 SpawnerId = ID,
-                SpawnId = task.SpawnId,
+                SpawnId = task.ID,
                 SpawnCode = task.UniqueCode
             };
 
@@ -117,6 +118,11 @@ namespace SpawnerHandler
         public void OnProcessStarted()
         {
             ProcessesRunning += 1;
+        }
+
+        public override string ToString()
+        {
+            return Options.Region + "-" + ID;
         }
     }
 }
