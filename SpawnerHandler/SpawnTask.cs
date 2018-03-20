@@ -7,43 +7,36 @@ using Utils;
 namespace SpawnerHandler
 {
     /// <summary>
-    /// Represents a spawn request, and manages the state of request
-    /// from start to finalization
+    ///     Represents a spawn request, and manages the state of request
+    ///     from start to finalization
     /// </summary>
     public class SpawnTask
     {
-        public RegisteredSpawner Spawner { get; private set; }
-
-        public int ID { get; private set; }
-        public event Action<SpawnStatus> StatusChanged;
-
         private SpawnStatus _status;
-
-        public string UniqueCode { get; private set; }
-
-        public SpawnFinalizationPacket FinalizationPacket { get; private set; }
 
         protected List<Action<SpawnTask>> WhenDoneCallbacks;
 
-        public SpawnTask(int id, RegisteredSpawner spawner) {
+        public RegisteredSpawner Spawner { get; }
+        public string World { get; }
+        public string Room { get; }
+        public int MaxPlayers { get; }
+        public bool IsPublic { get; }
 
-            ID = id;
+        public int ID { get; }
 
-            Spawner = spawner;
+        public string UniqueCode { get; }
 
-            UniqueCode = Utils.Security.CreateRandomString(6);
-            WhenDoneCallbacks = new List<Action<SpawnTask>>();
-        }
+        public SpawnFinalizedMessage FinalizationMessage { get; private set; }
 
-        public bool IsAborted { get { return _status < SpawnStatus.None; } }
+        public bool IsAborted => _status < SpawnStatus.None;
 
-        public bool IsDoneStartingProcess { get { return IsAborted || IsProcessStarted; } }
+        public bool IsDoneStartingProcess => IsAborted || IsProcessStarted;
 
-        public bool IsProcessStarted { get { return Status >= SpawnStatus.WaitingForProcess; } }
+        public bool IsProcessStarted => Status >= SpawnStatus.WaitingForProcess;
 
         public SpawnStatus Status
         {
-            get { return _status; }
+            get => _status;
             set
             {
                 _status = value;
@@ -57,17 +50,33 @@ namespace SpawnerHandler
         }
 
         /// <summary>
-        /// Peer, who registered a started process for this task
-        /// (for example, a game server)
+        ///     Peer, who registered a started process for this task
+        ///     (for example, a game server)
         /// </summary>
         public IClient RegisteredClient { get; private set; }
 
         /// <summary>
-        /// Who requested to spawn
-        /// (most likely clients peer)
-        /// Can be null
+        ///     Who requested to spawn
+        ///     (most likely clients peer)
+        ///     Can be null
         /// </summary>
         public IClient Requester { get; set; }
+
+        public SpawnTask(int id, RegisteredSpawner spawner, string world, string room, int maxPlayers, bool isPublic)
+        {
+            ID = id;
+
+            Spawner = spawner;
+            World = world;
+            Room = room;
+            MaxPlayers = maxPlayers;
+            IsPublic = isPublic;
+
+            UniqueCode = Security.CreateRandomString(6);
+            WhenDoneCallbacks = new List<Action<SpawnTask>>();
+        }
+
+        public event Action<SpawnStatus> StatusChanged;
 
         public void OnProcessStarted()
         {
@@ -81,45 +90,37 @@ namespace SpawnerHandler
         public void OnProcessKilled()
         {
             Status = SpawnStatus.Killed;
+            Spawner.OnProcessKilled();
         }
 
         public void OnRegistered(IClient clientWhoRegistered)
         {
             RegisteredClient = clientWhoRegistered;
 
-            if (!IsAborted && Status < SpawnStatus.ProcessRegistered)
-            {
-                Status = SpawnStatus.ProcessRegistered;
-            }
+            if (!IsAborted && Status < SpawnStatus.ProcessRegistered) Status = SpawnStatus.ProcessRegistered;
         }
 
-        public void OnFinalized(SpawnFinalizationPacket finalizationPacket)
+        public void OnFinalized(SpawnFinalizedMessage finalizedMessage)
         {
-            FinalizationPacket = finalizationPacket;
-            if (!IsAborted && Status < SpawnStatus.Finalized)
-            {
-                Status = SpawnStatus.Finalized;
-            }
+            FinalizationMessage = finalizedMessage;
+            if (!IsAborted && Status < SpawnStatus.Finalized) Status = SpawnStatus.Finalized;
         }
 
         public override string ToString()
         {
-            return string.Format("[SpawnTask: id - {0}]", ID);
+            return $"[SpawnTask: id - {ID}]";
         }
 
         protected void NotifyDoneListeners()
         {
-            foreach (var callback in WhenDoneCallbacks)
-            {
-                callback.Invoke(this);
-            }
+            foreach (var callback in WhenDoneCallbacks) callback.Invoke(this);
 
             WhenDoneCallbacks.Clear();
         }
 
         /// <summary>
-        /// Callback will be called when spawn task is aborted or completed 
-        /// (game server is opened)
+        ///     Callback will be called when spawn task is aborted or completed
+        ///     (game server is opened)
         /// </summary>
         /// <param name="callback"></param>
         public SpawnTask WhenDone(Action<SpawnTask> callback)
@@ -148,6 +149,5 @@ namespace SpawnerHandler
                     throw new Exception("Spawned Process might not have been killed");
             });
         }
-        
     }
 }

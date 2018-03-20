@@ -4,7 +4,6 @@ namespace Utils.Messages
 {
     public abstract class NotificationMessage : IDarkRiftSerializable
     {
-
         public virtual void Deserialize(DeserializeEvent e)
         {
         }

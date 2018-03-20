@@ -49,18 +49,12 @@ namespace Utils.Conversion
             /// <summary>
             ///     Returns the value of the instance as an integer.
             /// </summary>
-            internal int AsInt32
-            {
-                get { return i; }
-            }
+            internal int AsInt32 => i;
 
             /// <summary>
             ///     Returns the value of the instance as a floating point number.
             /// </summary>
-            internal float AsSingle
-            {
-                get { return f; }
-            }
+            internal float AsSingle => f;
         }
 
         #endregion
@@ -87,27 +81,17 @@ namespace Utils.Conversion
 
         #region Factory properties
 
-        private static readonly LittleEndianBitConverter little = new LittleEndianBitConverter();
-
         /// <summary>
         ///     Returns a little-endian bit converter instance. The same instance is
         ///     always returned.
         /// </summary>
-        public static LittleEndianBitConverter Little
-        {
-            get { return little; }
-        }
-
-        private static readonly BigEndianBitConverter big = new BigEndianBitConverter();
+        public static LittleEndianBitConverter Little { get; } = new LittleEndianBitConverter();
 
         /// <summary>
         ///     Returns a big-endian bit converter instance. The same instance is
         ///     always returned.
         /// </summary>
-        public static BigEndianBitConverter Big
-        {
-            get { return big; }
-        }
+        public static BigEndianBitConverter Big { get; } = new BigEndianBitConverter();
 
         #endregion
 
@@ -292,7 +276,7 @@ namespace Utils.Conversion
         {
             if (value == null)
                 throw new ArgumentNullException("value");
-            if ((startIndex < 0) || (startIndex > value.Length - bytesRequired))
+            if (startIndex < 0 || startIndex > value.Length - bytesRequired)
                 throw new ArgumentOutOfRangeException("startIndex");
         }
 
@@ -388,7 +372,7 @@ namespace Utils.Conversion
             // On the other hand, there's no real format specified...
             var parts = new int[4];
             for (var i = 0; i < 4; i++)
-                parts[i] = ToInt32(value, startIndex + i*4);
+                parts[i] = ToInt32(value, startIndex + i * 4);
             return new decimal(parts);
         }
 
@@ -402,7 +386,7 @@ namespace Utils.Conversion
             var bytes = new byte[16];
             var parts = decimal.GetBits(value);
             for (var i = 0; i < 4; i++)
-                CopyBytesImpl(parts[i], 4, bytes, i*4);
+                CopyBytesImpl(parts[i], 4, bytes, i * 4);
             return bytes;
         }
 
@@ -417,7 +401,7 @@ namespace Utils.Conversion
         {
             var parts = decimal.GetBits(value);
             for (var i = 0; i < 4; i++)
-                CopyBytesImpl(parts[i], 4, buffer, i*4 + index);
+                CopyBytesImpl(parts[i], 4, buffer, i * 4 + index);
         }
 
         #endregion

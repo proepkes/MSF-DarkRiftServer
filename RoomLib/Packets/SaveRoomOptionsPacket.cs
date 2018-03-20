@@ -4,8 +4,8 @@ namespace RoomLib.Packets
 {
     public class SaveRoomOptionsPacket : IDarkRiftSerializable
     {
-        public int RoomId;
         public RoomOptions Options;
+        public int RoomId;
 
         public void Deserialize(DeserializeEvent e)
         {

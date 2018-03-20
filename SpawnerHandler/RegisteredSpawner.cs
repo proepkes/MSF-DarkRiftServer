@@ -13,17 +13,16 @@ namespace SpawnerHandler
         public delegate void KillRequestCallback(bool isKilled);
 
         public static int MaxConcurrentRequests = 8;
+        private readonly HashSet<SpawnTask> _beingSpawned;
+
+        private readonly Queue<SpawnTask> _queue;
+        private readonly HashSet<SpawnTask> _startingProcesses;
 
         public int ID { get; set; }
         public IClient Client { get; set; }
         public SpawnerOptions Options { get; set; }
 
-        private readonly Queue<SpawnTask> _queue;
-        private readonly HashSet<SpawnTask> _startingProcesses;
-
         public int ProcessesRunning { get; private set; }
-
-        private HashSet<SpawnTask> _beingSpawned;
 
         public RegisteredSpawner(int id, IClient client, SpawnerOptions options)
         {
@@ -88,7 +87,11 @@ namespace SpawnerHandler
             {
                 SpawnerId = ID,
                 SpawnTaskID = task.ID,
-                SpawnCode = task.UniqueCode
+                SpawnCode = task.UniqueCode,
+                WorldName = task.World,
+                RoomName = task.Room,
+                IsPublic = task.IsPublic,
+                MaxPlayers = task.MaxPlayers
             };
 
             Client.SendMessage(Message.Create(MessageTags.RequestSpawnFromMasterToSpawner, data), SendMode.Reliable);
@@ -96,13 +99,13 @@ namespace SpawnerHandler
 
         public void SendKillRequest(int spawnId, KillRequestCallback callback)
         {
-            var packet = new KillSpawnedProcessPacket()
+            var packet = new KillSpawnedProcessPacket
             {
                 SpawnerId = ID,
                 SpawnId = spawnId
             };
 
-            Client.SendMessage(Message.Create(MessageTags.KillSpawn, packet), SendMode.Reliable); 
+            Client.SendMessage(Message.Create(MessageTags.KillSpawn, packet), SendMode.Reliable);
         }
 
         public void OnProcessKilled()

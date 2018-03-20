@@ -1,21 +1,22 @@
-﻿using DarkRift;
+﻿using System.Text;
+using DarkRift;
 
 namespace Utils.Messages.Responses
 {
-    public class RequestClientSpawnSuccessMessage : ResponseMessage
+    public class FailedMessage : ResponseMessage
     {
-        public int TaskID;
+        public string Reason;
 
         public override void Deserialize(DeserializeEvent e)
         {
             base.Deserialize(e);
-            TaskID = e.Reader.ReadInt32();
+            Reason = e.Reader.ReadString(Encoding.Unicode);
         }
 
         public override void Serialize(SerializeEvent e)
         {
             base.Serialize(e);
-            e.Writer.Write(TaskID);
+            e.Writer.Write(Reason);
         }
     }
 }

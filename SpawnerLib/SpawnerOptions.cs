@@ -4,27 +4,11 @@ namespace SpawnerLib
 {
     public class SpawnerOptions : IDarkRiftSerializable
     {
-        /// <summary>
-        /// Public IP address of the machine, on which the spawner is running
-        /// </summary>
         public string MachineIp = "xxx.xxx.xxx.xxx";
 
-        /// <summary>
-        /// Max number of processes that this spawner can handle. If 0 - unlimited
-        /// </summary>
-        public int MaxProcesses = 0;
+        public int MaxProcesses;
 
-        /// <summary>
-        /// Region, to which the spawner belongs
-        /// </summary>
         public string Region = "International";
-
-        public override string ToString()
-        {
-
-            return string.Format("PublicIp: {0}, MaxProcesses: {1}, Region: {2}",
-                MachineIp, MaxProcesses, Region);
-        }
 
         public void Deserialize(DeserializeEvent e)
         {
@@ -38,6 +22,11 @@ namespace SpawnerLib
             e.Writer.Write(MachineIp);
             e.Writer.Write(MaxProcesses);
             e.Writer.Write(Region);
+        }
+
+        public override string ToString()
+        {
+            return $"PublicIp: {MachineIp}, MaxProcesses: {MaxProcesses}, Region: {Region}";
         }
     }
 }

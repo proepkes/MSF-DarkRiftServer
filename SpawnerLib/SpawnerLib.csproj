@@ -45,8 +45,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Packets\KillSpawnedProcessPacket.cs" />
-    <Compile Include="Packets\RegisterSpawnedProcessPacket.cs" />
-    <Compile Include="Packets\SpawnFinalizationPacket.cs" />
     <Compile Include="Packets\SpawnRequestPacket.cs" />
     <Compile Include="Packets\SpawnStatusPacket.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

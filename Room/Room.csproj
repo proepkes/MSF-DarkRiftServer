@@ -50,6 +50,16 @@
     <Compile Include="RoomPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RoomLib\RoomLib.csproj">
+      <Project>{2ab82bea-559c-41d8-93ec-38d9220d57fe}</Project>
+      <Name>RoomLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Utils\Utils.csproj">
+      <Project>{73957A5C-7298-4BD7-97A7-6E572B50D155}</Project>
+      <Name>Utils</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy /d /y  $(ProjectDir)bin\$(ConfigurationName) E:\UnityProjects\DarkRiftServer\Plugins

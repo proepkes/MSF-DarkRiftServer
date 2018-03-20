@@ -116,10 +116,11 @@ namespace Utils.Conversion
                 var result = new byte[digits.Length + 1];
                 for (var i = digits.Length - 1; i >= 0; i--)
                 {
-                    var resultDigit = digits[i]*amount + result[i + 1];
-                    result[i] = (byte) (resultDigit/10);
-                    result[i + 1] = (byte) (resultDigit%10);
+                    var resultDigit = digits[i] * amount + result[i + 1];
+                    result[i] = (byte) (resultDigit / 10);
+                    result[i + 1] = (byte) (resultDigit % 10);
                 }
+
                 if (result[0] != 0)
                     digits = result;
                 else
@@ -152,7 +153,7 @@ namespace Utils.Conversion
                     if (digits[last] != 0)
                         break;
 
-                if ((first == 0) && (last == digits.Length - 1))
+                if (first == 0 && last == digits.Length - 1)
                     return;
 
                 var tmp = new byte[last - first + 1];

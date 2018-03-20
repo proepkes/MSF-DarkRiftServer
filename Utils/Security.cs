@@ -11,38 +11,28 @@ namespace Utils
     {
         private static readonly byte[] Salt = Encoding.ASCII.GetBytes("o6806642kbM7c5");
 
-        #region Password hashing
-        // The following constants may be changed without breaking existing hashes.
-        private const int SALT_BYTE_SIZE = 24;
-        private const int HASH_BYTE_SIZE = 24;
-        private const int PBKDF2_ITERATIONS = 1000;
-
-        private const int ITERATION_INDEX = 0;
-        private const int SALT_INDEX = 1;
-        private const int PBKDF2_INDEX = 2;
-        #endregion
-
         //Anti time-attacks
         public static bool SlowEquals(byte[] a, byte[] b)
         {
-            var diff = (uint)a.Length ^ (uint)b.Length;
-            for (var i = 0; (i < a.Length) && (i < b.Length); i++)
-                diff |= (uint)(a[i] ^ b[i]);
+            var diff = (uint) a.Length ^ (uint) b.Length;
+            for (var i = 0; i < a.Length && i < b.Length; i++)
+                diff |= (uint) (a[i] ^ b[i]);
             return diff == 0;
         }
 
         public static bool ValidatePassword(string password, string correctHash)
         {
             // Extract the parameters from the hash
-            char[] delimiter = { ':' };
+            char[] delimiter = {':'};
             var split = correctHash.Split(delimiter);
-            var iterations = Int32.Parse(split[ITERATION_INDEX]);
+            var iterations = int.Parse(split[ITERATION_INDEX]);
             var salt = Convert.FromBase64String(split[SALT_INDEX]);
             var hash = Convert.FromBase64String(split[PBKDF2_INDEX]);
 
             var testHash = PBKDF2(password, salt, iterations, hash.Length);
             return SlowEquals(hash, testHash);
         }
+
         public static string CreateHash(string password)
         {
             // Generate a random salt
@@ -69,17 +59,17 @@ namespace Utils
             using (var aesAlg = new RijndaelManaged())
             {
                 // generate the key from the shared secret and the salt
-                Rfc2898DeriveBytes key = new Rfc2898DeriveBytes(sharedSecret, Salt);
+                var key = new Rfc2898DeriveBytes(sharedSecret, Salt);
 
-                using (MemoryStream msDecrypt = new MemoryStream(encryptedData))
+                using (var msDecrypt = new MemoryStream(encryptedData))
                 {
                     // Get the key
                     aesAlg.Key = key.GetBytes(aesAlg.KeySize / 8);
                     // Get the initialization vector from the encrypted stream
                     aesAlg.IV = ReadByteArray(msDecrypt);
                     // Create a decrytor to perform the stream transform.
-                    ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
-                    using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                    var decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
+                    using (var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
                     {
                         using (var reader = new EndianBinaryReader(EndianBitConverter.Big, csDecrypt))
                         {
@@ -88,7 +78,6 @@ namespace Utils
                     }
                 }
             }
-
         }
 
         public static byte[] EncryptAES(byte[] rawData, string sharedSecret)
@@ -96,21 +85,21 @@ namespace Utils
             using (var aesAlg = new RijndaelManaged())
             {
                 // generate the key from the shared secret and the salt
-                Rfc2898DeriveBytes key = new Rfc2898DeriveBytes(sharedSecret, Salt);
+                var key = new Rfc2898DeriveBytes(sharedSecret, Salt);
 
                 // Create a RijndaelManaged object
                 aesAlg.Key = key.GetBytes(aesAlg.KeySize / 8);
 
                 // Create a decryptor to perform the stream transform.
-                ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
+                var encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
 
                 // Create the streams used for encryption.
-                using (MemoryStream msEncrypt = new MemoryStream())
+                using (var msEncrypt = new MemoryStream())
                 {
                     // prepend the IV
                     msEncrypt.Write(BitConverter.GetBytes(aesAlg.IV.Length), 0, sizeof(int));
                     msEncrypt.Write(aesAlg.IV, 0, aesAlg.IV.Length);
-                    using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                    using (var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
                     {
                         using (var writer = new EndianBinaryWriter(EndianBitConverter.Big, csEncrypt))
                         {
@@ -119,6 +108,7 @@ namespace Utils
                             writer.Write(rawData);
                         }
                     }
+
                     return msEncrypt.ToArray();
                 }
             }
@@ -126,17 +116,13 @@ namespace Utils
 
         private static byte[] ReadByteArray(Stream s)
         {
-            byte[] rawLength = new byte[sizeof(int)];
+            var rawLength = new byte[sizeof(int)];
             if (s.Read(rawLength, 0, rawLength.Length) != rawLength.Length)
-            {
                 throw new SystemException("Stream did not contain properly formatted byte array");
-            }
 
-            byte[] buffer = new byte[BitConverter.ToInt32(rawLength, 0)];
+            var buffer = new byte[BitConverter.ToInt32(rawLength, 0)];
             if (s.Read(buffer, 0, buffer.Length) != buffer.Length)
-            {
                 throw new SystemException("Did not read byte array properly");
-            }
 
             return buffer;
         }
@@ -147,5 +133,18 @@ namespace Utils
 
             return Guid.NewGuid().ToString().Substring(0, length);
         }
+
+        #region Password hashing
+
+        // The following constants may be changed without breaking existing hashes.
+        private const int SALT_BYTE_SIZE = 24;
+        private const int HASH_BYTE_SIZE = 24;
+        private const int PBKDF2_ITERATIONS = 1000;
+
+        private const int ITERATION_INDEX = 0;
+        private const int SALT_INDEX = 1;
+        private const int PBKDF2_INDEX = 2;
+
+        #endregion
     }
 }

@@ -1,5 +1,4 @@
-﻿
-using DarkRift;
+﻿using DarkRift;
 
 namespace SpawnerLib.Packets
 {
@@ -7,7 +6,7 @@ namespace SpawnerLib.Packets
     {
         public int SpawnerId;
         public int SpawnId;
-        
+
         public void Deserialize(DeserializeEvent e)
         {
             SpawnerId = e.Reader.ReadInt32();

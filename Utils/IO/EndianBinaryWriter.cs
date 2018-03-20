@@ -89,17 +89,17 @@ namespace Utils.IO
         /// <summary>
         ///     The bit converter used to write values to the stream
         /// </summary>
-        public EndianBitConverter BitConverter { get; private set; }
+        public EndianBitConverter BitConverter { get; }
 
         /// <summary>
         ///     The encoding used to write strings
         /// </summary>
-        public Encoding Encoding { get; private set; }
+        public Encoding Encoding { get; }
 
         /// <summary>
         ///     Gets the underlying stream of the EndianBinaryWriter.
         /// </summary>
-        public Stream BaseStream { get; private set; }
+        public Stream BaseStream { get; }
 
         #endregion
 
@@ -324,7 +324,7 @@ namespace Utils.IO
             if (data.Length > short.MaxValue)
                 throw new Exception("String is too long to be written like this");
 
-            Write((short)data.Length);
+            Write((short) data.Length);
             WriteInternal(data, data.Length);
         }
 
@@ -346,6 +346,7 @@ namespace Utils.IO
                 value = value >> 7;
                 index++;
             }
+
             buffer[index++] = (byte) value;
             BaseStream.Write(buffer, 0, index);
         }

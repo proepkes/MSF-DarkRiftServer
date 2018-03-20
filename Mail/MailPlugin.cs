@@ -1,19 +1,17 @@
-﻿using DarkRift;
-using DarkRift.Server;
-using System;
+﻿using System;
 using System.Net;
 using System.Net.Mail;
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
+using DarkRift;
+using DarkRift.Server;
 
 namespace Mail
 {
     public class MailPlugin : Plugin
     {
+        private SmtpClient SmtpClient;
+
         public override bool ThreadSafe => true;
         public override Version Version => new Version(1, 0, 0);
-
-        private SmtpClient SmtpClient;
 
         public string SmtpPassword { get; set; }
 
@@ -48,7 +46,7 @@ namespace Mail
             // Configure mail client
             SmtpClient = new SmtpClient(SmtpHost, SmtpPort)
             {
-                Credentials = new NetworkCredential(SmtpUsername, SmtpPassword) as ICredentialsByHost,
+                Credentials = new NetworkCredential(SmtpUsername, SmtpPassword),
                 EnableSsl = true
             };
 
@@ -56,21 +54,17 @@ namespace Mail
 
             SmtpClient.SendCompleted += (sender, args) =>
             {
-                if (args.Error != null)
-                {
-                    WriteEvent("EMail send error:" + args.Error, LogType.Fatal);
-                }
+                if (args.Error != null) WriteEvent("EMail send error:" + args.Error, LogType.Fatal);
             };
 
             ServicePointManager.ServerCertificateValidationCallback =
-                delegate (object s, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
-                { return true; };
+                delegate { return true; };
         }
 
         public void SendMail(string to, string subject, string body)
         {
             // Create the mail message (from, to, subject, body)
-            MailMessage mailMessage = new MailMessage();
+            var mailMessage = new MailMessage();
             mailMessage.From = new MailAddress(EmailFrom, SenderDisplayName);
             mailMessage.To.Add(to);
 

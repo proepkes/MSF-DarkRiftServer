@@ -2,7 +2,7 @@
 
 namespace Utils.Messages.Notifications
 {
-    public class SpawnerKilledProcessNotificationMessage : NotificationMessage
+    public class ProcessKilledMessage : NotificationMessage
     {
         public int SpawnerID;
         public int SpawnTaskID;

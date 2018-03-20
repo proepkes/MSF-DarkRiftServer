@@ -1,19 +1,18 @@
-﻿using DarkRift;
+﻿using System;
+using System.Collections.Generic;
+using DarkRift;
 using DarkRift.Server;
 using MySql.Data.MySqlClient;
-using System;
-using System.Collections.Generic;
 
 namespace Database
 {
     public class MySQLPlugin : Plugin
     {
-        public override Version Version => new Version(1, 0, 0);
-        public override bool ThreadSafe => true;
-
+        private readonly bool _debug = true;
         private string _connectionString;
 
-        private bool _debug = true;
+        public override Version Version => new Version(1, 0, 0);
+        public override bool ThreadSafe => true;
 
         public MySQLPlugin(PluginLoadData pluginLoadData) : base(pluginLoadData)
         {
@@ -23,25 +22,25 @@ namespace Database
         {
             base.Loaded(args);
 
-            _connectionString = base.DatabaseManager.GetConnectionString("MySQL");
+            _connectionString = DatabaseManager.GetConnectionString("MySQL");
         }
 
         #region ErrorHandling
+
         //For calling from other plugins to help track down the issue to the database connection-- might not be needed
         public void DatabaseError(IClient client, ushort subject, byte code, Exception e)
         {
-
             if (_debug)
-            {
                 WriteEvent("[MySqlConnector] Database Error: " + e.Message + " - " + e.StackTrace, LogType.Error);
-            }
 
-            using (DarkRiftWriter writer = DarkRiftWriter.Create())
+            using (var writer = DarkRiftWriter.Create())
             {
                 writer.Write(code);
 
-                using (Message message = Message.Create(subject, writer))
+                using (var message = Message.Create(subject, writer))
+                {
                     client.SendMessage(message, SendMode.Reliable);
+                }
             }
         }
 
@@ -51,7 +50,7 @@ namespace Database
         {
             return new SqlAccountData();
         }
-        
+
         public SqlAccountData GetAccountByToken(string token)
         {
             using (var con = new MySqlConnection(_connectionString))
@@ -75,7 +74,6 @@ namespace Database
 
         public SqlAccountData GetAccount(string email)
         {
-
             using (var con = new MySqlConnection(_connectionString))
             using (var cmd = new MySqlCommand())
             {
@@ -134,7 +132,7 @@ namespace Database
                 // Read row
                 reader.Read();
 
-                return new PasswordResetData()
+                return new PasswordResetData
                 {
                     Code = reader["code"] as string,
                     Email = reader["email"] as string
@@ -234,7 +232,7 @@ namespace Database
                 cmd.Parameters.AddWithValue("@is_guest", account.IsGuest ? 1 : 0);
                 cmd.Parameters.AddWithValue("@is_email_confirmed", account.IsEmailConfirmed ? 1 : 0);
                 cmd.ExecuteNonQuery();
-                account.AccountId = (int)cmd.LastInsertedId;
+                account.AccountId = (int) cmd.LastInsertedId;
             }
         }
 
@@ -264,8 +262,7 @@ namespace Database
 
             // Read primary account data
             while (reader.Read())
-            {
-                account = new SqlAccountData()
+                account = new SqlAccountData
                 {
                     AccountId = reader.GetInt32("account_id"),
                     Email = reader["email"] as string,
@@ -276,7 +273,6 @@ namespace Database
                     Properties = new Dictionary<string, string>(),
                     Token = reader["token"] as string
                 };
-            }
 
             if (account == null)
                 return null;
@@ -299,6 +295,7 @@ namespace Database
 
                 account.Properties[key] = value;
             }
+
             return account;
         }
     }

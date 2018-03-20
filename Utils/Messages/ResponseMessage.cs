@@ -13,7 +13,7 @@ namespace Utils.Messages
 
         public virtual void Serialize(SerializeEvent e)
         {
-            e.Writer.Write((short)Status);
+            e.Writer.Write((short) Status);
         }
     }
 }

@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading;
 using DarkRift;
 using DarkRift.Client;
-using DarkRift.Dispatching;
 using Spawner.Properties;
 using SpawnerLib;
 using SpawnerLib.Packets;
@@ -20,7 +17,7 @@ namespace Spawner
 {
     public class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var client = new SpawnerClient();
             Console.WriteLine("1: Request Room");
@@ -30,25 +27,21 @@ namespace Spawner
             {
                 input = Console.ReadLine();
                 if (input != null)
-                {
                     if (input.Equals("1"))
-                    {
                         client.SpawnRoom();
-                    }
-                }
             }
         }
     }
 
-    class SpawnerClient
+    internal class SpawnerClient
     {
         private static readonly object ProcessLock = new object();
         private static readonly Dictionary<int, Process> Processes = new Dictionary<int, Process>();
-
-        private int _spawnerId;
+        private readonly DarkRiftClient _client;
         private readonly Queue<int> _freePorts;
         private int _lastPortTaken = -1;
-        private DarkRiftClient _client;
+
+        private int _spawnerId;
 
         public IPAddress MasterIpAddress { get; set; }
         public int MasterPort { get; set; }
@@ -86,32 +79,27 @@ namespace Spawner
             _client.ConnectInBackground(MasterIpAddress, MasterPort, IPVersion.IPv4, OnConnectedToMaster);
         }
 
-        //For testing-purposes
+        //FIXME: ONLY FOR TESTING; SPAWNS ARE REQUESTED BY CLIENTS AND NOT THE SPAWNER ITSELF
         public void SpawnRoom()
         {
             _client.SendMessage(Message.Create(MessageTags.RequestSpawnFromClientToMaster,
-                    new RequestSpawnFromClientToMasterMessage {Region = "EU"}), SendMode.Reliable);
+                new SpawnFromClientToMasterMessage {Region = "EU", WorldName = "ExampleGame", RoomName = "Act1"}), SendMode.Reliable);
         }
 
 
         private void OnConnectedToMaster(Exception exception)
         {
-            if (exception != null)
-            {
-                return;
-            }
+            if (exception != null) return;
 
             _client.MessageReceived += OnMessageFromMaster;
 
             if (AutoStartSpawner)
-            {
                 _client.SendMessage(Message.Create(MessageTags.RegisterSpawner, new SpawnerOptions
                 {
                     Region = Region,
                     MachineIp = SpawnerIpAddress,
                     MaxProcesses = MaxProcesses
                 }), SendMode.Reliable);
-            }
         }
 
         private void OnMessageFromMaster(object sender, MessageReceivedEventArgs e)
@@ -129,11 +117,13 @@ namespace Spawner
                     case MessageTags.RequestSpawnFromMasterToSpawner:
                         HandleRequestSpawnFromMaster(message);
                         break;
+                    //FIXME: ONLY FOR TESTING; SPAWNS ARE REQUESTED BY CLIENTS AND NOT THE SPAWNER ITSELF
                     case MessageTags.RequestSpawnFromClientToMasterSuccess:
                         Console.WriteLine("Room will be spawned!");
                         break;
                     case MessageTags.RequestSpawnFromClientToMasterFailed:
-                        Console.WriteLine("Spawning room failed: " + message.Deserialize<RequestFailedMessage>().Reason);
+                        Console.WriteLine("Spawning room failed: " +
+                                          message.Deserialize<FailedMessage>().Reason);
                         break;
                 }
             }
@@ -149,14 +139,17 @@ namespace Spawner
                 {
                     CreateNoWindow = !CreateRoomWindow,
                     UseShellExecute = UseShellExecute,
-                    WindowStyle = ProcessWindowStyle.Normal,
                     Arguments = $"\"{ConfigPath}\" " +
-                                $"{ArgNames.MasterIp}={MasterIpAddress} " +
+                                $"{ArgNames.MasterIpAddress}={MasterIpAddress} " +
                                 $"{ArgNames.MasterPort}={MasterPort} " +
-                                $"{ArgNames.SpawnId}={data.SpawnTaskID} " +
+                                $"{ArgNames.SpawnTaskID}={data.SpawnTaskID} " +
                                 $"{ArgNames.AssignedPort}={port} " +
                                 $"{ArgNames.MachineIp}={SpawnerIpAddress} " +
-                                $"{ArgNames.SpawnCode}=\"{data.SpawnCode}\""
+                                $"{ArgNames.SpawnCode}=\"{data.SpawnCode}\" " +
+                                $"{ArgNames.WorldName}={data.WorldName} " +
+                                $"{ArgNames.RoomName}={data.RoomName} " +
+                                $"{ArgNames.MaxPlayers}={data.MaxPlayers} " +
+                                $"{ArgNames.IsPublic}={data.IsPublic} "
                 };
 
                 var processStarted = false;
@@ -181,8 +174,15 @@ namespace Spawner
                                 // Notify server that we've successfully handled the request (on main thread)
                                 new Action(delegate
                                 {
-                                    _client.SendMessage(Message.Create(MessageTags.RequestSpawnFromMasterToSpawnerSuccess,
-                                        new RequestSpawnFromMasterToSpawnerSuccessMessage { SpawnTaskID = data.SpawnTaskID, ProcessID = processId, Arguments = startProcessInfo.Arguments, Status = ResponseStatus.Success }), SendMode.Reliable);
+                                    _client.SendMessage(Message.Create(
+                                        MessageTags.RequestSpawnFromMasterToSpawnerSuccess,
+                                        new SpawnFromMasterToSpawnerSuccessMessage
+                                        {
+                                            SpawnTaskID = data.SpawnTaskID,
+                                            ProcessID = processId,
+                                            Arguments = startProcessInfo.Arguments,
+                                            Status = ResponseStatus.Success
+                                        }), SendMode.Reliable);
                                 }).Invoke();
 
                                 process.WaitForExit();
@@ -190,15 +190,18 @@ namespace Spawner
                         }
                         catch (Exception e)
                         {
-
                             if (!processStarted)
-                            {
                                 new Action(delegate
                                 {
-                                    _client.SendMessage(Message.Create(MessageTags.RequestSpawnFromMasterToSpawnerFailed,
-                                        new RequestSpawnFromMasterToSpawnerFailedMessage { SpawnTaskID = data.SpawnTaskID, Reason = e.ToString(), Status = ResponseStatus.Failed }), SendMode.Reliable);
+                                    _client.SendMessage(Message.Create(
+                                        MessageTags.RequestSpawnFromMasterToSpawnerFailed,
+                                        new SpawnFromMasterToSpawnerFailedMessage
+                                        {
+                                            SpawnTaskID = data.SpawnTaskID,
+                                            Reason = e.ToString(),
+                                            Status = ResponseStatus.Failed
+                                        }), SendMode.Reliable);
                                 }).Invoke();
-                            }
                         }
                         finally
                         {
@@ -207,15 +210,19 @@ namespace Spawner
                                 // Remove the process
                                 Processes.Remove(data.SpawnTaskID);
                             }
+
                             new Action(delegate
                             {
                                 // Release the port number
                                 _freePorts.Enqueue(port);
                                 _client.SendMessage(Message.Create(MessageTags.NotifySpawnerKilledProcess,
-                                    new SpawnerKilledProcessNotificationMessage { SpawnTaskID = data.SpawnTaskID, SpawnerID = _spawnerId }), SendMode.Reliable);
+                                    new ProcessKilledMessage
+                                    {
+                                        SpawnTaskID = data.SpawnTaskID,
+                                        SpawnerID = _spawnerId
+                                    }), SendMode.Reliable);
                             }).Invoke();
                         }
-
                     }).Start();
                 }
                 catch (Exception e)
@@ -231,7 +238,9 @@ namespace Spawner
             if (data != null)
             {
                 _spawnerId = data.SpawnerID;
-                Console.WriteLine("Spawner " + Region + "-" + _spawnerId + " registered to master: " + MasterIpAddress + ":" + MasterPort, LogType.Info);
+                Console.WriteLine(
+                    "Spawner " + Region + "-" + _spawnerId + " registered to master: " + MasterIpAddress + ":" +
+                    MasterPort, LogType.Info);
             }
         }
 

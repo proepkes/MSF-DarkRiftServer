@@ -30,6 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DarkRift, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\DarkRift.dll</HintPath>
+    </Reference>
     <Reference Include="DarkRift.Server">
       <HintPath>..\Lib\DarkRift.Server.dll</HintPath>
     </Reference>
@@ -50,6 +54,14 @@
       <Project>{2AB82BEA-559C-41D8-93EC-38D9220D57FE}</Project>
       <Name>RoomLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Utils\Utils.csproj">
+      <Project>{73957A5C-7298-4BD7-97A7-6E572B50D155}</Project>
+      <Name>Utils</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /d /y  $(ProjectDir)bin\$(ConfigurationName) E:\UnityProjects\DarkRiftServer\Plugins
+</PostBuildEvent>
+  </PropertyGroup>
 </Project>

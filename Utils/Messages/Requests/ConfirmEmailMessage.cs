@@ -3,7 +3,7 @@ using DarkRift;
 
 namespace Utils.Messages.Requests
 {
-    public class RequestEmailConfirmationMessage : RequestWithStringMessage
+    public class ConfirmEmailMessage : RequestFromUserMessage
     {
         public string Code;
 

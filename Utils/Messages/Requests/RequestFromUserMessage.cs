@@ -1,22 +1,22 @@
-﻿using DarkRift;
-using System.Text;
+﻿using System.Text;
+using DarkRift;
 
 namespace Utils.Messages.Requests
 {
-    public class RequestWithStringMessage : RequestMessage
+    public class RequestFromUserMessage : RequestMessage
     {
-        public string String;
+        public string EMail;
 
         public override void Deserialize(DeserializeEvent e)
         {
             base.Deserialize(e);
-            String = e.Reader.ReadString(Encoding.Unicode);
+            EMail = e.Reader.ReadString(Encoding.Unicode);
         }
 
         public override void Serialize(SerializeEvent e)
         {
             base.Serialize(e);
-            e.Writer.Write(String, Encoding.Unicode);
+            e.Writer.Write(EMail, Encoding.Unicode);
         }
     }
 }

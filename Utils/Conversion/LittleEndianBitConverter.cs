@@ -9,10 +9,7 @@ namespace Utils.Conversion
         /// <summary>
         ///     Indicates the byte order ("endianess") in which data is converted using this class.
         /// </summary>
-        public override Endianness Endianness
-        {
-            get { return Endianness.LittleEndian; }
-        }
+        public override Endianness Endianness => Endianness.LittleEndian;
 
         /// <summary>
         ///     Indicates the byte order ("endianess") in which data is converted using this class.

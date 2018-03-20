@@ -1,23 +1,22 @@
 ﻿using DarkRift;
-using Utils;
 
-namespace SpawnerLib.Packets
+namespace Utils.Messages.Requests
 {
-    public class SpawnStatusPacket : IDarkRiftSerializable
+    public class RegisterSpawnedProcessMessage : IDarkRiftSerializable
     {
+        public string SpawnCode;
         public int SpawnTaskID;
-        public SpawnStatus Status;
 
         public void Deserialize(DeserializeEvent e)
         {
             SpawnTaskID = e.Reader.ReadInt32();
-            Status = (SpawnStatus) e.Reader.ReadInt32();
+            SpawnCode = e.Reader.ReadString();
         }
 
         public void Serialize(SerializeEvent e)
         {
             e.Writer.Write(SpawnTaskID);
-            e.Writer.Write((int) Status);
+            e.Writer.Write(SpawnCode);
         }
     }
 }

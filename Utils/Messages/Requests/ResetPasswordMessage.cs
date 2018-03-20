@@ -1,12 +1,12 @@
-﻿using DarkRift;
-using System.Text;
+﻿using System.Text;
+using DarkRift;
 
 namespace Utils.Messages.Requests
 {
-    public class RequestResetPasswordMessage : RequestMessage
+    public class ResetPasswordMessage : RequestMessage
     {
-        public string EMail;
         public string Code;
+        public string EMail;
         public string NewPassword;
 
         public override void Deserialize(DeserializeEvent e)

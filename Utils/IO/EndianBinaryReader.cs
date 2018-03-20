@@ -100,17 +100,17 @@ namespace Utils.IO
         /// <summary>
         ///     The bit converter used to read values from the stream
         /// </summary>
-        public EndianBitConverter BitConverter { get; private set; }
+        public EndianBitConverter BitConverter { get; }
 
         /// <summary>
         ///     The encoding used to read strings
         /// </summary>
-        public Encoding Encoding { get; private set; }
+        public Encoding Encoding { get; }
 
         /// <summary>
         ///     Gets the underlying stream of the EndianBinaryReader.
         /// </summary>
-        public Stream BaseStream { get; private set; }
+        public Stream BaseStream { get; }
 
         #endregion
 
@@ -309,7 +309,7 @@ namespace Utils.IO
             // use at most 4K at a time.
             var byteBuffer = buffer;
 
-            if (byteBuffer.Length < count*minBytesPerChar)
+            if (byteBuffer.Length < count * minBytesPerChar)
                 byteBuffer = new byte[4096];
 
             while (read < count)
@@ -318,15 +318,16 @@ namespace Utils.IO
                 // First time through we know we haven't previously read any data
                 if (firstTime)
                 {
-                    amountToRead = count*minBytesPerChar;
+                    amountToRead = count * minBytesPerChar;
                     firstTime = false;
                 }
                 // After that we can only assume we need to fully read "chars left -1" characters
                 // and a single byte of the character we may be in the middle of
                 else
                 {
-                    amountToRead = (count - read - 1)*minBytesPerChar + 1;
+                    amountToRead = (count - read - 1) * minBytesPerChar + 1;
                 }
+
                 if (amountToRead > byteBuffer.Length)
                     amountToRead = byteBuffer.Length;
                 var bytesRead = TryReadInternal(byteBuffer, amountToRead);
@@ -336,6 +337,7 @@ namespace Utils.IO
                 read += decoded;
                 index += decoded;
             }
+
             return read;
         }
 
@@ -372,6 +374,7 @@ namespace Utils.IO
                 read += block;
                 count -= block;
             }
+
             return read;
         }
 
@@ -399,8 +402,10 @@ namespace Utils.IO
                     Buffer.BlockCopy(ret, 0, copy, 0, index);
                     return copy;
                 }
+
                 index += read;
             }
+
             return ret;
         }
 
@@ -439,6 +444,7 @@ namespace Utils.IO
                 if ((b & 0x80) == 0)
                     return ret;
             }
+
             // Still haven't seen a byte with the high bit unset? Dodgy data.
             throw new IOException("Invalid 7-bit encoded integer in stream.");
         }
@@ -464,6 +470,7 @@ namespace Utils.IO
                 if ((b & 0x80) == 0)
                     return ret;
             }
+
             // Still haven't seen a byte with the high bit unset? Dodgy data.
             throw new IOException("Invalid 7-bit encoded integer in stream.");
         }
@@ -537,6 +544,7 @@ namespace Utils.IO
                     return index;
                 index += read;
             }
+
             return index;
         }
 

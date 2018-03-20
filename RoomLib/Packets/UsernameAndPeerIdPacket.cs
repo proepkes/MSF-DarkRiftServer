@@ -4,13 +4,8 @@ namespace RoomLib.Packets
 {
     public class UsernameAndPeerIdPacket : IDarkRiftSerializable
     {
-        public string Username = "";
         public int PeerId;
-
-        public override string ToString()
-        {
-            return string.Format("[Username: {0}, Peer ID: {1}]", Username, PeerId);
-        }
+        public string Username = "";
 
         public void Deserialize(DeserializeEvent e)
         {
@@ -22,6 +17,11 @@ namespace RoomLib.Packets
         {
             e.Writer.Write(Username);
             e.Writer.Write(PeerId);
+        }
+
+        public override string ToString()
+        {
+            return string.Format("[Username: {0}, Peer ID: {1}]", Username, PeerId);
         }
     }
 }

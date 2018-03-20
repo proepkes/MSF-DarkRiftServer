@@ -43,5 +43,13 @@
         public const ushort KillSpawn = 2260;
         public const ushort NotifySpawnerKilledProcess = 2261;
         public const ushort SpawnStatusChanged = 2270;
+        public const ushort CompleteSpawnProcess = 2280;
+        public const ushort CompleteSpawnProcessFailed = 2281;
+        public const ushort CompleteSpawnProcessSuccess = 2282;
+
+        //Rooms
+        public const ushort RegisterRoom = 2300;
+        public const ushort RegisterRoomFailed = 2301;
+        public const ushort RegisterRoomSuccess = 2302;
     }
 }

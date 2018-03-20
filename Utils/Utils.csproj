@@ -36,8 +36,14 @@
     <Reference Include="DarkRift">
       <HintPath>..\Lib\DarkRift.dll</HintPath>
     </Reference>
+    <Reference Include="DarkRift.Server">
+      <HintPath>..\Lib\DarkRift.Server.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Threading.Tasks.NET35, Version=3.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Unofficial.3.1\lib\net35\System.Threading.Tasks.NET35.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
@@ -53,18 +59,21 @@
     <Compile Include="Extensions\SerializationExtensions.cs" />
     <Compile Include="IO\EndianBinaryReader.cs" />
     <Compile Include="IO\EndianBinaryWriter.cs" />
-    <Compile Include="Messages\Notifications\SpawnerKilledProcessNotificationMessage.cs" />
+    <Compile Include="Messages\Notifications\ProcessKilledMessage .cs" />
     <Compile Include="Messages\NotificationMessage.cs" />
-    <Compile Include="Messages\Requests\RequestEmailConfirmationMessage.cs" />
-    <Compile Include="Messages\Requests\RequestResetPasswordMessage.cs" />
-    <Compile Include="Messages\Requests\RequestSpawnFromClientToMasterMessage.cs" />
-    <Compile Include="Messages\Requests\RequestWithStringMessage.cs" />
+    <Compile Include="Messages\Notifications\SpawnFinalizedMessage.cs" />
+    <Compile Include="Messages\Requests\RegisterSpawnedProcessMessage.cs" />
+    <Compile Include="Messages\Requests\ConfirmEmailMessage.cs" />
+    <Compile Include="Messages\Requests\ResetPasswordMessage.cs" />
+    <Compile Include="Messages\Requests\SpawnFromClientToMasterMessage.cs" />
+    <Compile Include="Messages\Requests\RequestFromUserMessage.cs" />
     <Compile Include="Messages\RequestMessage.cs" />
-    <Compile Include="Messages\Responses\RequestSpawnFromMasterToSpawnerFailedMessage.cs" />
-    <Compile Include="Messages\Responses\RequestSpawnFromMasterToSpawnerSuccessMessage.cs" />
-    <Compile Include="Messages\Responses\RequestClientSpawnSuccessMessage.cs" />
+    <Compile Include="Messages\Responses\RegisterRoomSuccessMessage.cs" />
+    <Compile Include="Messages\Responses\SpawnFromMasterToSpawnerFailedMessage.cs" />
+    <Compile Include="Messages\Responses\SpawnFromMasterToSpawnerSuccessMessage.cs" />
+    <Compile Include="Messages\Responses\ClientSpawnSuccessMessage.cs" />
     <Compile Include="Messages\Responses\LoginSuccessMessage.cs" />
-    <Compile Include="Messages\Responses\RequestFailedMessage.cs" />
+    <Compile Include="Messages\Responses\FailedMessage.cs" />
     <Compile Include="Messages\ResponseMessage.cs" />
     <Compile Include="Messages\Responses\RegisterSpawnerSuccessMessage.cs" />
     <Compile Include="ResponseStatus.cs" />
@@ -73,7 +82,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SpawnStatus.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy /d /y  $(ProjectDir)bin\$(ConfigurationName) E:\UnityProjects\DarkRiftServer\Plugins

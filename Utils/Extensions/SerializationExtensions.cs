@@ -10,7 +10,6 @@ namespace Utils.Extensions
     /// </summary>
     public static class SerializationExtensions
     {
-
         public static byte[] ToBytes(this Dictionary<string, string> dictionary)
         {
             byte[] b;
@@ -23,6 +22,7 @@ namespace Utils.Extensions
 
                 b = ms.ToArray();
             }
+
             return b;
         }
 
@@ -53,13 +53,9 @@ namespace Utils.Extensions
                 var key = reader.ReadString();
                 var value = reader.ReadString();
                 if (dictionary.ContainsKey(key))
-                {
                     dictionary[key] = value;
-                }
                 else
-                {
                     dictionary.Add(key, value);
-                }
             }
 
             return dictionary;
@@ -74,6 +70,7 @@ namespace Utils.Extensions
                     dictionary.FromReader(reader);
                 }
             }
+
             return dictionary;
         }
     }

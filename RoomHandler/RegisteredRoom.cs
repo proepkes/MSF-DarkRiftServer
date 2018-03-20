@@ -8,28 +8,23 @@ using RoomLib.Packets;
 namespace RoomHandler
 {
     /// <summary>
-    /// This is an instance of the room in master server
+    ///     This is an instance of the room in master server
     /// </summary>
     public class RegisteredRoom
     {
         public delegate void GetAccessCallback(RoomAccessPacket access, string error);
 
         private readonly Dictionary<int, RoomAccessPacket> _accessesInUse;
-        private readonly Dictionary<string, RoomAccessData> _unconfirmedAccesses;
         private readonly HashSet<int> _pendingRequests;
 
-        private Dictionary<int, IClient> _players;
-
-        public event Action<IClient> PlayerJoined;
-        public event Action<IClient> PlayerLeft;
-
-        public event Action<RegisteredRoom> Destroyed;
+        private readonly Dictionary<int, IClient> _players;
+        private readonly Dictionary<string, RoomAccessData> _unconfirmedAccesses;
 
         public RoomOptions Options { get; private set; }
-        public int ID { get; private set; }
-        public IClient Peer { get; private set; }
+        public int ID { get; }
+        public IClient Peer { get; }
 
-        public int OnlineCount { get { return _accessesInUse.Count; } }
+        public int OnlineCount => _accessesInUse.Count;
 
         public RegisteredRoom(int id, IClient peer, RoomOptions options)
         {
@@ -43,6 +38,11 @@ namespace RoomHandler
             _pendingRequests = new HashSet<int>();
         }
 
+        public event Action<IClient> PlayerJoined;
+        public event Action<IClient> PlayerLeft;
+
+        public event Action<RegisteredRoom> Destroyed;
+
         public void ChangeOptions(RoomOptions options)
         {
             Options = options;
@@ -50,30 +50,24 @@ namespace RoomHandler
 
 
         /// <summary>
-        /// Sends a request to room, to retrieve an access to it for a specified peer, 
-        /// with some extra properties
+        ///     Sends a request to room, to retrieve an access to it for a specified peer,
+        ///     with some extra properties
         /// </summary>
         public void GetAccess(IClient client)
         {
             // If request is already pending
-            if (_pendingRequests.Contains(client.ID))
-            {
-                return;
-            }
+            if (_pendingRequests.Contains(client.ID)) return;
 
             // If player is already in the game
-            if (_players.ContainsKey(client.ID))
-            {
-                return;
-            }
+            if (_players.ContainsKey(client.ID)) return;
 
             // If player has already received an access and didn't claim it
             // but is requesting again - send him the old one
             var currentAccess = _unconfirmedAccesses.Values.FirstOrDefault(v => v.Peer == client);
             if (currentAccess != null)
             {
-                // Restore the timeout
-                currentAccess.Timeout = DateTime.Now.AddSeconds(Options.AccessTimeoutPeriod);
+                // Restore the timeout //TODO: Timeout-Setting (no fixed value of 20)
+                currentAccess.Timeout = DateTime.Now.AddSeconds(20);
 
                 //callback.Invoke(currentAccess.Access, null);
                 return;
@@ -86,17 +80,13 @@ namespace RoomHandler
                                        + _accessesInUse.Count
                                        + _unconfirmedAccesses.Count;
 
-                if (playerSlotsTaken >= Options.MaxPlayers)
-                {
-                    //callback.Invoke(null, "Room is already full");
-                    return;
-                }
+                if (playerSlotsTaken >= Options.MaxPlayers) return;
             }
 
-            var packet = new RoomAccessProvideCheckPacket()
+            var packet = new RoomAccessProvideCheckPacket
             {
                 PeerId = client.ID,
-                RoomId =  ID
+                RoomId = ID
             };
 
             //// Add the username if available
@@ -137,7 +127,7 @@ namespace RoomHandler
         }
 
         /// <summary>
-        /// Checks if access token is valid
+        ///     Checks if access token is valid
         /// </summary>
         /// <param name="token"></param>
         /// <param name="peer"></param>
@@ -173,23 +163,13 @@ namespace RoomHandler
         }
 
         /// <summary>
-        /// Clears all of the accesses that have not been confirmed in time
+        ///     Clears all of the accesses that have not been confirmed in time
         /// </summary>
         public void ClearTimedOutAccesses()
         {
             var timedOut = _unconfirmedAccesses.Values.Where(u => u.Timeout < DateTime.Now).ToList();
 
-            foreach (var access in timedOut)
-            {
-                _unconfirmedAccesses.Remove(access.Access.Token);
-            }
-        }
-
-        private class RoomAccessData
-        {
-            public RoomAccessPacket Access;
-            public IClient Peer;
-            public DateTime Timeout;
+            foreach (var access in timedOut) _unconfirmedAccesses.Remove(access.Access.Token);
         }
 
         public void OnPlayerLeft(int peerId)
@@ -217,6 +197,13 @@ namespace RoomHandler
             PlayerJoined = null;
             PlayerLeft = null;
             Destroyed = null;
+        }
+
+        private class RoomAccessData
+        {
+            public RoomAccessPacket Access;
+            public IClient Peer;
+            public DateTime Timeout;
         }
     }
 }

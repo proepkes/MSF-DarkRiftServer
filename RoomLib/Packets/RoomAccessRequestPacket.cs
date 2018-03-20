@@ -4,8 +4,8 @@ namespace RoomLib.Packets
 {
     public class RoomAccessRequestPacket : IDarkRiftSerializable
     {
-        public int RoomId;
         public string Password = "";
+        public int RoomId;
 
         public void Deserialize(DeserializeEvent e)
         {

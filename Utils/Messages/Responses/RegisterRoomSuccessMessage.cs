@@ -1,22 +1,21 @@
-﻿using System.Text;
-using DarkRift;
+﻿using DarkRift;
 
 namespace Utils.Messages.Responses
 {
-    public class RequestFailedMessage : ResponseMessage
+    public class RegisterRoomSuccessMessage : ResponseMessage
     {
-        public string Reason;
+        public int RoomID;
 
         public override void Deserialize(DeserializeEvent e)
         {
             base.Deserialize(e);
-            Reason = e.Reader.ReadString(Encoding.Unicode);
+            RoomID = e.Reader.ReadInt32();
         }
 
         public override void Serialize(SerializeEvent e)
         {
             base.Serialize(e);
-            e.Writer.Write(Reason);
+            e.Writer.Write(RoomID);
         }
     }
 }

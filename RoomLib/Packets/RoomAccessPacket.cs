@@ -4,18 +4,11 @@ namespace RoomLib.Packets
 {
     public class RoomAccessPacket : IDarkRiftSerializable
     {
+        public int RoomId;
         public string RoomIp;
         public int RoomPort;
-        public string Token;
-        public int RoomId;
         public string SceneName = "";
-
-        public override string ToString()
-        {
-            return string.Format("[RoomAccessPacket| PublicAddress: {0}, RoomId: {1}, Token: {2}]",
-                RoomIp + ":" + RoomPort, RoomId, Token);
-
-        }
+        public string Token;
 
         public void Deserialize(DeserializeEvent e)
         {
@@ -33,6 +26,11 @@ namespace RoomLib.Packets
             e.Writer.Write(RoomPort);
             e.Writer.Write(RoomId);
             e.Writer.Write(SceneName);
+        }
+
+        public override string ToString()
+        {
+            return $"[RoomAccessPacket| PublicAddress: {RoomIp + ":" + RoomPort}, RoomId: {RoomId}, Token: {Token}]";
         }
     }
 }

@@ -15,23 +15,22 @@ using Utils.Messages.Responses;
 namespace SpawnerHandler
 {
     /// <summary>
-    /// This plugin runs on the master and contains the references to all spawners. 
-    /// It also creates spawn-tasks and delegates them to an available spawner.
+    ///     This plugin runs on the master and contains the references to all spawners.
+    ///     It also creates spawn-tasks and delegates them to an available spawner.
     /// </summary>
     public class SpawnerHandlerPlugin : Plugin
     {
-        private int _nextSpawnerId = 0;
-        private int _nextSpawnTaskId = 0;
-
-        public override Version Version => new Version(1, 0, 0);
-        public override bool ThreadSafe => true;
-        
         //ClientID -> SpawnTask (only contains ClientSpawnRequests)
         private readonly Dictionary<int, SpawnTask> _pendingSpawnTasks;
 
         private readonly List<RegisteredSpawner> _registeredSpawners;
 
         private readonly List<SpawnTask> _spawnTasks;
+        private int _nextSpawnerId;
+        private int _nextSpawnTaskId;
+
+        public override Version Version => new Version(1, 0, 0);
+        public override bool ThreadSafe => true;
 
         public bool EnableClientSpawnRequests { get; set; }
         public int QueueUpdateFrequency { get; set; }
@@ -42,8 +41,9 @@ namespace SpawnerHandler
             _registeredSpawners = new List<RegisteredSpawner>();
             _pendingSpawnTasks = new Dictionary<int, SpawnTask>();
 
-            EnableClientSpawnRequests = Convert.ToBoolean(pluginLoadData.Settings.Get(nameof(EnableClientSpawnRequests)));
             QueueUpdateFrequency = Convert.ToInt32(pluginLoadData.Settings.Get(nameof(QueueUpdateFrequency)));
+            EnableClientSpawnRequests =
+                Convert.ToBoolean(pluginLoadData.Settings.Get(nameof(EnableClientSpawnRequests)));
 
             ClientManager.ClientConnected += OnClientConnected;
             ClientManager.ClientDisconnected += OnClientDisconnected;
@@ -55,7 +55,6 @@ namespace SpawnerHandler
                     Thread.Sleep(QueueUpdateFrequency);
 
                     foreach (var spawner in _registeredSpawners)
-                    {
                         try
                         {
                             spawner.UpdateQueue();
@@ -67,7 +66,6 @@ namespace SpawnerHandler
                                 WriteEvent("Failed to update spawnerqueue", LogType.Error, e);
                             });
                         }
-                    }
                 }
             });
         }
@@ -98,14 +96,49 @@ namespace SpawnerHandler
                     case MessageTags.NotifySpawnerKilledProcess:
                         HandleNotifySpawnerKilledProcess(e.Client, message);
                         break;
+                    case MessageTags.CompleteSpawnProcess:
+                        HandleCompleteSpawnProcess(e.Client, message);
+                        break;
                 }
+            }
+        }
+
+        private void HandleCompleteSpawnProcess(IClient client, Message message)
+        {
+            var data = message.Deserialize<SpawnFinalizedMessage>();
+            if (data != null)
+            {
+                var task = _spawnTasks.FirstOrDefault(spawnTask => spawnTask.ID == data.SpawnTaskID);
+
+                if (task == null)
+                {
+                    WriteEvent("Process tried to complete to an unknown task", LogType.Error);
+                    client.SendMessage(
+                        Message.Create(MessageTags.CompleteSpawnProcessFailed,
+                            new FailedMessage {Status = ResponseStatus.Error, Reason = "Unknown task"}),
+                        SendMode.Reliable);
+                    return;
+                }
+
+                if (task.RegisteredClient.ID != client.ID)
+                {
+                    WriteEvent("Spawned process tried to complete spawn task, but it's not the same peer who registered to the task", LogType.Error);
+                    client.SendMessage(
+                        Message.Create(MessageTags.CompleteSpawnProcessFailed,
+                            new FailedMessage { Status = ResponseStatus.Unauthorized, Reason = "Client mismatch." }),
+                        SendMode.Reliable);
+                    return;
+                }
+
+                task.OnFinalized(data);
+
+                client.SendMessage(Message.CreateEmpty(MessageTags.CompleteSpawnProcessSuccess), SendMode.Reliable);
             }
         }
 
         private void HandleNotifySpawnerKilledProcess(IClient client, Message message)
         {
-
-            var data = message.Deserialize<SpawnerKilledProcessNotificationMessage>();
+            var data = message.Deserialize<ProcessKilledMessage>();
             if (data != null)
             {
                 var task = _spawnTasks.FirstOrDefault(spawnTask => spawnTask.ID == data.SpawnTaskID);
@@ -114,27 +147,36 @@ namespace SpawnerHandler
                     return;
 
                 task.OnProcessKilled();
-                task.Spawner.OnProcessKilled();
             }
         }
 
         private void HandleRegisterSpawnedProcess(IClient client, Message message)
         {
-            var data = message.Deserialize<RegisterSpawnedProcessPacket>();
+            var data = message.Deserialize<RegisterSpawnedProcessMessage>();
             if (data != null)
             {
                 var task = _spawnTasks.FirstOrDefault(spawnTask => spawnTask.ID == data.SpawnTaskID);
                 if (task == null)
                 {
-                    client.SendMessage(Message.Create(MessageTags.RegisterSpawnedProcessFailed, new RequestFailedMessage { Reason = "Invalid spawn task", Status = ResponseStatus.Failed}), SendMode.Reliable);
-                    WriteEvent("Process tried to register to an unknown task. Client: " + client.RemoteTcpEndPoint.Address, LogType.Warning);
+                    client.SendMessage(
+                        Message.Create(MessageTags.RegisterSpawnedProcessFailed,
+                            new FailedMessage {Reason = "Invalid spawn task", Status = ResponseStatus.Failed}),
+                        SendMode.Reliable);
+                    WriteEvent(
+                        "Process tried to register to an unknown task. Client: " + client.RemoteTcpEndPoint.Address,
+                        LogType.Warning);
                     return;
                 }
 
                 if (task.UniqueCode != data.SpawnCode)
                 {
-                    client.SendMessage(Message.Create(MessageTags.RegisterSpawnedProcessFailed, new RequestFailedMessage { Reason = "Unauthorized", Status = ResponseStatus.Unauthorized }), SendMode.Reliable);
-                    WriteEvent("Spawned process tried to register, but failed due to mismaching unique code. Client: " + client.RemoteTcpEndPoint.Address, LogType.Warning);
+                    client.SendMessage(
+                        Message.Create(MessageTags.RegisterSpawnedProcessFailed,
+                            new FailedMessage {Reason = "Unauthorized", Status = ResponseStatus.Unauthorized}),
+                        SendMode.Reliable);
+                    WriteEvent(
+                        "Spawned process tried to register, but failed due to mismaching unique code. Client: " +
+                        client.RemoteTcpEndPoint.Address, LogType.Warning);
                     return;
                 }
 
@@ -146,13 +188,14 @@ namespace SpawnerHandler
 
         private void HandleRequestSpawnFromMasterToSpawnerFailed(IClient client, Message message)
         {
-            var data = message.Deserialize<RequestSpawnFromMasterToSpawnerFailedMessage>();
+            var data = message.Deserialize<SpawnFromMasterToSpawnerFailedMessage>();
             if (data != null)
             {
                 var task = _spawnTasks.FirstOrDefault(spawnTask => spawnTask.ID == data.SpawnTaskID);
                 if (task != null)
                     task.Abort();
-                WriteEvent("Spawn request was not handled. Status: " + data.Status + " | " + data.Reason, LogType.Warning);
+                WriteEvent("Spawn request was not handled. Status: " + data.Status + " | " + data.Reason,
+                    LogType.Warning);
             }
         }
 
@@ -164,7 +207,8 @@ namespace SpawnerHandler
 
         private void OnClientDisconnected(object sender, ClientDisconnectedEventArgs e)
         {
-            var spawner = _registeredSpawners.FirstOrDefault(registeredSpawner => registeredSpawner.Client.ID == e.Client.ID);
+            var spawner =
+                _registeredSpawners.FirstOrDefault(registeredSpawner => registeredSpawner.Client.ID == e.Client.ID);
             if (spawner != null)
             {
                 WriteEvent("Spawner " + spawner + " disconnected.", LogType.Info);
@@ -177,36 +221,30 @@ namespace SpawnerHandler
             else
             {
                 //spawn-tasks can only be requested by player-clients
-                if (_pendingSpawnTasks.ContainsKey(e.Client.ID))
-                {
-                    _pendingSpawnTasks.Remove(e.Client.ID);
-                }
+                if (_pendingSpawnTasks.ContainsKey(e.Client.ID)) _pendingSpawnTasks.Remove(e.Client.ID);
             }
         }
 
         private void HandleRequestSpawnFromMasterToSpawnerSuccess(IClient client, Message message)
         {
-            var data = message.Deserialize<RequestSpawnFromMasterToSpawnerSuccessMessage>();
+            var data = message.Deserialize<SpawnFromMasterToSpawnerSuccessMessage>();
             if (data != null)
             {
                 var task = _spawnTasks.FirstOrDefault(spawnTask => spawnTask.ID == data.SpawnTaskID);
-                if (task != null)
-                {
-                    task.OnProcessStarted();
-                }
+                if (task != null) task.OnProcessStarted();
             }
         }
 
         private void HandleClientsSpawnRequest(IClient client, Message message)
         {
-            var data = message.Deserialize<RequestSpawnFromClientToMasterMessage>();
+            var data = message.Deserialize<SpawnFromClientToMasterMessage>();
             if (data != null)
             {
                 if (!CanClientSpawn(client, data))
                 {
                     // Client can't spawn
                     client.SendMessage(Message.Create(MessageTags.RequestSpawnFromClientToMasterFailed,
-                            new RequestFailedMessage
+                            new FailedMessage
                             {
                                 Status = ResponseStatus.Unauthorized,
                                 Reason = "Unauthorized"
@@ -219,7 +257,7 @@ namespace SpawnerHandler
                 {
                     // Client has unfinished request
                     client.SendMessage(Message.Create(MessageTags.RequestSpawnFromClientToMasterFailed,
-                            new RequestFailedMessage
+                            new FailedMessage
                             {
                                 Status = ResponseStatus.Failed,
                                 Reason = "You already have an active request"
@@ -229,12 +267,12 @@ namespace SpawnerHandler
                 }
 
                 // Get the spawn task
-                var task = Spawn(data.Region);
+                var task = Spawn(data.Region, data.WorldName, data.RoomName, data.MaxPlayers, data.IsPublic);
 
                 if (task == null)
-                {   
+                {
                     client.SendMessage(Message.Create(MessageTags.RequestSpawnFromClientToMasterFailed,
-                            new RequestFailedMessage
+                            new FailedMessage
                             {
                                 Status = ResponseStatus.Failed,
                                 Reason = "All the servers are busy.Try again later"
@@ -249,20 +287,20 @@ namespace SpawnerHandler
                 _pendingSpawnTasks[client.ID] = task;
 
                 // Listen to status changes
-                task.StatusChanged += (status) =>
+                task.StatusChanged += status =>
                 {
                     if (client.IsConnected)
-                    {
-                        // Send status update
                         client.SendMessage(Message.Create(MessageTags.SpawnStatusChanged, new SpawnStatusPacket
                         {
                             SpawnTaskID = task.ID,
                             Status = status
                         }), SendMode.Reliable);
-                    }
                 };
 
-                client.SendMessage(Message.Create(MessageTags.RequestSpawnFromClientToMasterSuccess, new RequestClientSpawnSuccessMessage {TaskID = task.ID, Status = ResponseStatus.Success}), SendMode.Reliable);
+                client.SendMessage(
+                    Message.Create(MessageTags.RequestSpawnFromClientToMasterSuccess,
+                        new ClientSpawnSuccessMessage { TaskID = task.ID, Status = ResponseStatus.Success}),
+                    SendMode.Reliable);
             }
         }
 
@@ -270,11 +308,10 @@ namespace SpawnerHandler
         {
             if (!HasCreationPermissions(client))
             {
-                client.SendMessage(Message.Create(MessageTags.RegisterSpawnerFailed, new RequestFailedMessage
+                client.SendMessage(Message.Create(MessageTags.RegisterSpawnerFailed, new FailedMessage
                 {
                     Status = ResponseStatus.Unauthorized,
                     Reason = "Insufficient permissions"
-
                 }), SendMode.Reliable);
                 return;
             }
@@ -299,21 +336,21 @@ namespace SpawnerHandler
         private RegisteredSpawner CreateSpawner(IClient client, SpawnerOptions options)
         {
             var spawner = new RegisteredSpawner(GenerateSpawnerId(), client, options);
-            
+
             // Add the spawner to a list of all spawners
             _registeredSpawners.Add(spawner);
 
             return spawner;
         }
 
-        public virtual SpawnTask Spawn(string region = "")
+        public virtual SpawnTask Spawn(string region, string world, string room, int maxPlayers, bool isPublic)
         {
             var spawners = GetFilteredSpawners(region);
 
             if (spawners.Count < 0)
             {
                 WriteEvent("No spawner was returned after filtering. " +
-                            (string.IsNullOrEmpty(region) ? "" : "Region: " + region), LogType.Warning);
+                           (string.IsNullOrEmpty(region) ? "" : "Region: " + region), LogType.Warning);
                 return null;
             }
 
@@ -325,16 +362,11 @@ namespace SpawnerHandler
             if (availableSpawner == null)
                 return null;
 
-            return Spawn(availableSpawner);
-        }
-
-        public virtual SpawnTask Spawn(RegisteredSpawner spawner)
-        {
-            var task = new SpawnTask(GenerateSpawnTaskId(), spawner);
+            var task = new SpawnTask(GenerateSpawnTaskId(), availableSpawner, world, room, maxPlayers, isPublic);
 
             _spawnTasks.Add(task);
 
-            spawner.AddTaskToQueue(task);
+            availableSpawner.AddTaskToQueue(task);
 
             Dispatcher.InvokeWait(() => WriteEvent("Spawner was found, and spawn task created: " + task, LogType.Trace));
 
@@ -370,16 +402,16 @@ namespace SpawnerHandler
         {
             return _nextSpawnerId++;
         }
+
         public int GenerateSpawnTaskId()
         {
             return _nextSpawnTaskId++;
         }
 
-        private bool CanClientSpawn(IClient client, RequestSpawnFromClientToMasterMessage data)
+        private bool CanClientSpawn(IClient client, SpawnFromClientToMasterMessage data)
         {
             //TODO: Setting: Only allow logged in clients to request a spawn & check here
             return EnableClientSpawnRequests;
         }
     }
 }
-
