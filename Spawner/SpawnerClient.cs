@@ -80,6 +80,7 @@ namespace Spawner
             AutoStartSpawner = Settings.Default.AutoStartSpawner;
             CreateRoomWindow = Settings.Default.CreateRoomWindow;
             ConfigPath = Settings.Default.ConfigPath;
+            UseShellExecute = Settings.Default.UseShellExecute;
 
             _client = new DarkRiftClient();
             _client.ConnectInBackground(MasterIpAddress, MasterPort, IPVersion.IPv4, OnConnectedToMaster);
@@ -148,6 +149,7 @@ namespace Spawner
                 {
                     CreateNoWindow = !CreateRoomWindow,
                     UseShellExecute = UseShellExecute,
+                    WindowStyle = ProcessWindowStyle.Normal,
                     Arguments = $"\"{ConfigPath}\" " +
                                 $"{ArgNames.MasterIp}={MasterIpAddress} " +
                                 $"{ArgNames.MasterPort}={MasterPort} " +
