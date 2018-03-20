@@ -87,7 +87,7 @@ namespace SpawnerHandler
             var data = new SpawnRequestPacket
             {
                 SpawnerId = ID,
-                SpawnId = task.ID,
+                SpawnTaskID = task.ID,
                 SpawnCode = task.UniqueCode
             };
 
@@ -103,11 +103,6 @@ namespace SpawnerHandler
             };
 
             Client.SendMessage(Message.Create(MessageTags.KillSpawn, packet), SendMode.Reliable); 
-        }
-
-        public void UpdateProcessesCount(int newCount)
-        {
-            ProcessesRunning = newCount;
         }
 
         public void OnProcessKilled()

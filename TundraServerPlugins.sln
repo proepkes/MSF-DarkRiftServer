@@ -21,6 +21,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpawnerLib", "SpawnerLib\Sp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spawner", "Spawner\Spawner.csproj", "{733A5630-DEE5-4AC2-8445-7886D853A349}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoomHandler", "RoomHandler\RoomHandler.csproj", "{3E59F708-ED83-4141-9474-5174ABD281F5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoomLib", "RoomLib\RoomLib.csproj", "{2AB82BEA-559C-41D8-93EC-38D9220D57FE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +67,14 @@ Global
 		{733A5630-DEE5-4AC2-8445-7886D853A349}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{733A5630-DEE5-4AC2-8445-7886D853A349}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{733A5630-DEE5-4AC2-8445-7886D853A349}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E59F708-ED83-4141-9474-5174ABD281F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E59F708-ED83-4141-9474-5174ABD281F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E59F708-ED83-4141-9474-5174ABD281F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E59F708-ED83-4141-9474-5174ABD281F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2AB82BEA-559C-41D8-93EC-38D9220D57FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2AB82BEA-559C-41D8-93EC-38D9220D57FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2AB82BEA-559C-41D8-93EC-38D9220D57FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2AB82BEA-559C-41D8-93EC-38D9220D57FE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

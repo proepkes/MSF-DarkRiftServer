@@ -25,7 +25,7 @@ namespace Spawner.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("GameServer/GameServerExample.exe")]
+        [global::System.Configuration.DefaultSettingValueAttribute("E:\\UnityProjects\\DarkRiftServer\\DarkRift.Server.Console.exe")]
         public string ExecutablePath {
             get {
                 return ((string)(this["ExecutablePath"]));
@@ -92,6 +92,33 @@ namespace Spawner.Properties {
         public int MaxProcesses {
             get {
                 return ((int)(this["MaxProcesses"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool UseShellExecute {
+            get {
+                return ((bool)(this["UseShellExecute"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool CreateRoomWindow {
+            get {
+                return ((bool)(this["CreateRoomWindow"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("E:\\UnityProjects\\DarkRiftServer\\RoomServer.config")]
+        public string ConfigPath {
+            get {
+                return ((string)(this["ConfigPath"]));
             }
         }
     }

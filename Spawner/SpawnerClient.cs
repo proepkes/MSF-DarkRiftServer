@@ -13,6 +13,7 @@ using SpawnerLib;
 using SpawnerLib.Packets;
 using Utils;
 using Utils.Messages.Notifications;
+using Utils.Messages.Requests;
 using Utils.Messages.Responses;
 
 namespace Spawner
@@ -21,8 +22,21 @@ namespace Spawner
     {
         static void Main(string[] args)
         {
-            new SpawnerClient();
-            Console.ReadLine();
+            var client = new SpawnerClient();
+            Console.WriteLine("1: Request Room");
+            Console.WriteLine("X: Exit");
+            var input = "";
+            while (input != null && input.ToLower() != "x")
+            {
+                input = Console.ReadLine();
+                if (input != null)
+                {
+                    if (input.Equals("1"))
+                    {
+                        client.SpawnRoom();
+                    }
+                }
+            }
         }
     }
 
@@ -46,7 +60,11 @@ namespace Spawner
         public string Region { get; set; }
 
         public bool AutoStartSpawner { get; set; }
-        
+
+        public bool UseShellExecute { get; set; }
+        public bool CreateRoomWindow { get; set; }
+        public string ConfigPath { get; set; }
+
         public SpawnerClient()
         {
             _freePorts = new Queue<int>();
@@ -60,9 +78,18 @@ namespace Spawner
             ExecutablePath = Settings.Default.ExecutablePath;
             Region = Settings.Default.Region;
             AutoStartSpawner = Settings.Default.AutoStartSpawner;
+            CreateRoomWindow = Settings.Default.CreateRoomWindow;
+            ConfigPath = Settings.Default.ConfigPath;
 
             _client = new DarkRiftClient();
             _client.ConnectInBackground(MasterIpAddress, MasterPort, IPVersion.IPv4, OnConnectedToMaster);
+        }
+
+        //For testing-purposes
+        public void SpawnRoom()
+        {
+            _client.SendMessage(Message.Create(MessageTags.RequestSpawnFromClientToMaster,
+                    new RequestSpawnFromClientToMasterMessage {Region = "EU"}), SendMode.Reliable);
         }
 
 
@@ -101,6 +128,12 @@ namespace Spawner
                     case MessageTags.RequestSpawnFromMasterToSpawner:
                         HandleRequestSpawnFromMaster(message);
                         break;
+                    case MessageTags.RequestSpawnFromClientToMasterSuccess:
+                        Console.WriteLine("Room will be spawned!");
+                        break;
+                    case MessageTags.RequestSpawnFromClientToMasterFailed:
+                        Console.WriteLine("Spawning room failed: " + message.Deserialize<RequestFailedMessage>().Reason);
+                        break;
                 }
             }
         }
@@ -113,16 +146,15 @@ namespace Spawner
                 var port = GetAvailablePort();
                 var startProcessInfo = new ProcessStartInfo(ExecutablePath)
                 {
-                    CreateNoWindow = true,
-                    UseShellExecute = false,
-                    Arguments = "-batchmode -nographics " +
-                                $"{ArgNames.LoadScene} {data.SceneName} " +
-                                $"{ArgNames.MasterIp} {MasterIpAddress} " +
-                                $"{ArgNames.MasterPort} {MasterPort} " +
-                                $"{ArgNames.SpawnId} {data.SpawnId} " +
-                                $"{ArgNames.AssignedPort} {port} " +
-                                $"{ArgNames.MachineIp} {SpawnerIpAddress} " +
-                                $"{ArgNames.SpawnCode} \"{data.SpawnCode}\" "
+                    CreateNoWindow = !CreateRoomWindow,
+                    UseShellExecute = UseShellExecute,
+                    Arguments = $"\"{ConfigPath}\" " +
+                                $"{ArgNames.MasterIp}={MasterIpAddress} " +
+                                $"{ArgNames.MasterPort}={MasterPort} " +
+                                $"{ArgNames.SpawnId}={data.SpawnTaskID} " +
+                                $"{ArgNames.AssignedPort}={port} " +
+                                $"{ArgNames.MachineIp}={SpawnerIpAddress} " +
+                                $"{ArgNames.SpawnCode}=\"{data.SpawnCode}\""
                 };
 
                 var processStarted = false;
@@ -139,52 +171,54 @@ namespace Spawner
                                 lock (ProcessLock)
                                 {
                                     // Save the process
-                                    Processes[data.SpawnId] = process;
+                                    Processes[data.SpawnTaskID] = process;
                                 }
 
                                 var processId = process.Id;
 
-                                // Notify server that we've successfully handled the request
-                                new Dispatcher(true).InvokeWait(() =>
+                                // Notify server that we've successfully handled the request (on main thread)
+                                new Action(delegate
                                 {
                                     _client.SendMessage(Message.Create(MessageTags.RequestSpawnFromMasterToSpawnerSuccess,
-                                            new RequestSpawnFromMasterToSpawnerSuccessMessage { SpawnTaskID = data.SpawnId, ProcessID = processId, Arguments = startProcessInfo.Arguments, Status = ResponseStatus.Success }), SendMode.Reliable);
-
-                                });
+                                        new RequestSpawnFromMasterToSpawnerSuccessMessage { SpawnTaskID = data.SpawnTaskID, ProcessID = processId, Arguments = startProcessInfo.Arguments, Status = ResponseStatus.Success }), SendMode.Reliable);
+                                }).Invoke();
 
                                 process.WaitForExit();
                             }
                         }
                         catch (Exception e)
                         {
+
                             if (!processStarted)
-                                new Dispatcher(true).InvokeWait(() =>
+                            {
+                                new Action(delegate
                                 {
                                     _client.SendMessage(Message.Create(MessageTags.RequestSpawnFromMasterToSpawnerFailed,
-                                        new RequestFailedMessage { Reason = e.ToString(), Status = ResponseStatus.Failed }), SendMode.Reliable);
-                                });
+                                        new RequestSpawnFromMasterToSpawnerFailedMessage { SpawnTaskID = data.SpawnTaskID, Reason = e.ToString(), Status = ResponseStatus.Failed }), SendMode.Reliable);
+                                }).Invoke();
+                            }
                         }
                         finally
                         {
                             lock (ProcessLock)
                             {
                                 // Remove the process
-                                Processes.Remove(data.SpawnId);
+                                Processes.Remove(data.SpawnTaskID);
                             }
-                            new Dispatcher(true).InvokeWait(() =>
+                            new Action(delegate
                             {
                                 // Release the port number
                                 _freePorts.Enqueue(port);
                                 _client.SendMessage(Message.Create(MessageTags.NotifySpawnerKilledProcess,
-                                    new SpawnerKilledProcessNotificationMessage { SpawnID = data.SpawnId, SpawnerID = _spawnerId }), SendMode.Reliable);
-                            });
+                                    new SpawnerKilledProcessNotificationMessage { SpawnTaskID = data.SpawnTaskID, SpawnerID = _spawnerId }), SendMode.Reliable);
+                            }).Invoke();
                         }
 
                     }).Start();
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("ThreadException " + data.SpawnId, LogType.Fatal, e);
+                    Console.WriteLine("ThreadException " + data.SpawnTaskID, LogType.Fatal, e);
                 }
             }
         }

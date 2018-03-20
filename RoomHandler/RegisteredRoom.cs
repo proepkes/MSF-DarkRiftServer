@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using DarkRift.Server;
-using Room.Packets;
+using RoomLib;
+using RoomLib.Packets;
 
-namespace Room
+namespace RoomHandler
 {
     /// <summary>
     /// This is an instance of the room in master server
@@ -13,9 +14,9 @@ namespace Room
     {
         public delegate void GetAccessCallback(RoomAccessPacket access, string error);
 
-        private Dictionary<int, RoomAccessPacket> _accessesInUse;
-        private Dictionary<string, RoomAccessData> _unconfirmedAccesses;
-        private HashSet<int> _pendingRequests;
+        private readonly Dictionary<int, RoomAccessPacket> _accessesInUse;
+        private readonly Dictionary<string, RoomAccessData> _unconfirmedAccesses;
+        private readonly HashSet<int> _pendingRequests;
 
         private Dictionary<int, IClient> _players;
 
@@ -25,14 +26,14 @@ namespace Room
         public event Action<RegisteredRoom> Destroyed;
 
         public RoomOptions Options { get; private set; }
-        public int RoomId { get; private set; }
+        public int ID { get; private set; }
         public IClient Peer { get; private set; }
 
         public int OnlineCount { get { return _accessesInUse.Count; } }
 
-        public RegisteredRoom(int roomId, IClient peer, RoomOptions options)
+        public RegisteredRoom(int id, IClient peer, RoomOptions options)
         {
-            RoomId = roomId;
+            ID = id;
             Peer = peer;
             Options = options;
 
@@ -95,7 +96,7 @@ namespace Room
             var packet = new RoomAccessProvideCheckPacket()
             {
                 PeerId = client.ID,
-                RoomId =  RoomId
+                RoomId =  ID
             };
 
             //// Add the username if available

@@ -1,6 +1,6 @@
 ﻿using DarkRift;
 
-namespace Room
+namespace RoomLib
 {
     /// <summary>
     /// List of options, which are sent to master server during registration

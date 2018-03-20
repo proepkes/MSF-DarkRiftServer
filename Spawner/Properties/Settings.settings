@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="ExecutablePath" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">GameServer/GameServerExample.exe</Value>
+      <Value Profile="(Default)">E:\UnityProjects\DarkRiftServer\DarkRift.Server.Console.exe</Value>
     </Setting>
     <Setting Name="MasterIpAddress" Type="System.String" Scope="Application">
       <Value Profile="(Default)">127.0.0.1</Value>
@@ -25,6 +25,15 @@
     </Setting>
     <Setting Name="MaxProcesses" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">10</Value>
+    </Setting>
+    <Setting Name="UseShellExecute" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="CreateRoomWindow" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="ConfigPath" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">E:\UnityProjects\DarkRiftServer\RoomServer.config</Value>
     </Setting>
   </Settings>
 </SettingsFile>

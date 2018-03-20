@@ -1,6 +1,6 @@
 ﻿using DarkRift;
 
-namespace Room.Packets
+namespace RoomLib.Packets
 {
     public class UsernameAndPeerIdPacket : IDarkRiftSerializable
     {

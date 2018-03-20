@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using DarkRift;
@@ -9,6 +8,7 @@ using DarkRift.Server;
 using SpawnerLib;
 using SpawnerLib.Packets;
 using Utils;
+using Utils.Messages.Notifications;
 using Utils.Messages.Requests;
 using Utils.Messages.Responses;
 
@@ -81,11 +81,11 @@ namespace SpawnerHandler
                     case MessageTags.RegisterSpawner:
                         HandleRegisterSpawner(e.Client, message);
                         break;
-                    case MessageTags.RequestSpawnFromClientToMaster:
-                        HandleClientsSpawnRequest(e.Client, message);
-                        break;
                     case MessageTags.RegisterSpawnedProcess:
                         HandleRegisterSpawnedProcess(e.Client, message);
+                        break;
+                    case MessageTags.RequestSpawnFromClientToMaster:
+                        HandleClientsSpawnRequest(e.Client, message);
                         break;
                     case MessageTags.RequestSpawnFromMasterToSpawnerSuccess:
                         //Spawner started a new process
@@ -95,7 +95,26 @@ namespace SpawnerHandler
                         //Cancel SpawnTask
                         HandleRequestSpawnFromMasterToSpawnerFailed(e.Client, message);
                         break;
+                    case MessageTags.NotifySpawnerKilledProcess:
+                        HandleNotifySpawnerKilledProcess(e.Client, message);
+                        break;
                 }
+            }
+        }
+
+        private void HandleNotifySpawnerKilledProcess(IClient client, Message message)
+        {
+
+            var data = message.Deserialize<SpawnerKilledProcessNotificationMessage>();
+            if (data != null)
+            {
+                var task = _spawnTasks.FirstOrDefault(spawnTask => spawnTask.ID == data.SpawnTaskID);
+
+                if (task == null)
+                    return;
+
+                task.OnProcessKilled();
+                task.Spawner.OnProcessKilled();
             }
         }
 

@@ -1,23 +1,22 @@
 ﻿using DarkRift;
 
-namespace Room.Packets
+namespace RoomLib.Packets
 {
-    public class RoomAccessValidatePacket : IDarkRiftSerializable
+    public class RoomAccessRequestPacket : IDarkRiftSerializable
     {
-        public string Token;
         public int RoomId;
-
+        public string Password = "";
 
         public void Deserialize(DeserializeEvent e)
         {
-            Token = e.Reader.ReadString();
             RoomId = e.Reader.ReadInt32();
+            Password = e.Reader.ReadString();
         }
 
         public void Serialize(SerializeEvent e)
         {
-            e.Writer.Write(Token);
             e.Writer.Write(RoomId);
+            e.Writer.Write(Password);
         }
     }
 }

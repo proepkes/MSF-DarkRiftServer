@@ -60,7 +60,7 @@ namespace SpawnerHandler
         /// Peer, who registered a started process for this task
         /// (for example, a game server)
         /// </summary>
-        public IClient RegisteredPeer { get; private set; }
+        public IClient RegisteredClient { get; private set; }
 
         /// <summary>
         /// Who requested to spawn
@@ -83,9 +83,9 @@ namespace SpawnerHandler
             Status = SpawnStatus.Killed;
         }
 
-        public void OnRegistered(IClient peerWhoRegistered)
+        public void OnRegistered(IClient clientWhoRegistered)
         {
-            RegisteredPeer = peerWhoRegistered;
+            RegisteredClient = clientWhoRegistered;
 
             if (!IsAborted && Status < SpawnStatus.ProcessRegistered)
             {
