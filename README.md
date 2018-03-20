@@ -3,9 +3,9 @@
 [![patreon_logo](https://user-images.githubusercontent.com/1029673/28471651-be40a2ea-6e35-11e7-9b01-e1b4a7d533b3.png)](https://www.patreon.com/proepkes) 
 [![Discord](https://img.shields.io/discord/413156098993029120.svg)](https://discord.gg/F9hJhcX) 
 
-### Planned architecture:
+### Highlevel-view:
 
-[![architecture](https://i.imgur.com/GB7qwSg.png)](https://i.imgur.com/GB7qwSg.png)
+[![architecture](https://i.imgur.com/x4XIuvF.png)](https://i.imgur.com/x4XIuvF.png)
 
 ### Current plugins & their dependencies
 
