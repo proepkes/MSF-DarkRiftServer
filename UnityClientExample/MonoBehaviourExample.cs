@@ -7,12 +7,11 @@
 //using DarkRift;
 //using DarkRift.Client;
 //using DarkRift.Client.Unity;
-//using SpawnerHandler.Packets;
 //using UnityEngine;
 //using Utils;
 //using Utils.Extensions;
 //using Utils.Messages.Requests;
-//using Utils.Messages.Response;
+//using Utils.Messages.Responses;
 //using Security = Utils.Security;
 
 //public class TundraNetClient : MonoBehaviour
@@ -97,7 +96,7 @@
 //    #region AUTH
 //    private void HandlePasswordResetFailed(Message message)
 //    {
-//        var data = message.Deserialize<RequestFailedMessage>();
+//        var data = message.Deserialize<FailedMessage>();
 //        if (data != null)
 //        {
 //            //Handle
@@ -111,7 +110,7 @@
 
 //    private void HandleRegisterAccountFailed(Message message)
 //    {
-//        var data = message.Deserialize<RequestFailedMessage>();
+//        var data = message.Deserialize<FailedMessage>();
 //        if (data != null)
 //        {
 //            //Handle
@@ -130,7 +129,7 @@
 
 //    private void HandleLoginFailed(Message message)
 //    {
-//        var data = message.Deserialize<RequestFailedMessage>();
+//        var data = message.Deserialize<FailedMessage>();
 //        if (data != null)
 //        {
 //            if (LogInFailed != null)
@@ -264,7 +263,7 @@
 //    {
 //        Client.SendMessage(
 //            Message.Create(MessageTags.ResetPassword,
-//                new RequestResetPasswordMessage { EMail = eMail, Code = code, NewPassword = newPassword }),
+//                new ResetPasswordMessage { EMail = eMail, Code = code, NewPassword = newPassword }),
 //            SendMode.Reliable);
 //    }
 
@@ -272,21 +271,21 @@
 //    {
 //        //Fire & Forget
 //        Client.SendMessage(
-//            Message.Create(MessageTags.RequestPasswordResetCode, new RequestWithStringMessage { String = eMail }),
+//            Message.Create(MessageTags.RequestPasswordResetCode, new RequestFromUserMessage { EMail = eMail }),
 //            SendMode.Reliable);
 //    }
 
 //    public void ConfirmEmail(string email, string code)
 //    {
 //        Client.SendMessage(
-//            Message.Create(MessageTags.ConfirmEmail, new RequestEmailConfirmationMessage { String = email, Code = code }),
+//            Message.Create(MessageTags.ConfirmEmail, new ConfirmEmailMessage { EMail = email, Code = code }),
 //            SendMode.Reliable);
 //    }
 
 //    public void RequestNewEmailConfirmationCode(string email)
 //    {
 //        Client.SendMessage(
-//            Message.Create(MessageTags.RequestNewEmailConfirmationCode, new RequestWithStringMessage { String = email }),
+//            Message.Create(MessageTags.RequestNewEmailConfirmationCode, new RequestFromUserMessage { EMail = email }),
 //            SendMode.Reliable);
 //    }
 //    #endregion
@@ -295,7 +294,7 @@
 
 //    public void RequestSpawn(string region = "")
 //    {
-//        Client.SendMessage(Message.Create(MessageTags.RequestSpawnFromClientToMaster, new RequestSpawnFromClientToMasterMessage
+//        Client.SendMessage(Message.Create(MessageTags.RequestSpawnFromClientToMaster, new SpawnFromClientToMasterMessage
 //        {
 //            Region = region
 //        }), SendMode.Reliable);
@@ -303,4 +302,3 @@
 
 //    #endregion
 //}
-

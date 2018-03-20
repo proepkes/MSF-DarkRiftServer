@@ -92,7 +92,7 @@ namespace Room
                         WriteEvent("Failed to register room", LogType.Warning);
                         break;
                     case MessageTags.CompleteSpawnProcessSuccess:
-                        WriteEvent("All set, ready for players!", LogType.Info);
+                        WriteEvent("Room " + RoomName + " in World " + WorldName + " is ready for Players.", LogType.Info);
                         break;
                     case MessageTags.CompleteSpawnProcessFailed:
                         WriteEvent("Failed to complete the spawn", LogType.Info);

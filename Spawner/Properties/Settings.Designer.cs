@@ -121,5 +121,14 @@ namespace Spawner.Properties {
                 return ((string)(this["ConfigPath"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UseMono {
+            get {
+                return ((bool)(this["UseMono"]));
+            }
+        }
     }
 }

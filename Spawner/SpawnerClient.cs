@@ -57,6 +57,7 @@ namespace Spawner
         public bool UseShellExecute { get; set; }
         public bool CreateRoomWindow { get; set; }
         public string ConfigPath { get; set; }
+        public bool UseMono { get; set; }
 
         public SpawnerClient()
         {
@@ -74,6 +75,7 @@ namespace Spawner
             CreateRoomWindow = Settings.Default.CreateRoomWindow;
             ConfigPath = Settings.Default.ConfigPath;
             UseShellExecute = Settings.Default.UseShellExecute;
+            UseMono = Settings.Default.UseMono;
 
             _client = new DarkRiftClient();
             _client.ConnectInBackground(MasterIpAddress, MasterPort, IPVersion.IPv4, OnConnectedToMaster);
@@ -135,11 +137,15 @@ namespace Spawner
             if (data != null)
             {
                 var port = GetAvailablePort();
-                var startProcessInfo = new ProcessStartInfo(ExecutablePath)
+                var startProcessInfo = new ProcessStartInfo()
                 {
+                    FileName = UseMono ? "mono": ExecutablePath,
                     CreateNoWindow = !CreateRoomWindow,
                     UseShellExecute = UseShellExecute,
-                    Arguments = $"\"{ConfigPath}\" " +
+                    Arguments = (UseMono ? 
+                        System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "/" + ExecutablePath + " " 
+                        : "") +
+                        $"\"{ConfigPath}\" " +
                                 $"{ArgNames.MasterIpAddress}={MasterIpAddress} " +
                                 $"{ArgNames.MasterPort}={MasterPort} " +
                                 $"{ArgNames.SpawnTaskID}={data.SpawnTaskID} " +
