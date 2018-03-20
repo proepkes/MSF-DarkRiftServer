@@ -9,7 +9,7 @@
 
 ### Current plugins & their dependencies
 
-[![Plugins](https://i.imgur.com/kHM8MxR.png)]
+[![Plugins](https://i.imgur.com/kHM8MxR.png)](https://i.imgur.com/kHM8MxR.png)
 
 ### Instructions:
 
