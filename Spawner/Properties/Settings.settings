@@ -3,10 +3,10 @@
   <Profiles />
   <Settings>
     <Setting Name="ExecutablePath" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">E:\Repositories\MSF-DarkRiftServer\Deploy\DarkRift.Server.Console.exe</Value>
+      <Value Profile="(Default)">DarkRift.Server.Console.exe</Value>
     </Setting>
     <Setting Name="ConfigPath" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">E:\Repositories\MSF-DarkRiftServer\Deploy\Spawner\WorldServer.config</Value>
+      <Value Profile="(Default)">WorldServer.config</Value>
     </Setting>
     <Setting Name="MasterIpAddress" Type="System.String" Scope="Application">
       <Value Profile="(Default)">127.0.0.1</Value>

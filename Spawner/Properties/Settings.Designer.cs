@@ -25,7 +25,7 @@ namespace Spawner.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("E:\\Repositories\\MSF-DarkRiftServer\\Deploy\\DarkRift.Server.Console.exe")]
+        [global::System.Configuration.DefaultSettingValueAttribute("DarkRift.Server.Console.exe")]
         public string ExecutablePath {
             get {
                 return ((string)(this["ExecutablePath"]));
@@ -34,7 +34,7 @@ namespace Spawner.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("E:\\Repositories\\MSF-DarkRiftServer\\Deploy\\Spawner\\WorldServer.config")]
+        [global::System.Configuration.DefaultSettingValueAttribute("WorldServer.config")]
         public string ConfigPath {
             get {
                 return ((string)(this["ConfigPath"]));
