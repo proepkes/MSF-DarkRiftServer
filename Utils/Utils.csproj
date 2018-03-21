@@ -97,7 +97,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /d /y $(TargetDir)$(TargetName).dll E:\UnityProjects\Tundra\Assets\Game\ServerPlugins
-xcopy /d /y $(TargetDir)$(TargetName).pdb E:\UnityProjects\Tundra\Assets\Game\ServerPlugins</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>
