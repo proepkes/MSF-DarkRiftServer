@@ -21,7 +21,7 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="SpawnerIpAddress" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">127.0.0.1</Value>
+      <Value Profile="(Default)">0.0.0.0</Value>
     </Setting>
     <Setting Name="SpawnerStartPort" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">20000</Value>

@@ -79,7 +79,7 @@ namespace Spawner.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("127.0.0.1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0.0.0.0")]
         public string SpawnerIpAddress {
             get {
                 return ((string)(this["SpawnerIpAddress"]));
