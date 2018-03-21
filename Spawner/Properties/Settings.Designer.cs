@@ -25,10 +25,19 @@ namespace Spawner.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("E:\\UnityProjects\\DarkRiftServer\\DarkRift.Server.Console.exe")]
+        [global::System.Configuration.DefaultSettingValueAttribute("E:\\Repositories\\MSF-DarkRiftServer\\Deploy\\DarkRift.Server.Console.exe")]
         public string ExecutablePath {
             get {
                 return ((string)(this["ExecutablePath"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("E:\\Repositories\\MSF-DarkRiftServer\\Deploy\\Spawner\\WorldServer.config")]
+        public string ConfigPath {
+            get {
+                return ((string)(this["ConfigPath"]));
             }
         }
         
@@ -110,15 +119,6 @@ namespace Spawner.Properties {
         public bool CreateRoomWindow {
             get {
                 return ((bool)(this["CreateRoomWindow"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("E:\\UnityProjects\\DarkRiftServer\\RoomServer.config")]
-        public string ConfigPath {
-            get {
-                return ((string)(this["ConfigPath"]));
             }
         }
         
