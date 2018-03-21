@@ -16,7 +16,7 @@
 1. Set the values of "ExecutablePath" and "ConfigPath" in "Settings.settings" in the Project "Spawner" accordingly
 1. Build solution
 1. Replace the contents of "Server.config" with the contents of "MasterServerExample.config" and configure to your needs
-1. Run DarkRift.Server.Console.exe and then run Spawner/Spawner.exe
+1. Run DarkRift.Server.Console.exe and then run Spawner.exe
 
 ### Warning:
 
