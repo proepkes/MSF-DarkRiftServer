@@ -291,3 +291,7 @@ __pycache__/
 /Deploy/DarkRift.Server.dll
 /Deploy/DarkRift.dll
 /Deploy/DarkRift.Client.dll
+/Deploy/WorldPlugins.dll
+/Deploy/Utils.dll
+/Deploy/Spawner.exe.config
+/Deploy/Spawner.exe

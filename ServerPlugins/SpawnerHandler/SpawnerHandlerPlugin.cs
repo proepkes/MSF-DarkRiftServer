@@ -50,7 +50,6 @@ namespace ServerPlugins.SpawnerHandler
             ClientManager.ClientConnected += OnClientConnected;
             ClientManager.ClientDisconnected += OnClientDisconnected;
 
-            //Prevent amiguous-warning by passing a new action
             updateQueue = Task.Run(() =>
             {
                 while (keepUpdateQueueRunning)
