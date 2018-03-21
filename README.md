@@ -13,28 +13,14 @@
 
 ### Instructions:
 
-Make sure to edit PostBuild-Events of every containing project to fit your needs. By default, the builds are copied to "E:\UnityProjects\DarkRiftServer\Plugins". The build of "Utils"-project should be copied to the Unity-Assets, so you can access the MessageTags:
-1. Right-click on every project
-1. Select "Properties" (last entry in the context menu)
-1. Select "Build Events" (on the left)
-1. Edit the path of the xcopy-target
-
-For each project you have to set the correct dll-paths:
-1. Right-click on References
-1. Add-Reference...
-1. Browse to [Darkrift.dll, DarkRiftServer.dll, DarkRiftClient.dll] (depending on the project's usings)
-1. Cick "OK"
-
-Final steps:
-1. Right-click on solution
-1. Restore NuGet-Packages
+1. Place DarkRiftClient.dll, DarkRiftServer.dll and DarkRift.dll into the directory "Lib"
+1. Extract "DarkRift Server.rar" into the directory "Deploy"
+1. Open "TundraServerPlugins.sln" in Visual Studio
+1. Right-click on solution -> "Restore NuGet-Packages"
 1. Build solution
-1. If you set up the build-events correctly, all plugins & dependencies will be automatically copied to DarkRiftServer's Plugin-folder
-1. Import "CreateTable.sql" to a newly created MySQL-database.
-1. See "Example.config" in the root directory of this repository for plugin- and database-configuration.
-1. Setup finished, for a basic usage you can take a look at the project "TundraClient". The MonoBehaviourExample is an outcommented Unity-Monobehaviour ready to use in Unity.
-
-99% of the code is/will be ported from the really awesome (but no longer continued? :() Master-Server-Framework: https://github.com/alvyxaz/barebones-masterserver
+1. Replace the contents of "Server.config" with the contents of "MasterServerExample.config" and configure to your needs
+1. Open "Deploy/Spawner/Spawner.exe.config" and configure the "ExecutablePath"
+1. Run DarkRift.Server.Console.exe and then run Spawner/Spawner.exe
 
 ### Warning:
 
