@@ -7,19 +7,15 @@
 
 [![architecture](https://i.imgur.com/x4XIuvF.png)](https://i.imgur.com/x4XIuvF.png)
 
-### Current plugins & their dependencies
-
-[![Plugins](https://i.imgur.com/6rARE7u.png)](https://i.imgur.com/6rARE7u.png)
-
 ### Instructions:
 
 1. Place DarkRiftClient.dll, DarkRiftServer.dll and DarkRift.dll into the directory "Lib"
 1. Extract "DarkRift Server.rar" into the directory "Deploy"
 1. Open "TundraServerPlugins.sln" in Visual Studio
 1. Right-click on solution -> "Restore NuGet-Packages"
+1. Set the values of "ExecutablePath" and "ConfigPath" in "Settings.settings" in the Project "Spawner" accordingly
 1. Build solution
 1. Replace the contents of "Server.config" with the contents of "MasterServerExample.config" and configure to your needs
-1. Open "Deploy/Spawner/Spawner.exe.config" and configure the "ExecutablePath"
 1. Run DarkRift.Server.Console.exe and then run Spawner/Spawner.exe
 
 ### Warning:
