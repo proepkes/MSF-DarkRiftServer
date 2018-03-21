@@ -10,7 +10,7 @@ using Utils.Messages.Responses;
 using Utils.Packets;
 using MessageReceivedEventArgs = DarkRift.Client.MessageReceivedEventArgs;
 
-namespace SpawnerPlugins.Room
+namespace WorldPlugins.Room
 {
     public delegate void RoomAccessProviderCallback(RoomAccessPacket access, string error);
     public delegate void RoomAccessProvider(UsernameAndPeerIdPacket requester, RoomAccessProviderCallback giveAccess);
