@@ -28,6 +28,8 @@ namespace ServerPlugins.SpawnerHandler
         private readonly List<SpawnTask> _spawnTasks;
         private int _nextSpawnerId;
         private int _nextSpawnTaskId;
+        private Task updateQueue;
+        private bool keepUpdateQueueRunning = true;
 
         public override Version Version => new Version(1, 0, 0);
         public override bool ThreadSafe => true;
@@ -49,9 +51,9 @@ namespace ServerPlugins.SpawnerHandler
             ClientManager.ClientDisconnected += OnClientDisconnected;
 
             //Prevent amiguous-warning by passing a new action
-            Task.Run(() => new Action(() =>
+            updateQueue = Task.Run(() =>
             {
-                while (true)
+                while (keepUpdateQueueRunning)
                 {
                     Thread.Sleep(QueueUpdateFrequency);
 
@@ -68,7 +70,7 @@ namespace ServerPlugins.SpawnerHandler
                         });
                     }
                 }
-            }));
+            });
         }
 
         private void OnClientMessageReceived(object sender, MessageReceivedEventArgs e)
@@ -238,6 +240,7 @@ namespace ServerPlugins.SpawnerHandler
 
         private void HandleClientsSpawnRequest(IClient client, Message message)
         {
+            WriteEvent("New spawn request from Client received", LogType.Info);
             var data = message.Deserialize<SpawnFromClientToMasterMessage>();
             if (data != null)
             {
@@ -266,7 +269,7 @@ namespace ServerPlugins.SpawnerHandler
                         SendMode.Reliable);
                     return;
                 }
-
+                WriteEvent("New spawn task created", LogType.Info);
                 // Get the spawn task
                 var task = Spawn(data.Region, data.WorldName, data.RoomName, data.MaxPlayers, data.IsPublic);
 
@@ -413,6 +416,17 @@ namespace ServerPlugins.SpawnerHandler
         {
             //TODO: Setting: Only allow logged in clients to request a spawn & check here
             return EnableClientSpawnRequests;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            WriteEvent("Waiting for all tasks to finish...", LogType.Info);
+            if (disposing)
+            {
+                keepUpdateQueueRunning = false;
+                Task.WaitAll(updateQueue);
+            }
+            base.Dispose(disposing);
         }
     }
 }
