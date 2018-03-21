@@ -18,6 +18,17 @@
 1. Replace the contents of "Server.config" with the contents of "MasterServerExample.config" and configure accordingly
 1. Run DarkRift.Server.Console.exe and then run Spawner.exe
 
+### FAQ:
+
+Deploying on Linux results in "System.ArgumentException: An item with the same key has already been added":
+ - Delete DarkRiftServer.dll  from Plugins/ and WorldPlugins/
+
+### Resources:
+
+https://darkriftnetworking.com/
+
+https://github.com/alvyxaz/barebones-masterserver
+
 ### Warning:
 
 Even though this project is programmed with great care, I take no responsibility for any (security) issues. It's still in the very early development and there will be breaking changes every now and then. This project will be field-tested by my other projects.
