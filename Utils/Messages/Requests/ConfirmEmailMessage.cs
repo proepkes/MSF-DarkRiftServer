@@ -7,13 +7,13 @@ namespace Utils.Messages.Requests
     {
         public string Code;
 
-        public void Deserialize(DeserializeEvent e)
+        public override void Deserialize(DeserializeEvent e)
         {
             base.Deserialize(e);
             Code = e.Reader.ReadString(Encoding.Unicode);
         }
 
-        public void Serialize(SerializeEvent e)
+        public override void Serialize(SerializeEvent e)
         {
             base.Serialize(e);
             e.Writer.Write(Code, Encoding.Unicode);

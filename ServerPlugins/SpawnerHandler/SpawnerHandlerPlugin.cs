@@ -48,26 +48,27 @@ namespace ServerPlugins.SpawnerHandler
             ClientManager.ClientConnected += OnClientConnected;
             ClientManager.ClientDisconnected += OnClientDisconnected;
 
-            Task.Run(() =>
+            //Prevent amiguous-warning by passing a new action
+            Task.Run(() => new Action(() =>
             {
                 while (true)
                 {
                     Thread.Sleep(QueueUpdateFrequency);
 
                     foreach (var spawner in _registeredSpawners)
-                        try
+                    try
+                    {
+                        spawner.UpdateQueue();
+                    }
+                    catch (Exception e)
+                    {
+                        Dispatcher.InvokeWait(() =>
                         {
-                            spawner.UpdateQueue();
-                        }
-                        catch (Exception e)
-                        {
-                            Dispatcher.InvokeWait(() =>
-                            {
-                                WriteEvent("Failed to update spawnerqueue", LogType.Error, e);
-                            });
-                        }
+                            WriteEvent("Failed to update spawnerqueue", LogType.Error, e);
+                        });
+                    }
                 }
-            });
+            }));
         }
 
         private void OnClientMessageReceived(object sender, MessageReceivedEventArgs e)

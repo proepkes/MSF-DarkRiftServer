@@ -9,8 +9,7 @@ namespace ServerPlugins.RoomHandler
 {
     public class RoomHandlerPlugin : Plugin
     {
-        private int _nextRoomID = 0;
-        private int _roomIdGenerator;
+        private int _nextRoomID;
         private List<RegisteredRoom> Rooms;
 
         public override Version Version => new Version(1, 0, 0);
@@ -92,7 +91,7 @@ namespace ServerPlugins.RoomHandler
 
         private int GenerateRoomId()
         {
-            return _roomIdGenerator++;
+            return _nextRoomID++;
         }
     }
 }
