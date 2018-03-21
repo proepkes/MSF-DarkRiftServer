@@ -1,0 +1,6 @@
+Files:
+
+Lib/
+DarkRift.Server.Console.exe
+DarkRift.Server.Console.exe.config
+Server.config
