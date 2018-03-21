@@ -33,11 +33,9 @@
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DarkRift">
-      <HintPath>..\Lib\DarkRift.dll</HintPath>
-    </Reference>
-    <Reference Include="DarkRift.Server">
-      <HintPath>..\Lib\DarkRift.Server.dll</HintPath>
+    <Reference Include="DarkRift, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Deploy\DarkRift.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

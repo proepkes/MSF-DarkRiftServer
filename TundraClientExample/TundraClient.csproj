@@ -33,12 +33,6 @@
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DarkRift">
-      <HintPath>..\Lib\DarkRift.dll</HintPath>
-    </Reference>
-    <Reference Include="DarkRift.Client">
-      <HintPath>..\Lib\DarkRift.Client.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />

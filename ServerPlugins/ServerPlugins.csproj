@@ -30,11 +30,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DarkRift">
-      <HintPath>..\Lib\DarkRift.dll</HintPath>
+    <Reference Include="DarkRift, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Deploy\DarkRift.dll</HintPath>
     </Reference>
-    <Reference Include="DarkRift.Server">
-      <HintPath>..\Lib\DarkRift.Server.dll</HintPath>
+    <Reference Include="DarkRift.Server, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Deploy\DarkRift.Server.dll</HintPath>
     </Reference>
     <Reference Include="MySql.Data, Version=6.9.8.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <HintPath>..\packages\MySql.Data.6.9.8\lib\net20\MySql.Data.dll</HintPath>

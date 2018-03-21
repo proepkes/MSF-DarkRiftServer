@@ -34,11 +34,13 @@
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DarkRift">
-      <HintPath>..\Lib\DarkRift.dll</HintPath>
+    <Reference Include="DarkRift, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Deploy\DarkRift.dll</HintPath>
     </Reference>
-    <Reference Include="DarkRift.Client">
-      <HintPath>..\Lib\DarkRift.Client.dll</HintPath>
+    <Reference Include="DarkRift.Client, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Deploy\DarkRift.Client.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
