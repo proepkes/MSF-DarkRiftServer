@@ -295,3 +295,4 @@ __pycache__/
 /Deploy/Utils.dll
 /Deploy/Spawner.exe.config
 /Deploy/Spawner.exe
+/Deploy/WorldData/Plugins.xml
