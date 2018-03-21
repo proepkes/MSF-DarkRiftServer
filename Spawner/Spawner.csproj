@@ -78,6 +78,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /d /y  $(ProjectDir)bin\$(ConfigurationName) $(SolutionDir)\Deploy\</PostBuildEvent>
+    <PostBuildEvent>xcopy /d /y  $(TargetDir)$(TargetName).exe $(SolutionDir)\Deploy\
+xcopy /d /y  $(TargetDir)$(TargetName).pdb $(SolutionDir)\Deploy\
+xcopy /d /y  $(TargetDir)$(TargetName).exe.config $(SolutionDir)\Deploy\</PostBuildEvent>
   </PropertyGroup>
 </Project>
