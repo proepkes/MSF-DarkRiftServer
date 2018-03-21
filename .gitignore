@@ -278,7 +278,6 @@ __pycache__/
 /Lib/DarkRift.Client.dll
 /Deploy/Lib
 /Deploy/WorldServer.config
-/Deploy/Spawner/WorldServer.config
 /Deploy/Spawner/WorldPlugins
 /Deploy/Spawner/WorldData
 /Deploy/Spawner/Utils.dll
@@ -287,3 +286,5 @@ __pycache__/
 /Deploy/Spawner/Logs/21-3-2018
 /Deploy/Spawner/DarkRift.dll
 /Deploy/Spawner/DarkRift.Client.dll
+/Deploy/Spawner/DarkRift.Server.dll
+/Deploy/Spawner/WorldPlugins.dll
