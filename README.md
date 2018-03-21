@@ -7,10 +7,6 @@
 
 [![architecture](https://i.imgur.com/x4XIuvF.png)](https://i.imgur.com/x4XIuvF.png)
 
-### Current plugins & their dependencies
-
-[![Plugins](https://i.imgur.com/6rARE7u.png)](https://i.imgur.com/6rARE7u.png)
-
 ### Instructions:
 
 1. Place DarkRiftClient.dll, DarkRiftServer.dll and DarkRift.dll into the directory "Lib"
