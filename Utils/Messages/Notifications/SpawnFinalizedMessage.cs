@@ -1,6 +1,6 @@
 ﻿using DarkRift;
 
-namespace SpawnerLib.Packets
+namespace Utils.Messages.Notifications
 {
     public class SpawnFinalizedMessage : IDarkRiftSerializable
     {

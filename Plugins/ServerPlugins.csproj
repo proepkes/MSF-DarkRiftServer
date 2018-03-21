@@ -4,15 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{733A5630-DEE5-4AC2-8445-7886D853A349}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>Spawner</RootNamespace>
-    <AssemblyName>Spawner</AssemblyName>
+    <ProjectGuid>{3F3234EE-ED0E-44E3-8024-05CC293F568E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ServerPlugins</RootNamespace>
+    <AssemblyName>ServerPlugins</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,7 +22,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -30,53 +29,53 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="DarkRift">
       <HintPath>..\Lib\DarkRift.dll</HintPath>
     </Reference>
-    <Reference Include="DarkRift.Client">
-      <HintPath>..\Lib\DarkRift.Client.dll</HintPath>
+    <Reference Include="DarkRift.Server">
+      <HintPath>..\Lib\DarkRift.Server.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data, Version=6.9.8.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.6.9.8\lib\net20\MySql.Data.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Threading.Tasks.NET35, Version=3.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Unofficial.3.1\lib\net35\System.Threading.Tasks.NET35.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
-    <Compile Include="SpawnerClient.cs" />
+    <Compile Include="Authentication\AuthenticationPlugin.cs" />
+    <Compile Include="Authentication\EncryptionData.cs" />
+    <Compile Include="Database\MySQLPlugin.cs" />
+    <Compile Include="Database\PasswordResetData.cs" />
+    <Compile Include="Database\SqlAccountData.cs" />
+    <Compile Include="Mail\MailPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SpawnerOptions.cs" />
+    <Compile Include="RoomHandler\RegisteredRoom.cs" />
+    <Compile Include="RoomHandler\RoomHandlerPlugin.cs" />
+    <Compile Include="SpawnerHandler\RegisteredSpawner.cs" />
+    <Compile Include="SpawnerHandler\SpawnerHandlerPlugin.cs" />
+    <Compile Include="SpawnerHandler\SpawnTask.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SpawnerPlugins\WorldPlugins.csproj">
-      <Project>{0b21ae26-0add-45fe-a1be-0ea6541642e3}</Project>
-      <Name>WorldPlugins</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Utils\Utils.csproj">
       <Project>{73957A5C-7298-4BD7-97A7-6E572B50D155}</Project>
       <Name>Utils</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /d /y  $(ProjectDir)bin\$(ConfigurationName) $(SolutionDir)\Deploy\Spawner\
+    <PostBuildEvent>xcopy /d /y  $(ProjectDir)bin\$(ConfigurationName) $(SolutionDir)\Deploy\Plugins\
 </PostBuildEvent>
   </PropertyGroup>
 </Project>

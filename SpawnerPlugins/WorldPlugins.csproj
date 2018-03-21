@@ -4,15 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{733A5630-DEE5-4AC2-8445-7886D853A349}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>Spawner</RootNamespace>
-    <AssemblyName>Spawner</AssemblyName>
+    <ProjectGuid>{0B21AE26-0ADD-45FE-A1BE-0EA6541642E3}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>WorldPlugins</RootNamespace>
+    <AssemblyName>WorldPlugins</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,7 +22,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -30,15 +29,15 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="DarkRift">
       <HintPath>..\Lib\DarkRift.dll</HintPath>
     </Reference>
     <Reference Include="DarkRift.Client">
       <HintPath>..\Lib\DarkRift.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="DarkRift.Server">
+      <HintPath>..\Lib\DarkRift.Server.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -48,27 +47,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
-    <Compile Include="SpawnerClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SpawnerOptions.cs" />
+    <Compile Include="Room\RoomPlugin.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SpawnerPlugins\WorldPlugins.csproj">
-      <Project>{0b21ae26-0add-45fe-a1be-0ea6541642e3}</Project>
-      <Name>WorldPlugins</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Utils\Utils.csproj">
       <Project>{73957A5C-7298-4BD7-97A7-6E572B50D155}</Project>
       <Name>Utils</Name>
@@ -76,7 +58,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /d /y  $(ProjectDir)bin\$(ConfigurationName) $(SolutionDir)\Deploy\Spawner\
+    <PostBuildEvent>xcopy /d /y  $(ProjectDir)bin\$(ConfigurationName) $(SolutionDir)\Deploy\WorldPlugins\
 </PostBuildEvent>
   </PropertyGroup>
 </Project>

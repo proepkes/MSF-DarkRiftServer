@@ -6,12 +6,12 @@ using System.Threading;
 using DarkRift;
 using DarkRift.Client;
 using Spawner.Properties;
-using SpawnerLib;
-using SpawnerLib.Packets;
 using Utils;
+using Utils.Messages;
 using Utils.Messages.Notifications;
 using Utils.Messages.Requests;
 using Utils.Messages.Responses;
+using Utils.Packets;
 
 namespace Spawner
 {

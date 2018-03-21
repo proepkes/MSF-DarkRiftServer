@@ -1,6 +1,6 @@
 ﻿using DarkRift;
 
-namespace SpawnerLib.Packets
+namespace Utils.Packets
 {
     public class KillSpawnedProcessPacket : IDarkRiftSerializable
     {
