@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using DarkRift.Client;
+using DarkRift.Server;
 using Urho;
 using Urho.Actions;
 using Urho.Gui;
@@ -7,19 +9,24 @@ using Urho.Shapes;
 
 namespace WorldEngine
 {
-    public class Game : Application
+    public class GameRoom : Application
     {
-        private uint _nextEntityId = 0;
+        private readonly DarkRiftClient _client;
+        private readonly Action _setupFinishedCallback;
         Node cameraNode;
         Node earthNode;
         Node rootNode;
-        Scene scene;
+        Scene _scene;
         float yaw, pitch;
 
         [Preserve]
-        public Game(ApplicationOptions options) : base(options) { }
+        public GameRoom(ApplicationOptions options, DarkRiftClient client, Action setupFinishedCallback) : base(options)
+        {
+            _client = client;
+            _setupFinishedCallback = setupFinishedCallback;
+        }
 
-        static Game()
+        static GameRoom()
         {
             UnhandledException += (s, e) =>
             {
@@ -33,6 +40,7 @@ namespace WorldEngine
         {
             base.Setup();
             Engine.MaxFps = 30; //Tickrate
+            _setupFinishedCallback.Invoke();
         }
 
         protected override async void Start()
@@ -49,11 +57,11 @@ namespace WorldEngine
             UI.Root.AddChild(helloText);
 
             // 3D scene with Octree
-            scene = new Scene(Context);
-            scene.CreateComponent<Octree>();
+            _scene = new Scene(Context);
+            _scene.CreateComponent<Octree>();
 
             // Create a node for the Earth
-            rootNode = scene.CreateChild();
+            rootNode = _scene.CreateChild();
             rootNode.Position = new Vector3(0, 0, 0);
             earthNode = rootNode.CreateChild();
             earthNode.SetScale(5f);
@@ -80,7 +88,7 @@ namespace WorldEngine
             clouds.SetMaterial(cloudsMaterial);
 
             // Light
-            Node lightNode = scene.CreateChild();
+            Node lightNode = _scene.CreateChild();
             var light = lightNode.CreateComponent<Light>();
             light.LightType = LightType.Directional;
             light.Range = 20;
@@ -88,11 +96,11 @@ namespace WorldEngine
             lightNode.SetDirection(new Vector3(1f, -0.25f, 1.0f));
 
             // Camera
-            cameraNode = scene.CreateChild();
+            cameraNode = _scene.CreateChild();
             var camera = cameraNode.CreateComponent<Camera>();
 
             // Viewport
-            var viewport = new Viewport(Context, scene, camera, null);
+            var viewport = new Viewport(Context, _scene, camera, null);
             Renderer.SetViewport(0, viewport);
             //viewport.RenderPath.Append(CoreAssets.PostProcess.FXAA2);
 
@@ -101,7 +109,7 @@ namespace WorldEngine
             new MonoDebugHud(this).Show(Color.Green, 25);
 
             // Stars (Skybox)
-            var skyboxNode = scene.CreateChild();
+            var skyboxNode = _scene.CreateChild();
             var skybox = skyboxNode.CreateComponent<Skybox>();
             skybox.Model = CoreAssets.Models.Box;
             skybox.SetMaterial(Material.SkyboxFromImage("Textures/Space.png"));
@@ -177,11 +185,11 @@ namespace WorldEngine
             cameraNode.Rotation = new Quaternion(pitch, yaw, 0);
         }
 
-        public void AddEntity(TundraNetEntity entity)
+        public void AddEntity(IClient client)
         {
-            var child = scene.CreateChild(_nextEntityId++, CreateMode.Local);
-            System.Console.WriteLine(child.ID);
-            //child.ID;
+            var child = _scene.CreateChild();
+            var entity = child.CreateComponent<TundraNetEntity>();
+            entity.Client = client;
         }
     }
 }

@@ -5,11 +5,13 @@ using System.Reflection;
 using DarkRift;
 using DarkRift.Client;
 using DarkRift.Server;
+using Urho;
 using Utils;
 using Utils.Messages.Notifications;
 using Utils.Messages.Requests;
 using Utils.Messages.Responses;
 using Utils.Packets;
+using WorldEngine;
 using MessageReceivedEventArgs = DarkRift.Client.MessageReceivedEventArgs;
 
 namespace WorldPlugins.Room
@@ -28,6 +30,7 @@ namespace WorldPlugins.Room
         private readonly string SpawnCode;
         // ReSharper restore InconsistentNaming
 
+        private GameRoom gameRoom;
         private readonly DarkRiftClient _client;
 
         public override Version Version => new Version(1, 0, 0);
@@ -65,15 +68,19 @@ namespace WorldPlugins.Room
             WorldName = pluginLoadData.Settings.Get(nameof(WorldName));
             RoomName = pluginLoadData.Settings.Get(nameof(RoomName));
 
-            
-
+            ClientManager.ClientConnected += OnPlayerConnected;
             _client = new DarkRiftClient();
+        }
+
+        private void OnPlayerConnected(object sender, ClientConnectedEventArgs e)
+        {
+            WriteEvent("New player connected", LogType.Info);
+            gameRoom.AddEntity(e.Client);
         }
 
         protected override void Loaded(LoadedEventArgs args)
         {
             base.Loaded(args);
-            WriteEvent("Loaded from " + AssemblyDirectory, LogType.Info);
             WriteEvent("Connecting to " + MasterIpAddress + ":" + MasterPort, LogType.Info);
             _client.ConnectInBackground(MasterIpAddress, MasterPort, IPVersion.IPv4, OnConnectedToMaster);
         }
@@ -105,7 +112,7 @@ namespace WorldPlugins.Room
                         WriteEvent("Failed to register room", LogType.Warning);
                         break;
                     case MessageTags.CompleteSpawnProcessSuccess:
-                        WriteEvent("We've registered this process to the master. Starting room... Room " + RoomName + " in World " + WorldName + " is ready for Players.", LogType.Info);
+                        WriteEvent("Starting room... Room " + RoomName + " in World " + WorldName + " is ready for Players.", LogType.Info);
                         break;
                     case MessageTags.CompleteSpawnProcessFailed:
                         WriteEvent("Failed to complete the spawn", LogType.Info);
@@ -138,19 +145,22 @@ namespace WorldPlugins.Room
         {
             WriteEvent("We've registered this process to the master. Starting room...", LogType.Info);
 
-            
-            
-            // 1. Create options object
-            var options = new RoomOptions
+            gameRoom = new GameRoom(new ApplicationOptions("MyData"), _client, () =>
             {
-                RoomName = RoomName,
-                WorldName = WorldName,
-                MaxPlayers = MaxPlayers,
-                IsPublic = IsPublic
-            };
+                // 1. Create options object
+                var options = new RoomOptions
+                {
+                    RoomName = RoomName,
+                    WorldName = WorldName,
+                    MaxPlayers = MaxPlayers,
+                    IsPublic = IsPublic
+                };
 
-            // 2. Send a request to create a room
-            _client.SendMessage(Message.Create(MessageTags.RegisterRoom, options), SendMode.Reliable);
+                // 2. Send a request to create a room
+                _client.SendMessage(Message.Create(MessageTags.RegisterRoom, options), SendMode.Reliable);
+
+            });
+            gameRoom.Run();
         }
 
         private void GameOnResumed()

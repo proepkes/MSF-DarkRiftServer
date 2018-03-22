@@ -58,7 +58,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Engine\Game.cs" />
+    <Compile Include="Engine\GameRoom.cs" />
     <Compile Include="Engine\TundraNetEntity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Room\RoomPlugin.cs" />
