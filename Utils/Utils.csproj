@@ -96,8 +96,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
+   <PropertyGroup>
+    <PostBuildEvent>xcopy /d /y $(TargetDir)$(TargetName).dll $(SolutionDir)\Deploy\
+xcopy /d /y  $(TargetDir)$(TargetName).pdb $(SolutionDir)\Deploy\</PostBuildEvent>
+</PropertyGroup>
 </Project>
