@@ -40,16 +40,6 @@ namespace WorldPlugins.Room
         public string WorldName { get; set; }
         public string RoomName { get; set; }
         public bool IsRoomRegistered { get; protected set; }
-        public static string AssemblyDirectory
-        {
-            get
-            {
-                string codeBase = Assembly.GetExecutingAssembly().CodeBase;
-                UriBuilder uri = new UriBuilder(codeBase);
-                string path = Uri.UnescapeDataString(uri.Path);
-                return Path.GetDirectoryName(path);
-            }
-        }
 
         private RoomAccessProvider _accessProvider;
 
@@ -73,7 +63,6 @@ namespace WorldPlugins.Room
         protected override void Loaded(LoadedEventArgs args)
         {
             base.Loaded(args);
-            WriteEvent("Loaded from " + AssemblyDirectory, LogType.Info);
             WriteEvent("Connecting to " + MasterIpAddress + ":" + MasterPort, LogType.Info);
             _client.ConnectInBackground(MasterIpAddress, MasterPort, IPVersion.IPv4, OnConnectedToMaster);
         }
