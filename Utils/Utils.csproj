@@ -33,9 +33,8 @@
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DarkRift, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Deploy\DarkRift.dll</HintPath>
+    <Reference Include="DarkRift">
+      <HintPath>..\Deploy\Lib\DarkRift.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -96,8 +95,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-   <PropertyGroup>
-    <PostBuildEvent>xcopy /d /y $(TargetDir)$(TargetName).dll $(SolutionDir)\Deploy\
-xcopy /d /y  $(TargetDir)$(TargetName).pdb $(SolutionDir)\Deploy\</PostBuildEvent>
-</PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
 </Project>

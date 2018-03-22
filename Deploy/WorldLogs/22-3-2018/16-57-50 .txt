@@ -1,6 +1,0 @@
-[Trace]   DarkRiftServer        System Details:
-                                	OS: Microsoft Windows NT 6.2.9200.0
-                                	CLS Version: 4.0.30319.42000
-                                	DarkRift: 2.0.0.0 - Pro
-[Trace]   NetworkListener       Starting standard listener.
-[Info]    DarkRiftServer        Server mounted, listening on port 20000.

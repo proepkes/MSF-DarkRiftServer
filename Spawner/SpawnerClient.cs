@@ -125,7 +125,7 @@ namespace Spawner
                         break;
                     //FIXME: ONLY FOR TESTING; SPAWNS ARE REQUESTED BY CLIENTS AND NOT THE SPAWNER ITSELF
                     case MessageTags.RequestSpawnFromClientToMasterSuccess:
-                        Console.WriteLine("Room will be spawned!");
+                        Console.WriteLine("MasterServer has created a task!");
                         break;
                     case MessageTags.RequestSpawnFromClientToMasterFailed:
                         Console.WriteLine("Spawning room failed: " +
@@ -147,7 +147,7 @@ namespace Spawner
                     CreateNoWindow = !CreateRoomWindow,
                     UseShellExecute = UseShellExecute,
                     Arguments = (UseMono ? 
-                        System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "/" + ExecutablePath + " " 
+                        Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "/" + ExecutablePath + " " 
                         : "") +
                         $"\"{ConfigPath}\" " +
                                 $"{ArgNames.MasterIpAddress}={MasterIpAddress} " +
@@ -161,7 +161,7 @@ namespace Spawner
                                 $"{ArgNames.MaxPlayers}={data.MaxPlayers} " +
                                 $"{ArgNames.IsPublic}={data.IsPublic} "
                 };
-
+                Console.WriteLine("WorkingDir:" + startProcessInfo.WorkingDirectory);
                 var processStarted = false;
                 try
                 {
