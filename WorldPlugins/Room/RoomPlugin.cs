@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Net;
+using System.Reflection;
 using DarkRift;
 using DarkRift.Client;
 using DarkRift.Server;
@@ -38,6 +40,16 @@ namespace WorldPlugins.Room
         public string WorldName { get; set; }
         public string RoomName { get; set; }
         public bool IsRoomRegistered { get; protected set; }
+        public static string AssemblyDirectory
+        {
+            get
+            {
+                string codeBase = Assembly.GetExecutingAssembly().CodeBase;
+                UriBuilder uri = new UriBuilder(codeBase);
+                string path = Uri.UnescapeDataString(uri.Path);
+                return Path.GetDirectoryName(path);
+            }
+        }
 
         private RoomAccessProvider _accessProvider;
 
@@ -53,12 +65,15 @@ namespace WorldPlugins.Room
             WorldName = pluginLoadData.Settings.Get(nameof(WorldName));
             RoomName = pluginLoadData.Settings.Get(nameof(RoomName));
 
+            
+
             _client = new DarkRiftClient();
         }
 
         protected override void Loaded(LoadedEventArgs args)
         {
             base.Loaded(args);
+            WriteEvent("Loaded from " + AssemblyDirectory, LogType.Info);
             WriteEvent("Connecting to " + MasterIpAddress + ":" + MasterPort, LogType.Info);
             _client.ConnectInBackground(MasterIpAddress, MasterPort, IPVersion.IPv4, OnConnectedToMaster);
         }
@@ -90,7 +105,7 @@ namespace WorldPlugins.Room
                         WriteEvent("Failed to register room", LogType.Warning);
                         break;
                     case MessageTags.CompleteSpawnProcessSuccess:
-                        WriteEvent("Room " + RoomName + " in World " + WorldName + " is ready for Players.", LogType.Info);
+                        WriteEvent("We've registered this process to the master. Starting room... Room " + RoomName + " in World " + WorldName + " is ready for Players.", LogType.Info);
                         break;
                     case MessageTags.CompleteSpawnProcessFailed:
                         WriteEvent("Failed to complete the spawn", LogType.Info);
@@ -121,7 +136,10 @@ namespace WorldPlugins.Room
 
         private void HandleRegisterSpawnedProcessSuccess(Message message)
         {
-            //TODO: At this point the master knows of the spawned process, now register a room for this process. In future versions, the room registration will be the same as process registration, because this process is the server itself and we dont need a "UnetServerStarter", but right now we apply the default MSF-workflow
+            WriteEvent("We've registered this process to the master. Starting room...", LogType.Info);
+
+            
+            
             // 1. Create options object
             var options = new RoomOptions
             {
@@ -134,6 +152,12 @@ namespace WorldPlugins.Room
             // 2. Send a request to create a room
             _client.SendMessage(Message.Create(MessageTags.RegisterRoom, options), SendMode.Reliable);
         }
+
+        private void GameOnResumed()
+        {
+            WriteEvent("GameOnResumed", LogType.Info);
+        }
+
 
         public virtual void CreateAccess(UsernameAndPeerIdPacket requester, RoomAccessProviderCallback callback)
         {

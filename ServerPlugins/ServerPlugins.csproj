@@ -33,10 +33,12 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DarkRift">
+    <Reference Include="DarkRift, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Deploy\Lib\DarkRift.dll</HintPath>
     </Reference>
-    <Reference Include="DarkRift.Server">
+    <Reference Include="DarkRift.Server, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Deploy\Lib\DarkRift.Server.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
