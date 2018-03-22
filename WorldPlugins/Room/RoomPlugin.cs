@@ -43,16 +43,6 @@ namespace WorldPlugins.Room
         public string WorldName { get; set; }
         public string RoomName { get; set; }
         public bool IsRoomRegistered { get; protected set; }
-        public static string AssemblyDirectory
-        {
-            get
-            {
-                string codeBase = Assembly.GetExecutingAssembly().CodeBase;
-                UriBuilder uri = new UriBuilder(codeBase);
-                string path = Uri.UnescapeDataString(uri.Path);
-                return Path.GetDirectoryName(path);
-            }
-        }
 
         private RoomAccessProvider _accessProvider;
 
@@ -70,6 +60,12 @@ namespace WorldPlugins.Room
 
             ClientManager.ClientConnected += OnPlayerConnected;
             _client = new DarkRiftClient();
+            _client.Disconnected += OnDisconnectedFromMaster;
+        }
+
+        private void OnDisconnectedFromMaster(object sender, DisconnectedEventArgs disconnectedEventArgs)
+        {
+            WriteEvent("Disconnected from Master!", LogType.Info);
         }
 
         private void OnPlayerConnected(object sender, ClientConnectedEventArgs e)
@@ -143,7 +139,7 @@ namespace WorldPlugins.Room
 
         private void HandleRegisterSpawnedProcessSuccess(Message message)
         {
-            WriteEvent("We've registered this process to the master. Starting room...", LogType.Info);
+            WriteEvent("Starting room...", LogType.Info);
 
             gameRoom = new GameRoom(new ApplicationOptions("MyData"), _client, () =>
             {
@@ -161,11 +157,6 @@ namespace WorldPlugins.Room
 
             });
             gameRoom.Run();
-        }
-
-        private void GameOnResumed()
-        {
-            WriteEvent("GameOnResumed", LogType.Info);
         }
 
 

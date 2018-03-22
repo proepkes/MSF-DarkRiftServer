@@ -22,14 +22,14 @@ namespace ServerPlugins.RoomHandler
 
         public RoomOptions Options { get; private set; }
         public int ID { get; }
-        public IClient Peer { get; }
+        public IClient Client { get; }
 
         public int OnlineCount => _accessesInUse.Count;
 
-        public RegisteredRoom(int id, IClient peer, RoomOptions options)
+        public RegisteredRoom(int id, IClient client, RoomOptions options)
         {
             ID = id;
-            Peer = peer;
+            Client = client;
             Options = options;
 
             _unconfirmedAccesses = new Dictionary<string, RoomAccessData>();
@@ -188,9 +188,6 @@ namespace ServerPlugins.RoomHandler
 
         public void Destroy()
         {
-            if (Destroyed != null)
-                Destroyed.Invoke(this);
-
             _unconfirmedAccesses.Clear();
 
             // Clear listeners

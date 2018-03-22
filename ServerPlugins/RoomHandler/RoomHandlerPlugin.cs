@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using DarkRift;
 using DarkRift.Server;
 using Utils;
@@ -10,15 +12,30 @@ namespace ServerPlugins.RoomHandler
     public class RoomHandlerPlugin : Plugin
     {
         private int _nextRoomID;
-        private List<RegisteredRoom> Rooms;
+        private readonly List<RegisteredRoom> _rooms;
 
         public override Version Version => new Version(1, 0, 0);
         public override bool ThreadSafe => true;
 
         public RoomHandlerPlugin(PluginLoadData pluginLoadData) : base(pluginLoadData)
         {
-            Rooms = new List<RegisteredRoom>();
-            ClientManager.ClientConnected +=OnClientConnected;
+            _rooms = new List<RegisteredRoom>();
+            ClientManager.ClientConnected += OnClientConnected;
+            ClientManager.ClientDisconnected += OnClientDisconnected;
+        }
+
+        private void OnClientDisconnected(object sender, ClientDisconnectedEventArgs e)
+        {
+            lock (_rooms)
+            {
+                foreach (var room in _rooms.Where(registeredRoom => registeredRoom.Client.ID == e.Client.ID))
+                {
+                    room.Destroy();
+                }
+                // Remove the room from all rooms
+                _rooms.RemoveAll(room => room.Client.ID == e.Client.ID);
+            }
+
         }
 
         private void OnClientConnected(object sender, ClientConnectedEventArgs e)
@@ -83,15 +100,19 @@ namespace ServerPlugins.RoomHandler
             // Create the object
             var room = new RegisteredRoom(GenerateRoomId(), client, options);
 
+            
             // Add the room to a list of all rooms
-            Rooms.Add(room);
+            lock (_rooms)
+            {
+                _rooms.Add(room);
+            }
             
             return room;
         }
 
         private int GenerateRoomId()
         {
-            return _nextRoomID++;
+            return Interlocked.Increment(ref _nextRoomID);
         }
     }
 }
