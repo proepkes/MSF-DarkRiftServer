@@ -277,4 +277,5 @@ __pycache__/
 /Deploy/Spawner.exe.config
 /Deploy/Spawner.exe
 /Deploy/WorldData
+/Deploy/WorldLogs
 /ServerPlugins/docs
