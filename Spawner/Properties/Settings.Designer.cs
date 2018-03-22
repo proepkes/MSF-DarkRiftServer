@@ -34,7 +34,7 @@ namespace Spawner.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("E:\\Repositories\\MSF-DarkRiftServer\\Deploy\\WorldServer.config")]
+        [global::System.Configuration.DefaultSettingValueAttribute("WorldServer.config")]
         public string ConfigPath {
             get {
                 return ((string)(this["ConfigPath"]));
