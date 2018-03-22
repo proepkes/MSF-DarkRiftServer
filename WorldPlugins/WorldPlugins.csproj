@@ -110,7 +110,6 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy /d /y  $(ProjectDir)bin\$(ConfigurationName) $(SolutionDir)\Deploy\Plugins\
-
 </PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\UrhoSharp.1.8.93\build\net45\UrhoSharp.targets" Condition="Exists('..\packages\UrhoSharp.1.8.93\build\net45\UrhoSharp.targets')" />

@@ -10,7 +10,7 @@
 ### Instructions:
 
 1. Extract "DarkRift Server.rar" into the directory "Deploy"
-1. Copy DarkRiftClient.dll, DarkRiftServer.dll and DarkRift.dll into the directory "Deploy"
+1. Copy DarkRiftClient.dll into the directory "Deploy/Lib"
 1. Open "TundraServerPlugins.sln" in Visual Studio
 1. Right-click on solution -> "Restore NuGet-Packages"
 1. Check whether the settings in "Settings.settings" in the Project "Spawner" fit your needs
@@ -21,8 +21,8 @@
 ### FAQ:
 
 Deploying on Linux results in "System.ArgumentException: An item with the same key has already been added":
- - Delete DarkRiftServer.dll  from Plugins/ and WorldPlugins/
-
+ - Delete DarkRiftServer.dll from Plugins/
+ 
 ### Resources:
 
 https://darkriftnetworking.com/
