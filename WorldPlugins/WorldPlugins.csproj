@@ -33,17 +33,15 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DarkRift, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Deploy\DarkRift.dll</HintPath>
+    <Reference Include="DarkRift">
+      <HintPath>..\Deploy\Lib\DarkRift.dll</HintPath>
     </Reference>
     <Reference Include="DarkRift.Client, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Deploy\DarkRift.Client.dll</HintPath>
+      <HintPath>..\Deploy\Lib\DarkRift.Client.dll</HintPath>
     </Reference>
-    <Reference Include="DarkRift.Server, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Deploy\DarkRift.Server.dll</HintPath>
+    <Reference Include="DarkRift.Server">
+      <HintPath>..\Deploy\Lib\DarkRift.Server.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -64,7 +62,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /d /y  $(ProjectDir)bin\$(ConfigurationName) $(SolutionDir)\Deploy\WorldPlugins\
+    <PostBuildEvent>xcopy /d /y  $(ProjectDir)bin\$(ConfigurationName) $(SolutionDir)\Deploy\Plugins\
 </PostBuildEvent>
   </PropertyGroup>
 </Project>

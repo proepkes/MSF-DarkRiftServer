@@ -37,13 +37,11 @@
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DarkRift, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Deploy\DarkRift.dll</HintPath>
+    <Reference Include="DarkRift">
+      <HintPath>..\Deploy\Lib\DarkRift.dll</HintPath>
     </Reference>
-    <Reference Include="DarkRift.Client, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Deploy\DarkRift.Client.dll</HintPath>
+    <Reference Include="DarkRift.Client">
+      <HintPath>..\Deploy\Lib\DarkRift.Client.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -70,10 +68,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\WorldPlugins\WorldPlugins.csproj">
-      <Project>{0b21ae26-0add-45fe-a1be-0ea6541642e3}</Project>
-      <Name>WorldPlugins</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Utils\Utils.csproj">
       <Project>{73957A5C-7298-4BD7-97A7-6E572B50D155}</Project>
       <Name>Utils</Name>
