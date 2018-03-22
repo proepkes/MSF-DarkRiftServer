@@ -5,13 +5,15 @@ VisualStudioVersion = 15.0.27428.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utils", "Utils\Utils.csproj", "{73957A5C-7298-4BD7-97A7-6E572B50D155}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TundraClientExample", "TundraClientExample\TundraClient.csproj", "{293D0BB8-6F23-47E0-8047-DEF7AFE92464}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TundraClient", "TundraClientExample\TundraClient.csproj", "{293D0BB8-6F23-47E0-8047-DEF7AFE92464}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spawner", "Spawner\Spawner.csproj", "{733A5630-DEE5-4AC2-8445-7886D853A349}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerPlugins", "ServerPlugins\ServerPlugins.csproj", "{3F3234EE-ED0E-44E3-8024-05CC293F568E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorldPlugins", "WorldPlugins\WorldPlugins.csproj", "{0B21AE26-0ADD-45FE-A1BE-0EA6541642E3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorldEngineTest", "WorldEngineTest\WorldEngineTest.csproj", "{C0D83211-56B5-4BB3-8F3D-C7D74939C350}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{0B21AE26-0ADD-45FE-A1BE-0EA6541642E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B21AE26-0ADD-45FE-A1BE-0EA6541642E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B21AE26-0ADD-45FE-A1BE-0EA6541642E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0D83211-56B5-4BB3-8F3D-C7D74939C350}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0D83211-56B5-4BB3-8F3D-C7D74939C350}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0D83211-56B5-4BB3-8F3D-C7D74939C350}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0D83211-56B5-4BB3-8F3D-C7D74939C350}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

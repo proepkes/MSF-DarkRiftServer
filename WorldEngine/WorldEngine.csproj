@@ -4,14 +4,13 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{0B21AE26-0ADD-45FE-A1BE-0EA6541642E3}</ProjectGuid>
+    <ProjectGuid>{4D7EFA4A-E8AB-4C1D-A3FD-3D3B6006EA37}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>WorldPlugins</RootNamespace>
-    <AssemblyName>WorldPlugins</AssemblyName>
+    <RootNamespace>WorldEngine</RootNamespace>
+    <AssemblyName>WorldEngine</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
@@ -23,7 +22,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -32,86 +30,32 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DarkRift, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Deploy\DarkRift.dll</HintPath>
-    </Reference>
-    <Reference Include="DarkRift.Client, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Deploy\DarkRift.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="DarkRift.Server, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="DarkRift.Server">
       <HintPath>..\Deploy\DarkRift.Server.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="Urho, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\UrhoSharp.1.8.93\lib\net45\Urho.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Engine\Game.cs" />
-    <Compile Include="Engine\TundraNetEntity.cs" />
+    <Compile Include="Game.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Room\RoomPlugin.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Utils\Utils.csproj">
-      <Project>{73957A5C-7298-4BD7-97A7-6E572B50D155}</Project>
-      <Name>Utils</Name>
-    </ProjectReference>
+    <Compile Include="TundraNetEntity.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="MyData\Materials\Earth.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="MyData\Materials\Moon.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="MyData\Textures\Earth.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="MyData\Textures\Earth_Clouds.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="MyData\Textures\Earth_Night.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="MyData\Textures\Earth_NormalsMap.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="MyData\Textures\Earth_SpecularMap.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="MyData\Textures\License.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="MyData\Textures\Moon.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="MyData\Textures\Moon_NormalsMap.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="MyData\Textures\Space.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>xcopy /d /y  $(ProjectDir)bin\$(ConfigurationName) $(SolutionDir)\Deploy\WorldPlugins\
-</PostBuildEvent>
-  </PropertyGroup>
   <Import Project="..\packages\UrhoSharp.1.8.93\build\net45\UrhoSharp.targets" Condition="Exists('..\packages\UrhoSharp.1.8.93\build\net45\UrhoSharp.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

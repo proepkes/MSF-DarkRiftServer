@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Net;
+using System.Reflection;
 using System.Threading;
 using DarkRift;
 using DarkRift.Client;
@@ -76,6 +78,8 @@ namespace Spawner
             ConfigPath = Settings.Default.ConfigPath;
             UseShellExecute = Settings.Default.UseShellExecute;
             UseMono = Settings.Default.UseMono;
+
+            
 
             _client = new DarkRiftClient();
             _client.ConnectInBackground(MasterIpAddress, MasterPort, IPVersion.IPv4, OnConnectedToMaster);
