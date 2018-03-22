@@ -22,6 +22,9 @@
 
 Deploying on Linux results in "System.ArgumentException: An item with the same key has already been added":
  - Delete DarkRiftServer.dll  from Plugins/ and WorldPlugins/
+ 
+Why do the DarkRift-dlls have to be copied to the Deploy folder?:
+ - When you run DarkRift.Server.Console.exe normally it acts as the MasterServer. If spawned by the Spawner, it acts as a Room/Gameserver and requires all dependencies inside the same directory (due to "Process.Start").
 
 ### Resources:
 
