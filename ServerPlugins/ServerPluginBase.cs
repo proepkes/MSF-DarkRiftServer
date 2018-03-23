@@ -29,12 +29,19 @@ namespace ServerPlugins
         private void OnMessagereceived(object sender, MessageReceivedEventArgs e)
         {
             var message = e.GetMessage();
+            
             if (message != null)
             {
+                WriteEvent("Received message with tag " + message.Tag, LogType.Trace);
                 if (_handlers.ContainsKey(message.Tag))
                 {
                     _handlers[message.Tag](e.Client, message);
                 }
+            }
+            else
+            {
+
+                WriteEvent("Received message null", LogType.Trace);
             }
         }
 

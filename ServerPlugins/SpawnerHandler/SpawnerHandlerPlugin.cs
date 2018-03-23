@@ -160,6 +160,7 @@ namespace ServerPlugins.SpawnerHandler
 
                 task.OnRegistered(client);
 
+                WriteEvent("Registered a spawned process", LogType.Info);
                 client.SendMessage(Message.CreateEmpty(MessageTags.RegisterSpawnedProcessSuccess), SendMode.Reliable);
             }
         }

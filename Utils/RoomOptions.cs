@@ -8,13 +8,7 @@ namespace Utils
     public class RoomOptions : IDarkRiftSerializable
     {
         public bool IsPublic;
-
         public int MaxPlayers;
-
-        public string RoomIp = "";
-
-        public int RoomPort = -1;
-
         public string WorldName;
         public string RoomName;
         public string Region;
@@ -24,8 +18,6 @@ namespace Utils
         {
             WorldName = e.Reader.ReadString();
             RoomName = e.Reader.ReadString();
-            RoomIp = e.Reader.ReadString();
-            RoomPort = e.Reader.ReadInt32();
             IsPublic = e.Reader.ReadBoolean();
             MaxPlayers = e.Reader.ReadInt32();
             Region = e.Reader.ReadString();
@@ -35,8 +27,6 @@ namespace Utils
         {
             e.Writer.Write(WorldName);
             e.Writer.Write(RoomName);
-            e.Writer.Write(RoomIp);
-            e.Writer.Write(RoomPort);
             e.Writer.Write(IsPublic);
             e.Writer.Write(MaxPlayers);
             e.Writer.Write(Region);

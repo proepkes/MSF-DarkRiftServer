@@ -40,6 +40,7 @@ namespace WorldPlugins.Room
         public bool IsPublic { get; set; }
         public string WorldName { get; set; }
         public string RoomName { get; set; }
+        public string Region { get; set; }
         public bool IsRoomRegistered { get; protected set; }
 
         private RoomAccessProvider _accessProvider;
@@ -55,6 +56,7 @@ namespace WorldPlugins.Room
             MaxPlayers = Convert.ToInt32(pluginLoadData.Settings.Get(nameof(MaxPlayers)));
             WorldName = pluginLoadData.Settings.Get(nameof(WorldName));
             RoomName = pluginLoadData.Settings.Get(nameof(RoomName));
+            Region = pluginLoadData.Settings.Get(nameof(Region));
 
             _client = new DarkRiftClient();
         }
@@ -62,20 +64,35 @@ namespace WorldPlugins.Room
         protected override void Loaded(LoadedEventArgs args)
         {
             base.Loaded(args);
+
             WriteEvent("Connecting to " + MasterIpAddress + ":" + MasterPort, LogType.Info);
             _client.ConnectInBackground(MasterIpAddress, MasterPort, IPVersion.IPv4, OnConnectedToMaster);
-
-            SetHandler(MessageTags.RegisterRoomSuccess, HandleRegisterRoomSuccess);
-            SetHandler(MessageTags.RegisterSpawnedProcessSuccess, HandleRegisterSpawnedProcessSuccess);
+            _client.MessageReceived += (client, message) =>
+            {
+                var data = message.GetMessage();
+                if (data != null)
+                {
+                    switch (data.Tag)
+                    {
+                        case MessageTags.RegisterRoomSuccess:
+                            HandleRegisterRoomSuccess(data);
+                            break;
+                        case MessageTags.RegisterSpawnedProcessSuccess:
+                            HandleRegisterSpawnedProcessSuccess(data);
+                            break;
+                    }
+                }
+            };
         }
 
         private void OnConnectedToMaster(Exception exception)
         {
+            WriteEvent("Connected to Master", LogType.Info);
             _client.SendMessage(Message.Create(MessageTags.RegisterSpawnedProcess,
                     new RegisterSpawnedProcessMessage {SpawnTaskID = SpawnTaskID, SpawnCode = SpawnCode}),
                 SendMode.Reliable);
         }
-        private void HandleRegisterRoomSuccess(IClient client, Message message)
+        private void HandleRegisterRoomSuccess(Message message)
         {
             var data = message.Deserialize<RegisterRoomSuccessMessage>();
             if (data != null)
@@ -95,11 +112,9 @@ namespace WorldPlugins.Room
             }
         }
 
-        private void HandleRegisterSpawnedProcessSuccess(IClient client, Message message)
+        private void HandleRegisterSpawnedProcessSuccess(Message message)
         {
             WriteEvent("We've registered this process to the master. Starting room...", LogType.Info);
-
-            
             
             // 1. Create options object
             var options = new RoomOptions
@@ -107,19 +122,14 @@ namespace WorldPlugins.Room
                 RoomName = RoomName,
                 WorldName = WorldName,
                 MaxPlayers = MaxPlayers,
-                IsPublic = IsPublic
+                IsPublic = IsPublic,
+                Region = Region,
             };
 
             // 2. Send a request to create a room
             _client.SendMessage(Message.Create(MessageTags.RegisterRoom, options), SendMode.Reliable);
         }
-
-        private void GameOnResumed()
-        {
-            WriteEvent("GameOnResumed", LogType.Info);
-        }
-
-
+        
         public virtual void CreateAccess(UsernameAndPeerIdPacket requester, RoomAccessProviderCallback callback)
         {
             callback.Invoke(new RoomAccessPacket()

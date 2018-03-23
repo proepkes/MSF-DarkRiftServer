@@ -12,5 +12,6 @@
         public const string RoomName = "-RoomName";
         public const string MaxPlayers = "-MaxPlayers";
         public const string IsPublic = "-IsPublic";
+        public const string Region = "-Region";
     }
 }

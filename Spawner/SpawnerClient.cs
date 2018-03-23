@@ -160,6 +160,7 @@ namespace Spawner
                                 $"{ArgNames.WorldName}={data.Options.WorldName} " +
                                 $"{ArgNames.RoomName}={data.Options.RoomName} " +
                                 $"{ArgNames.MaxPlayers}={data.Options.MaxPlayers} " +
+                                $"{ArgNames.Region}={data.Options.Region} " +
                                 $"{ArgNames.IsPublic}={data.Options.IsPublic} "
                 };
                 var processStarted = false;
