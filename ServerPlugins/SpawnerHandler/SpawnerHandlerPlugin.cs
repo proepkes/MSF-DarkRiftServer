@@ -210,7 +210,7 @@ namespace ServerPlugins.SpawnerHandler
         private void HandleClientsSpawnRequest(IClient client, Message message)
         {
             WriteEvent("New spawn request from Client received", LogType.Info);
-            var data = message.Deserialize<SpawnFromClientToMasterMessage>();
+            var data = message.Deserialize<RoomOptions>();
             if (data != null)
             {
                 if (!CanClientSpawn(client, data))
@@ -240,7 +240,7 @@ namespace ServerPlugins.SpawnerHandler
                 }
                 WriteEvent("New spawn task created", LogType.Info);
                 // Get the spawn task
-                var task = Spawn(data.Region, data.WorldName, data.RoomName, data.MaxPlayers, data.IsPublic);
+                var task = Spawn(data);
 
                 if (task == null)
                 {
@@ -316,14 +316,14 @@ namespace ServerPlugins.SpawnerHandler
             return spawner;
         }
 
-        public virtual SpawnTask Spawn(string region, string world, string room, int maxPlayers, bool isPublic)
+        public virtual SpawnTask Spawn(RoomOptions options)
         {
-            var spawners = GetFilteredSpawners(region);
+            var spawners = GetFilteredSpawners(options.Region);
 
             if (spawners.Count < 0)
             {
                 WriteEvent("No spawner was returned after filtering. " +
-                           (string.IsNullOrEmpty(region) ? "" : "Region: " + region), LogType.Warning);
+                           (string.IsNullOrEmpty(options.Region) ? "" : "Region: " + options.Region), LogType.Warning);
                 return null;
             }
 
@@ -335,7 +335,7 @@ namespace ServerPlugins.SpawnerHandler
             if (availableSpawner == null)
                 return null;
 
-            var task = new SpawnTask(GenerateSpawnTaskId(), availableSpawner, world, room, maxPlayers, isPublic);
+            var task = new SpawnTask(GenerateSpawnTaskId(), availableSpawner, options);
 
             _spawnTasks.Add(task);
 
@@ -381,7 +381,7 @@ namespace ServerPlugins.SpawnerHandler
             return _nextSpawnTaskId++;
         }
 
-        private bool CanClientSpawn(IClient client, SpawnFromClientToMasterMessage data)
+        private bool CanClientSpawn(IClient client, RoomOptions data)
         {
             //TODO: Setting: Only allow logged in clients to request a spawn & check here
             return EnableClientSpawnRequests;

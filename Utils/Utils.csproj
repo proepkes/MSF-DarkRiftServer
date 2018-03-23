@@ -64,7 +64,6 @@
     <Compile Include="Messages\Requests\RegisterSpawnedProcessMessage.cs" />
     <Compile Include="Messages\Requests\ConfirmEmailMessage.cs" />
     <Compile Include="Messages\Requests\ResetPasswordMessage.cs" />
-    <Compile Include="Messages\Requests\SpawnFromClientToMasterMessage.cs" />
     <Compile Include="Messages\Requests\RequestFromUserMessage.cs" />
     <Compile Include="Messages\RequestMessage.cs" />
     <Compile Include="Messages\Responses\RegisterRoomSuccessMessage.cs" />

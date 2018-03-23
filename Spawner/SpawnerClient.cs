@@ -89,7 +89,7 @@ namespace Spawner
         public void SpawnRoom()
         {
             _client.SendMessage(Message.Create(MessageTags.RequestSpawnFromClientToMaster,
-                new SpawnFromClientToMasterMessage {Region = "EU", WorldName = "ExampleGame", RoomName = "Act1"}), SendMode.Reliable);
+                new RoomOptions {MaxPlayers = 8, Region = "EU", WorldName = "ExampleGame", RoomName = "Act1"}), SendMode.Reliable);
         }
 
 

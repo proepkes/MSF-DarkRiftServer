@@ -17,6 +17,7 @@ namespace ServerPlugins.SpawnerHandler
         protected List<Action<SpawnTask>> WhenDoneCallbacks;
 
         public RegisteredSpawner Spawner { get; }
+        public RoomOptions Options { get; }
         public string World { get; }
         public string Room { get; }
         public int MaxPlayers { get; }
@@ -62,15 +63,12 @@ namespace ServerPlugins.SpawnerHandler
         /// </summary>
         public IClient Requester { get; set; }
 
-        public SpawnTask(int id, RegisteredSpawner spawner, string world, string room, int maxPlayers, bool isPublic)
+        public SpawnTask(int id, RegisteredSpawner spawner, RoomOptions options)
         {
             ID = id;
 
             Spawner = spawner;
-            World = world;
-            Room = room;
-            MaxPlayers = maxPlayers;
-            IsPublic = isPublic;
+            Options = options;
 
             UniqueCode = Security.CreateRandomString(6);
             WhenDoneCallbacks = new List<Action<SpawnTask>>();

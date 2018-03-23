@@ -17,6 +17,7 @@ namespace Utils
 
         public string WorldName;
         public string RoomName;
+        public string Region;
 
 
         public void Deserialize(DeserializeEvent e)
@@ -27,6 +28,7 @@ namespace Utils
             RoomPort = e.Reader.ReadInt32();
             IsPublic = e.Reader.ReadBoolean();
             MaxPlayers = e.Reader.ReadInt32();
+            Region = e.Reader.ReadString();
         }
 
         public void Serialize(SerializeEvent e)
@@ -37,6 +39,7 @@ namespace Utils
             e.Writer.Write(RoomPort);
             e.Writer.Write(IsPublic);
             e.Writer.Write(MaxPlayers);
+            e.Writer.Write(Region);
         }
     }
 }
