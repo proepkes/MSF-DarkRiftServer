@@ -18,7 +18,7 @@ namespace ServerPlugins.SpawnerHandler
     ///     This plugin runs on the master and contains the references to all spawners.
     ///     It also creates spawn-tasks and delegates them to an available spawner.
     /// </summary>
-    public class SpawnerHandlerPluginBase : ServerPluginBase
+    public class SpawnerHandlerPlugin : ServerPluginBase
     {
         //ClientID -> SpawnTask (only contains ClientSpawnRequests)
         private readonly Dictionary<int, SpawnTask> _pendingSpawnTasks;
@@ -34,7 +34,7 @@ namespace ServerPlugins.SpawnerHandler
         public bool EnableClientSpawnRequests { get; set; }
         public int QueueUpdateFrequency { get; set; }
 
-        public SpawnerHandlerPluginBase(PluginLoadData pluginLoadData) : base(pluginLoadData)
+        public SpawnerHandlerPlugin(PluginLoadData pluginLoadData) : base(pluginLoadData)
         {
             _spawnTasks = new List<SpawnTask>();
             _registeredSpawners = new List<RegisteredSpawner>();

@@ -9,7 +9,7 @@ using Utils.Messages.Responses;
 
 namespace ServerPlugins.RoomHandler
 {
-    public class RoomHandlerPluginBase : ServerPluginBase
+    public class RoomHandlerPlugin : ServerPluginBase
     {
         private int _nextRoomID;
         private readonly List<RegisteredRoom> _rooms;
@@ -17,7 +17,7 @@ namespace ServerPlugins.RoomHandler
         public override Version Version => new Version(1, 0, 0);
         public override bool ThreadSafe => true;
 
-        public RoomHandlerPluginBase(PluginLoadData pluginLoadData) : base(pluginLoadData)
+        public RoomHandlerPlugin(PluginLoadData pluginLoadData) : base(pluginLoadData)
         {
             _rooms = new List<RegisteredRoom>();
             ClientManager.ClientDisconnected += OnClientDisconnected;

@@ -16,14 +16,14 @@ using Utils.Messages.Responses;
 
 namespace ServerPlugins.Authentication
 {
-    public class AuthenticationPluginBase : ServerPluginBase
+    public class AuthenticationPlugin : ServerPluginBase
     {
         private readonly Dictionary<IClient, EncryptionData> _encryptionData;
 
         public readonly Dictionary<IClient, SqlAccountData> LoggedInClients;
-        private MySqlPluginBase _database;
+        private MySqlPlugin _database;
 
-        private MailPluginBase _mailPluginBase;
+        private MailPlugin _mailPlugin;
 
 
         public int EMailMaxChars { get; set; }
@@ -31,7 +31,7 @@ namespace ServerPlugins.Authentication
         public string PasswordResetEmailBody { get; set; }
         public string ConfirmEmailBody { get; set; }
 
-        public AuthenticationPluginBase(PluginLoadData pluginLoadData) : base(pluginLoadData)
+        public AuthenticationPlugin(PluginLoadData pluginLoadData) : base(pluginLoadData)
         {
             LoggedInClients = new Dictionary<IClient, SqlAccountData>();
             _encryptionData = new Dictionary<IClient, EncryptionData>();
@@ -47,8 +47,8 @@ namespace ServerPlugins.Authentication
         protected override void Loaded(LoadedEventArgs args)
         {
             base.Loaded(args);
-            _mailPluginBase = PluginManager.GetPluginByType<MailPluginBase>();
-            _database = PluginManager.GetPluginByType<MySqlPluginBase>();
+            _mailPlugin = PluginManager.GetPluginByType<MailPlugin>();
+            _database = PluginManager.GetPluginByType<MySqlPlugin>();
 
             SetHandler(MessageTags.LogIn, HandleLogin);
             SetHandler(MessageTags.ConfirmEmail, HandleConfirmEmail);
@@ -190,7 +190,7 @@ namespace ServerPlugins.Authentication
 
                 _database.SavePasswordResetCode(account, code);
 
-                _mailPluginBase.SendMail(account.Email, "Password Reset Code", string.Format(PasswordResetEmailBody, code));
+                _mailPlugin.SendMail(account.Email, "Password Reset Code", string.Format(PasswordResetEmailBody, code));
             }
         }
 
@@ -421,7 +421,7 @@ namespace ServerPlugins.Authentication
 
             _database.SaveEmailConfirmationCode(accountData.Email, code);
 
-            _mailPluginBase.SendMail(accountData.Email, "E-mail confirmation", string.Format(ConfirmEmailBody, code));
+            _mailPlugin.SendMail(accountData.Email, "E-mail confirmation", string.Format(ConfirmEmailBody, code));
         }
 
         protected virtual bool IsEmailValid(string email)

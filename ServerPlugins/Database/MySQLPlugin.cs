@@ -6,12 +6,12 @@ using MySql.Data.MySqlClient;
 
 namespace ServerPlugins.Database
 {
-    public class MySqlPluginBase : ServerPluginBase
+    public class MySqlPlugin : ServerPluginBase
     {
         private readonly bool _debug = true;
         private string _connectionString;
 
-        public MySqlPluginBase(PluginLoadData pluginLoadData) : base(pluginLoadData)
+        public MySqlPlugin(PluginLoadData pluginLoadData) : base(pluginLoadData)
         {
         }
 

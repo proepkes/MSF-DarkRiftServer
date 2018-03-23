@@ -6,7 +6,7 @@ using DarkRift.Server;
 
 namespace ServerPlugins.Mail
 {
-    public class MailPluginBase : ServerPluginBase
+    public class MailPlugin : ServerPluginBase
     {
         private SmtpClient SmtpClient;
 
@@ -21,7 +21,7 @@ namespace ServerPlugins.Mail
 
         public string EmailFrom { get; set; }
 
-        public MailPluginBase(PluginLoadData pluginLoadData) : base(pluginLoadData)
+        public MailPlugin(PluginLoadData pluginLoadData) : base(pluginLoadData)
         {
             SmtpHost = pluginLoadData.Settings.Get(nameof(SmtpHost));
             SmtpPort = Convert.ToInt32(pluginLoadData.Settings.Get(nameof(SmtpPort)));
