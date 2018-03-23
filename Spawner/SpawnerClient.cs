@@ -161,7 +161,6 @@ namespace Spawner
                                 $"{ArgNames.MaxPlayers}={data.MaxPlayers} " +
                                 $"{ArgNames.IsPublic}={data.IsPublic} "
                 };
-                Console.WriteLine("WorkingDir:" + startProcessInfo.WorkingDirectory);
                 var processStarted = false;
                 try
                 {

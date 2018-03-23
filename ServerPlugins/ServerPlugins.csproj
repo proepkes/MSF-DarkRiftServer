@@ -37,6 +37,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Deploy\Lib\DarkRift.dll</HintPath>
     </Reference>
+    <Reference Include="DarkRift.Client">
+      <HintPath>..\Deploy\Lib\DarkRift.Client.dll</HintPath>
+    </Reference>
     <Reference Include="DarkRift.Server, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Deploy\Lib\DarkRift.Server.dll</HintPath>
@@ -67,14 +70,17 @@
     <Compile Include="Database\MySQLPlugin.cs" />
     <Compile Include="Database\PasswordResetData.cs" />
     <Compile Include="Database\SqlAccountData.cs" />
-    <Compile Include="DefaultServerPlugin.cs" />
+    <Compile Include="Game\GamePlugin.cs" />
+    <Compile Include="ServerPluginBase.cs" />
     <Compile Include="Mail\MailPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RoomHandler\RegisteredRoom.cs" />
     <Compile Include="RoomHandler\RoomHandlerPlugin.cs" />
+    <Compile Include="Room\RoomPlugin.cs" />
     <Compile Include="SpawnerHandler\RegisteredSpawner.cs" />
     <Compile Include="SpawnerHandler\SpawnerHandlerPlugin.cs" />
     <Compile Include="SpawnerHandler\SpawnTask.cs" />
+    <Compile Include="Time\TimePlugin.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Utils\Utils.csproj">
@@ -86,19 +92,7 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="docs\MySqlCommand.xml" />
-    <Content Include="docs\MySqlCommandBuilder.xml" />
-    <Content Include="docs\MySqlConnection.xml" />
-    <Content Include="docs\MySqlConnectionStringBuilder.xml" />
-    <Content Include="docs\MySqlDataAdapter.xml" />
-    <Content Include="docs\MySqlDataReader.xml" />
-    <Content Include="docs\MySqlException.xml" />
-    <Content Include="docs\MySqlHelper.xml" />
-    <Content Include="docs\MySqlParameter.xml" />
-    <Content Include="docs\MySqlParameterCollection.xml" />
-    <Content Include="docs\MySqlTransaction.xml" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy /d /y  $(ProjectDir)bin\$(ConfigurationName) $(SolutionDir)\Deploy\Plugins\

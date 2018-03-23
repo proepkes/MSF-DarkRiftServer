@@ -15,6 +15,11 @@ namespace ServerPlugins.Database
         {
         }
 
+        protected override void OnMessagereceived(object sender, MessageReceivedEventArgs e)
+        {
+            //Do nothing
+        }
+
         protected override void Loaded(LoadedEventArgs args)
         {
             base.Loaded(args);

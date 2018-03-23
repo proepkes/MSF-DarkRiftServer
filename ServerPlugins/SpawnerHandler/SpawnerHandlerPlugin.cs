@@ -18,7 +18,7 @@ namespace ServerPlugins.SpawnerHandler
     ///     This plugin runs on the master and contains the references to all spawners.
     ///     It also creates spawn-tasks and delegates them to an available spawner.
     /// </summary>
-    public class SpawnerHandlerPlugin : DefaultServerPlugin
+    public class SpawnerHandlerPluginBase : ServerPluginBase
     {
         //ClientID -> SpawnTask (only contains ClientSpawnRequests)
         private readonly Dictionary<int, SpawnTask> _pendingSpawnTasks;
@@ -34,7 +34,7 @@ namespace ServerPlugins.SpawnerHandler
         public bool EnableClientSpawnRequests { get; set; }
         public int QueueUpdateFrequency { get; set; }
 
-        public SpawnerHandlerPlugin(PluginLoadData pluginLoadData) : base(pluginLoadData)
+        public SpawnerHandlerPluginBase(PluginLoadData pluginLoadData) : base(pluginLoadData)
         {
             _spawnTasks = new List<SpawnTask>();
             _registeredSpawners = new List<RegisteredSpawner>();
@@ -44,7 +44,6 @@ namespace ServerPlugins.SpawnerHandler
             EnableClientSpawnRequests =
                 Convert.ToBoolean(pluginLoadData.Settings.Get(nameof(EnableClientSpawnRequests)));
 
-            ClientManager.ClientConnected += OnClientConnected;
             ClientManager.ClientDisconnected += OnClientDisconnected;
 
             updateQueue = Task.Run(() =>
@@ -69,38 +68,18 @@ namespace ServerPlugins.SpawnerHandler
             });
         }
 
-        private void OnClientMessageReceived(object sender, MessageReceivedEventArgs e)
+        protected override void Loaded(LoadedEventArgs args)
         {
-            using (var message = e.GetMessage())
-            {
-                switch (message.Tag)
-                {
-                    case MessageTags.RegisterSpawner:
-                        HandleRegisterSpawner(e.Client, message);
-                        break;
-                    case MessageTags.RegisterSpawnedProcess:
-                        HandleRegisterSpawnedProcess(e.Client, message);
-                        break;
-                    case MessageTags.RequestSpawnFromClientToMaster:
-                        HandleClientsSpawnRequest(e.Client, message);
-                        break;
-                    case MessageTags.RequestSpawnFromMasterToSpawnerSuccess:
-                        //Spawner started a new process
-                        HandleRequestSpawnFromMasterToSpawnerSuccess(e.Client, message);
-                        break;
-                    case MessageTags.RequestSpawnFromMasterToSpawnerFailed:
-                        //Cancel SpawnTask
-                        HandleRequestSpawnFromMasterToSpawnerFailed(e.Client, message);
-                        break;
-                    case MessageTags.NotifySpawnerKilledProcess:
-                        HandleNotifySpawnerKilledProcess(e.Client, message);
-                        break;
-                    case MessageTags.CompleteSpawnProcess:
-                        HandleCompleteSpawnProcess(e.Client, message);
-                        break;
-                }
-            }
+            base.Loaded(args);
+            SetHandler(MessageTags.RegisterSpawner, HandleRegisterSpawner);
+            SetHandler(MessageTags.RegisterSpawnedProcess, HandleRegisterSpawnedProcess);
+            SetHandler(MessageTags.RequestSpawnFromClientToMaster, HandleClientsSpawnRequest);
+            SetHandler(MessageTags.RequestSpawnFromMasterToSpawnerSuccess, HandleRequestSpawnFromMasterToSpawnerSuccess);
+            SetHandler(MessageTags.RequestSpawnFromMasterToSpawnerFailed, HandleRequestSpawnFromMasterToSpawnerFailed);
+            SetHandler(MessageTags.NotifySpawnerKilledProcess, HandleNotifySpawnerKilledProcess);
+            SetHandler(MessageTags.CompleteSpawnProcess, HandleCompleteSpawnProcess);
         }
+
 
         private void HandleCompleteSpawnProcess(IClient client, Message message)
         {
@@ -197,12 +176,6 @@ namespace ServerPlugins.SpawnerHandler
                     LogType.Warning);
             }
         }
-
-        private void OnClientConnected(object sender, ClientConnectedEventArgs e)
-        {
-            e.Client.MessageReceived += OnClientMessageReceived;
-        }
-
 
         private void OnClientDisconnected(object sender, ClientDisconnectedEventArgs e)
         {

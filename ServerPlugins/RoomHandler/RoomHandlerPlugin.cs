@@ -9,7 +9,7 @@ using Utils.Messages.Responses;
 
 namespace ServerPlugins.RoomHandler
 {
-    public class RoomHandlerPlugin : Plugin
+    public class RoomHandlerPlugin : DefaultServerPlugin
     {
         private int _nextRoomID;
         private readonly List<RegisteredRoom> _rooms;
@@ -20,7 +20,6 @@ namespace ServerPlugins.RoomHandler
         public RoomHandlerPlugin(PluginLoadData pluginLoadData) : base(pluginLoadData)
         {
             _rooms = new List<RegisteredRoom>();
-            ClientManager.ClientConnected += OnClientConnected;
             ClientManager.ClientDisconnected += OnClientDisconnected;
         }
 
@@ -38,12 +37,7 @@ namespace ServerPlugins.RoomHandler
 
         }
 
-        private void OnClientConnected(object sender, ClientConnectedEventArgs e)
-        {
-            e.Client.MessageReceived += OnMessageReceived;
-        }
-
-        private void OnMessageReceived(object sender, MessageReceivedEventArgs e)
+        protected override void OnMessagereceived(object sender, MessageReceivedEventArgs e)
         {
             using (var message = e.GetMessage())
             {
@@ -56,6 +50,7 @@ namespace ServerPlugins.RoomHandler
                 }
             }
         }
+
 
         private void HandleRegisterRoom(IClient client, Message message)
         {

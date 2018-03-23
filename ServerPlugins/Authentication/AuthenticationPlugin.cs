@@ -16,14 +16,14 @@ using Utils.Messages.Responses;
 
 namespace ServerPlugins.Authentication
 {
-    public class AuthenticationPlugin : DefaultServerPlugin
+    public class AuthenticationPluginBase : ServerPluginBase
     {
         private readonly Dictionary<IClient, EncryptionData> _encryptionData;
 
         public readonly Dictionary<IClient, SqlAccountData> LoggedInClients;
-        private MySQLPlugin _database;
+        private MySqlPluginBase _database;
 
-        private MailPlugin _mailPlugin;
+        private MailPluginBase _mailPluginBase;
 
 
         public int EMailMaxChars { get; set; }
@@ -31,7 +31,7 @@ namespace ServerPlugins.Authentication
         public string PasswordResetEmailBody { get; set; }
         public string ConfirmEmailBody { get; set; }
 
-        public AuthenticationPlugin(PluginLoadData pluginLoadData) : base(pluginLoadData)
+        public AuthenticationPluginBase(PluginLoadData pluginLoadData) : base(pluginLoadData)
         {
             LoggedInClients = new Dictionary<IClient, SqlAccountData>();
             _encryptionData = new Dictionary<IClient, EncryptionData>();
@@ -41,20 +41,23 @@ namespace ServerPlugins.Authentication
             PasswordResetEmailBody = pluginLoadData.Settings.Get(nameof(PasswordResetEmailBody));
             ConfirmEmailBody = pluginLoadData.Settings.Get(nameof(ConfirmEmailBody));
 
-            ClientManager.ClientConnected += ClientConnected;
             ClientManager.ClientDisconnected += ClientDisconnected;
         }
 
         protected override void Loaded(LoadedEventArgs args)
         {
             base.Loaded(args);
-            _mailPlugin = PluginManager.GetPluginByType<MailPlugin>();
-            _database = PluginManager.GetPluginByType<MySQLPlugin>();
-        }
+            _mailPluginBase = PluginManager.GetPluginByType<MailPluginBase>();
+            _database = PluginManager.GetPluginByType<MySqlPluginBase>();
 
-        private void ClientConnected(object sender, ClientConnectedEventArgs e)
-        {
-            e.Client.MessageReceived += ClientOnMessageReceived;
+            SetHandler(MessageTags.LogIn, HandleLogin);
+            SetHandler(MessageTags.ConfirmEmail, HandleConfirmEmail);
+            SetHandler(MessageTags.RequestAesKey, HandleRequestAesKey);
+            SetHandler(MessageTags.ResetPassword, HandleResetPassword);
+            SetHandler(MessageTags.RegisterAccount, HandleRegisterAccount);
+            SetHandler(MessageTags.RequestPermissionLevel, HandleRequestPermissionLevel);
+            SetHandler(MessageTags.RequestPasswordResetCode, HandleRequestPasswordResetCode);
+            SetHandler(MessageTags.RequestNewEmailConfirmationCode, HandleRequestNewEmailConfirmationCode);
         }
 
         private void ClientDisconnected(object sender, ClientDisconnectedEventArgs e)
@@ -63,46 +66,12 @@ namespace ServerPlugins.Authentication
             if (LoggedInClients.ContainsKey(e.Client)) LoggedInClients.Remove(e.Client);
         }
 
-        private void ClientOnMessageReceived(object sender, MessageReceivedEventArgs e)
-        {
-            using (var message = e.GetMessage())
-            {
-                switch (message.Tag)
-                {
-                    case MessageTags.RequestAesKey:
-                        HandleRequestAesKey(e.Client, message);
-                        break;
-                    case MessageTags.RequestPermissionLevel:
-                        HandleRequestPermissionLevel(e.Client, message);
-                        break;
-                    case MessageTags.LogIn:
-                        HandleLogin(e.Client, message);
-                        break;
-                    case MessageTags.RegisterAccount:
-                        HandleRegisterAccount(e.Client, message);
-                        break;
-                    case MessageTags.RequestPasswordResetCode:
-                        HandleRequestPasswordResetCode(message);
-                        break;
-                    case MessageTags.ResetPassword:
-                        HandleRequestPasswordReset(e.Client, message);
-                        break;
-                    case MessageTags.ConfirmEmail:
-                        HandleConfirmEmail(e.Client, message);
-                        break;
-                    case MessageTags.RequestNewEmailConfirmationCode:
-                        HandleRequestNewEmailConfirmationCode(message);
-                        break;
-                }
-            }
-        }
-
         private void HandleRequestPermissionLevel(IClient client, Message message)
         {
             throw new NotImplementedException();
         }
 
-        private void HandleRequestNewEmailConfirmationCode(Message message)
+        private void HandleRequestNewEmailConfirmationCode(IClient client, Message message)
         {
             var data = message.Deserialize<RequestFromUserMessage>();
             if (data != null)
@@ -167,7 +136,7 @@ namespace ServerPlugins.Authentication
             }
         }
 
-        private void HandleRequestPasswordReset(IClient client, Message message)
+        private void HandleResetPassword(IClient client, Message message)
         {
             var data = message.Deserialize<ResetPasswordMessage>();
             if (string.IsNullOrEmpty(data?.EMail) || string.IsNullOrEmpty(data.Code) ||
@@ -206,7 +175,7 @@ namespace ServerPlugins.Authentication
             client.SendMessage(Message.CreateEmpty(MessageTags.ResetPasswordSuccess), SendMode.Reliable);
         }
 
-        private void HandleRequestPasswordResetCode(Message message)
+        private void HandleRequestPasswordResetCode(IClient client, Message message)
         {
             var data = message.Deserialize<RequestFromUserMessage>();
             if (data != null)
@@ -221,7 +190,7 @@ namespace ServerPlugins.Authentication
 
                 _database.SavePasswordResetCode(account, code);
 
-                _mailPlugin.SendMail(account.Email, "Password Reset Code", string.Format(PasswordResetEmailBody, code));
+                _mailPluginBase.SendMail(account.Email, "Password Reset Code", string.Format(PasswordResetEmailBody, code));
             }
         }
 
@@ -452,7 +421,7 @@ namespace ServerPlugins.Authentication
 
             _database.SaveEmailConfirmationCode(accountData.Email, code);
 
-            _mailPlugin.SendMail(accountData.Email, "E-mail confirmation", string.Format(ConfirmEmailBody, code));
+            _mailPluginBase.SendMail(accountData.Email, "E-mail confirmation", string.Format(ConfirmEmailBody, code));
         }
 
         protected virtual bool IsEmailValid(string email)

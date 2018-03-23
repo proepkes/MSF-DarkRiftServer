@@ -31,6 +31,11 @@ namespace ServerPlugins.Mail
             EmailFrom = pluginLoadData.Settings.Get(nameof(EmailFrom));
         }
 
+        protected override void OnMessagereceived(object sender, MessageReceivedEventArgs e)
+        {
+            //Do nothing
+        }
+
         protected override void Loaded(LoadedEventArgs args)
         {
             base.Loaded(args);

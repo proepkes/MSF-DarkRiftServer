@@ -2,13 +2,12 @@
 
 namespace Utils.Packets
 {
-    public class FloatPacket : IDarkRiftSerializable
+    public class BytesPacket : IDarkRiftSerializable
     {
-        public float Data;
-
+        public byte[] Data;
         public void Deserialize(DeserializeEvent e)
         {
-            Data = e.Reader.ReadSingle();
+            Data = e.Reader.ReadBytes();
         }
 
         public void Serialize(SerializeEvent e)

@@ -20,7 +20,7 @@ namespace WorldPlugins.Room
     /// <summary>
     ///     This Plugin goes to the spawned server
     /// </summary>
-    public class RoomPlugin : DefaultWorldPlugin
+    public class RoomPlugin : ServerPluginBase
     {
         // ReSharper disable InconsistentNaming
         private readonly int SpawnTaskID;
@@ -64,6 +64,9 @@ namespace WorldPlugins.Room
             base.Loaded(args);
             WriteEvent("Connecting to " + MasterIpAddress + ":" + MasterPort, LogType.Info);
             _client.ConnectInBackground(MasterIpAddress, MasterPort, IPVersion.IPv4, OnConnectedToMaster);
+
+            SetHandler(MessageTags.RegisterRoomSuccess, HandleRegisterRoomSuccess);
+            SetHandler(MessageTags.RegisterSpawnedProcessSuccess, HandleRegisterSpawnedProcessSuccess);
         }
 
         private void OnConnectedToMaster(Exception exception)
@@ -72,35 +75,7 @@ namespace WorldPlugins.Room
                     new RegisterSpawnedProcessMessage {SpawnTaskID = SpawnTaskID, SpawnCode = SpawnCode}),
                 SendMode.Reliable);
         }
-        protected override void OnMessagereceived(object sender, DarkRift.Server.MessageReceivedEventArgs e)
-        {
-            using (var message = e.GetMessage())
-            {
-                switch (message.Tag)
-                {
-                    case MessageTags.RegisterSpawnedProcessSuccess:
-                        HandleRegisterSpawnedProcessSuccess(message);
-                        break;
-                    case MessageTags.RegisterSpawnedProcessFailed:
-                        WriteEvent("Failed to register process", LogType.Warning);
-                        break;
-                    case MessageTags.RegisterRoomSuccess:
-                        HandleRegisterRoomSuccess(message);
-                        break;
-                    case MessageTags.RegisterRoomFailed:
-                        WriteEvent("Failed to register room", LogType.Warning);
-                        break;
-                    case MessageTags.CompleteSpawnProcessSuccess:
-                        WriteEvent("We've registered this process to the master. Starting room... Room " + RoomName + " in World " + WorldName + " is ready for Players.", LogType.Info);
-                        break;
-                    case MessageTags.CompleteSpawnProcessFailed:
-                        WriteEvent("Failed to complete the spawn", LogType.Info);
-                        break;
-                }
-            }
-        }
-        
-        private void HandleRegisterRoomSuccess(Message message)
+        private void HandleRegisterRoomSuccess(IClient client, Message message)
         {
             var data = message.Deserialize<RegisterRoomSuccessMessage>();
             if (data != null)
@@ -120,7 +95,7 @@ namespace WorldPlugins.Room
             }
         }
 
-        private void HandleRegisterSpawnedProcessSuccess(Message message)
+        private void HandleRegisterSpawnedProcessSuccess(IClient client, Message message)
         {
             WriteEvent("We've registered this process to the master. Starting room...", LogType.Info);
 
