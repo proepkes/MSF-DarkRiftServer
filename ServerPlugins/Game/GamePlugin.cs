@@ -9,21 +9,8 @@ namespace ServerPlugins.Game
     /// </summary>
     public class GamePlugin : ServerPluginBase
     {
-        private float time;
-
         public GamePlugin(PluginLoadData pluginLoadData) : base(pluginLoadData)
         {
-        }
-
-        protected override void Loaded(LoadedEventArgs args)
-        {
-            base.Loaded(args);
-            SetHandler(MessageTags.GetNetworkTime, HandleGetNetworkTime);
-        }
-
-        private void HandleGetNetworkTime(IClient client, Message message)
-        {
-            
         }
     }
 }
