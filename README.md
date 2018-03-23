@@ -14,6 +14,7 @@
 1. Open "TundraServerPlugins.sln" in Visual Studio
 1. Right-click on solution -> "Restore NuGet-Packages"
 1. Check whether the settings in "Settings.settings" in the Project "Spawner" fit your needs
+1. Right-click on Utils-Project -> "Properties" (last entry) -> select Build Events (on the left) and edit the xcopy-command so it copies the files into your Unity\Assets-directory
 1. Build solution
 1. Replace the contents of "Server.config" with the contents of "MasterServerExample.config" and configure accordingly
 1. Run DarkRift.Server.Console.exe and then run Spawner.exe
