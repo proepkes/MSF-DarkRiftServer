@@ -82,6 +82,7 @@
     <Compile Include="Packets\RoomAccessRequestPacket.cs" />
     <Compile Include="Packets\RoomAccessValidatePacket.cs" />
     <Compile Include="Packets\SaveRoomOptionsPacket.cs" />
+    <Compile Include="Packets\TimePacket.cs" />
     <Compile Include="Packets\UsernameAndPeerIdPacket.cs" />
     <Compile Include="ResponseStatus.cs" />
     <Compile Include="RoomOptions.cs" />

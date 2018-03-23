@@ -69,7 +69,6 @@
     <Compile Include="Database\SqlAccountData.cs" />
     <Compile Include="DefaultServerPlugin.cs" />
     <Compile Include="Mail\MailPlugin.cs" />
-    <Compile Include="NetworkTime\NetworkTimePlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RoomHandler\RegisteredRoom.cs" />
     <Compile Include="RoomHandler\RoomHandlerPlugin.cs" />
