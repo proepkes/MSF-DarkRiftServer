@@ -1,4 +1,4 @@
-﻿//using System;
+//using System;
 //using System.Collections;
 //using System.Collections.Generic;
 //using System.IO;
@@ -12,6 +12,7 @@
 //using Utils.Extensions;
 //using Utils.Messages.Requests;
 //using Utils.Messages.Responses;
+//using Utils.Packets;
 //using Security = Utils.Security;
 
 //public class TundraNetClient : MonoBehaviour
@@ -25,7 +26,10 @@
 //    public event Action Registered;
 //    public event Action LoggedOut;
 
-//    private bool aeskeyPending;
+//    public bool IsConnected
+//    {
+//        get { return Client != null && Client.Connected; }
+//    }
 
 //    public bool IsLoggedIn { get; protected set; }
 
@@ -35,28 +39,40 @@
 //    private RSAParameters _parameters;
 //    private string _aesKey = string.Empty;
 
+//    private Action<Message> networkTimeCallback;
+
 //    private void Awake()
 //    {
-//        DontDestroyOnLoad(transform.gameObject);
+//        if (GameObject.FindGameObjectsWithTag(gameObject.tag).Length > 1)
+//        {
+//            Destroy(gameObject);
+//        }
+//        else
+//        {
+//            DontDestroyOnLoad(transform.gameObject);
+//        }
 //    }
 
 //    private void Start()
 //    {
 //        Client.Disconnected += ClientOnDisconnected;
 //        Client.MessageReceived += ClientOnMessageReceived;
-//    }
 
-//    private void Update()
-//    {
-//        if (RequestAESKeyOnStart && !aeskeyPending)
+//        if (RequestAESKeyOnStart)
 //        {
-//            if (Client.Connected)
-//            {
-//                aeskeyPending = true;
-//                RequestAesKey();
-//            }
+//            StartCoroutine(GetAesKey());
 //        }
 //    }
+
+//    private IEnumerator GetAesKey()
+//    {
+//        while (!Client.Connected)
+//        {
+//            yield return new WaitForSeconds(1f);
+//        }
+//        RequestAesKey();
+//    }
+
 //    private void ClientOnDisconnected(object sender, DisconnectedEventArgs disconnectedEventArgs)
 //    {
 //        IsLoggedIn = false;
@@ -88,6 +104,10 @@
 //                    break;
 //                case MessageTags.ResetPasswordFailed:
 //                    HandlePasswordResetFailed(message);
+//                    break;
+//                case MessageTags.GetNetworkTime:
+//                    if (networkTimeCallback != null)
+//                        networkTimeCallback.Invoke(message);
 //                    break;
 //            }
 //        }
@@ -221,12 +241,7 @@
 //                {"password", password}
 //            };
 
-//        var encryptedData = Security.EncryptAES(data.ToBytes(), _aesKey);
-//        using (var writer = DarkRiftWriter.Create())
-//        {
-//            writer.Write(encryptedData);
-//            Client.SendMessage(Message.Create(MessageTags.LogIn, writer), SendMode.Reliable);
-//        }
+//        SendEncrypted(MessageTags.LogIn, data.ToBytes());
 //    }
 
 //    public void LogOut()
@@ -251,12 +266,7 @@
 //                {"password", password},
 //            };
 
-//        var encryptedData = Security.EncryptAES(data.ToBytes(), _aesKey);
-//        using (var writer = DarkRiftWriter.Create())
-//        {
-//            writer.Write(encryptedData);
-//            Client.SendMessage(Message.Create(MessageTags.RegisterAccount, writer), SendMode.Reliable);
-//        }
+//        SendEncrypted(MessageTags.RegisterAccount, data.ToBytes());
 //    }
 
 //    public void RequestPasswordReset(string eMail, string code, string newPassword)
@@ -292,12 +302,21 @@
 
 //    #region SPAWNING
 
-//    public void RequestSpawn(string region = "")
+//    public void RequestSpawn(RoomOptions options)
 //    {
-//        Client.SendMessage(Message.Create(MessageTags.RequestSpawnFromClientToMaster, new SpawnFromClientToMasterMessage
-//        {
-//            Region = region
-//        }), SendMode.Reliable);
+//        Client.SendMessage(Message.Create(MessageTags.RequestSpawnFromClientToMaster, options), SendMode.Reliable);
+//    }
+
+//    public void GetServerTime(Action<Message> callback)
+//    {
+//        networkTimeCallback = callback;
+//        Client.SendMessage(Message.CreateEmpty(MessageTags.GetNetworkTime), SendMode.Reliable);
+//    }
+
+//    public void SendEncrypted(ushort tag, byte[] raw, SendMode sendMode = SendMode.Reliable)
+//    {
+//        if(!string.IsNullOrEmpty(_aesKey))
+//            Client.SendMessage(Message.Create(tag, new BytesPacket { Data = Security.EncryptAES(raw, _aesKey) }), sendMode);
 //    }
 
 //    #endregion
