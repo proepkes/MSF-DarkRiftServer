@@ -6,18 +6,13 @@ using MySql.Data.MySqlClient;
 
 namespace ServerPlugins.Database
 {
-    public class MySQLPlugin : DefaultServerPlugin
+    public class MySqlPluginBase : ServerPluginBase
     {
         private readonly bool _debug = true;
         private string _connectionString;
 
-        public MySQLPlugin(PluginLoadData pluginLoadData) : base(pluginLoadData)
+        public MySqlPluginBase(PluginLoadData pluginLoadData) : base(pluginLoadData)
         {
-        }
-
-        protected override void OnMessagereceived(object sender, MessageReceivedEventArgs e)
-        {
-            //Do nothing
         }
 
         protected override void Loaded(LoadedEventArgs args)

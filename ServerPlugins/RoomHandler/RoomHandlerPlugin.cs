@@ -9,7 +9,7 @@ using Utils.Messages.Responses;
 
 namespace ServerPlugins.RoomHandler
 {
-    public class RoomHandlerPlugin : DefaultServerPlugin
+    public class RoomHandlerPluginBase : ServerPluginBase
     {
         private int _nextRoomID;
         private readonly List<RegisteredRoom> _rooms;
@@ -17,7 +17,7 @@ namespace ServerPlugins.RoomHandler
         public override Version Version => new Version(1, 0, 0);
         public override bool ThreadSafe => true;
 
-        public RoomHandlerPlugin(PluginLoadData pluginLoadData) : base(pluginLoadData)
+        public RoomHandlerPluginBase(PluginLoadData pluginLoadData) : base(pluginLoadData)
         {
             _rooms = new List<RegisteredRoom>();
             ClientManager.ClientDisconnected += OnClientDisconnected;
@@ -37,21 +37,12 @@ namespace ServerPlugins.RoomHandler
 
         }
 
-        protected override void OnMessagereceived(object sender, MessageReceivedEventArgs e)
+        protected override void Loaded(LoadedEventArgs args)
         {
-            using (var message = e.GetMessage())
-            {
-                switch (message.Tag)
-                {
-                    case MessageTags.RegisterRoom:
-                        HandleRegisterRoom(e.Client, message);
-                        break;
-
-                }
-            }
+            base.Loaded(args);
+            SetHandler(MessageTags.RegisterRoom, HandleRegisterRoom);
         }
-
-
+        
         private void HandleRegisterRoom(IClient client, Message message)
         {
             if (!HasRoomRegistrationPermissions(client))
