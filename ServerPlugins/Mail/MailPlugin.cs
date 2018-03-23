@@ -6,12 +6,9 @@ using DarkRift.Server;
 
 namespace ServerPlugins.Mail
 {
-    public class MailPlugin : Plugin
+    public class MailPlugin : DefaultServerPlugin
     {
         private SmtpClient SmtpClient;
-
-        public override bool ThreadSafe => true;
-        public override Version Version => new Version(1, 0, 0);
 
         public string SmtpPassword { get; set; }
 

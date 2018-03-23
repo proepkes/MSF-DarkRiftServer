@@ -6,13 +6,10 @@ using MySql.Data.MySqlClient;
 
 namespace ServerPlugins.Database
 {
-    public class MySQLPlugin : Plugin
+    public class MySQLPlugin : DefaultServerPlugin
     {
         private readonly bool _debug = true;
         private string _connectionString;
-
-        public override Version Version => new Version(1, 0, 0);
-        public override bool ThreadSafe => true;
 
         public MySQLPlugin(PluginLoadData pluginLoadData) : base(pluginLoadData)
         {

@@ -16,7 +16,7 @@ using Utils.Messages.Responses;
 
 namespace ServerPlugins.Authentication
 {
-    public class AuthenticationPlugin : Plugin
+    public class AuthenticationPlugin : DefaultServerPlugin
     {
         private readonly Dictionary<IClient, EncryptionData> _encryptionData;
 
@@ -25,8 +25,6 @@ namespace ServerPlugins.Authentication
 
         private MailPlugin _mailPlugin;
 
-        public override Version Version => new Version(1, 0, 0);
-        public override bool ThreadSafe => true;
 
         public int EMailMaxChars { get; set; }
         public int EMailMinChars { get; set; }
