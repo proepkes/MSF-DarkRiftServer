@@ -141,7 +141,7 @@ namespace WorldPlugins.Room
         {
             WriteEvent("Starting room...", LogType.Info);
 
-            gameRoom = new GameRoom(new ApplicationOptions("MyData"), _client, () =>
+            gameRoom = new GameRoom(new ApplicationOptions("MyData") { AdditionalFlags = "-headless" }, _client, () =>
             {
                 // 1. Create options object
                 var options = new RoomOptions

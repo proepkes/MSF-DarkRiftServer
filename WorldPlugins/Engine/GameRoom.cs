@@ -48,17 +48,17 @@ namespace WorldEngine
             base.Start();
 
             // UI text 
-            var helloText = new Text(Context);
-            helloText.Value = "Hello World from UrhoSharp";
-            helloText.HorizontalAlignment = HorizontalAlignment.Center;
-            helloText.VerticalAlignment = VerticalAlignment.Top;
-            helloText.SetColor(new Color(r: 0.5f, g: 1f, b: 1f));
-            helloText.SetFont(font: CoreAssets.Fonts.AnonymousPro, size: 30);
-            UI.Root.AddChild(helloText);
+            //var helloText = new Text(Context);
+            //helloText.Value = "Hello World from UrhoSharp";
+            //helloText.HorizontalAlignment = HorizontalAlignment.Center;
+            //helloText.VerticalAlignment = VerticalAlignment.Top;
+            //helloText.SetColor(new Color(r: 0.5f, g: 1f, b: 1f));
+            //helloText.SetFont(font: CoreAssets.Fonts.AnonymousPro, size: 30);
+            //UI.Root.AddChild(helloText);
 
             // 3D scene with Octree
             _scene = new Scene(Context);
-            _scene.CreateComponent<Octree>();
+            //_scene.CreateComponent<Octree>();
 
             // Create a node for the Earth
             rootNode = _scene.CreateChild();
@@ -69,23 +69,23 @@ namespace WorldEngine
 
             // Create a static model component - Sphere:
             var earth = earthNode.CreateComponent<Sphere>();
-            earth.SetMaterial(ResourceCache.GetMaterial("Materials/Earth.xml")); // or simply Material.FromImage("Textures/Earth.jpg")
+            //earth.SetMaterial(ResourceCache.GetMaterial("Materials/Earth.xml")); // or simply Material.FromImage("Textures/Earth.jpg")
 
             // Same steps for the Moon
             var moonNode = earthNode.CreateChild();
             moonNode.SetScale(0.27f); // Relative size of the Moon is 1738.1km/6378.1km
             moonNode.Position = new Vector3(1.2f, 0, 0);
             var moon = moonNode.CreateComponent<Sphere>();
-            moon.SetMaterial(Material.FromImage("Textures/Moon.jpg"));
+            //moon.SetMaterial(Material.FromImage("Textures/Moon.jpg"));
 
             // Clouds
             var cloudsNode = earthNode.CreateChild();
             cloudsNode.SetScale(1.02f);
             var clouds = cloudsNode.CreateComponent<Sphere>();
             var cloudsMaterial = new Material();
-            cloudsMaterial.SetTexture(TextureUnit.Diffuse, ResourceCache.GetTexture2D("Textures/Earth_Clouds.jpg"));
-            cloudsMaterial.SetTechnique(0, CoreAssets.Techniques.DiffAddAlpha);
-            clouds.SetMaterial(cloudsMaterial);
+            //cloudsMaterial.SetTexture(TextureUnit.Diffuse, ResourceCache.GetTexture2D("Textures/Earth_Clouds.jpg"));
+            //cloudsMaterial.SetTechnique(0, CoreAssets.Techniques.DiffAddAlpha);
+            //clouds.SetMaterial(cloudsMaterial);
 
             // Light
             Node lightNode = _scene.CreateChild();
@@ -97,22 +97,22 @@ namespace WorldEngine
 
             // Camera
             cameraNode = _scene.CreateChild();
-            var camera = cameraNode.CreateComponent<Camera>();
+            //var camera = cameraNode.CreateComponent<Camera>();
 
-            // Viewport
-            var viewport = new Viewport(Context, _scene, camera, null);
-            Renderer.SetViewport(0, viewport);
-            //viewport.RenderPath.Append(CoreAssets.PostProcess.FXAA2);
+            //// Viewport
+            //var viewport = new Viewport(Context, _scene, camera, null);
+            //Renderer.SetViewport(0, viewport);
+            ////viewport.RenderPath.Append(CoreAssets.PostProcess.FXAA2);
 
-            Input.Enabled = true;
+            //Input.Enabled = true;
             // FPS
-            new MonoDebugHud(this).Show(Color.Green, 25);
+            //new MonoDebugHud(this).Show(Color.Green, 25);
 
             // Stars (Skybox)
             var skyboxNode = _scene.CreateChild();
             var skybox = skyboxNode.CreateComponent<Skybox>();
-            skybox.Model = CoreAssets.Models.Box;
-            skybox.SetMaterial(Material.SkyboxFromImage("Textures/Space.png"));
+            //skybox.Model = CoreAssets.Models.Box;
+            //skybox.SetMaterial(Material.SkyboxFromImage("Textures/Space.png"));
 
             // Run a an action to spin the Earth (7 degrees per second)
             rootNode.RunActions(new RepeatForever(new RotateBy(duration: 1f, deltaAngleX: 0, deltaAngleY: -7, deltaAngleZ: 0)));
@@ -121,13 +121,13 @@ namespace WorldEngine
             // Zoom effect:
             await rootNode.RunActionsAsync(new EaseOut(new MoveTo(2f, new Vector3(0, 0, 12)), 1));
 
-            AddCity(0, 0, "(0, 0)");
-            AddCity(53.9045f, 27.5615f, "Minsk");
-            AddCity(51.5074f, 0.1278f, "London");
-            AddCity(40.7128f, -74.0059f, "New-York");
-            AddCity(37.7749f, -122.4194f, "San Francisco");
-            AddCity(39.9042f, 116.4074f, "Beijing");
-            AddCity(-31.9505f, 115.8605f, "Perth");
+            //AddCity(0, 0, "(0, 0)");
+            //AddCity(53.9045f, 27.5615f, "Minsk");
+            //AddCity(51.5074f, 0.1278f, "London");
+            //AddCity(40.7128f, -74.0059f, "New-York");
+            //AddCity(37.7749f, -122.4194f, "San Francisco");
+            //AddCity(39.9042f, 116.4074f, "Beijing");
+            //AddCity(-31.9505f, 115.8605f, "Perth");
         }
 
         public void AddCity(float lat, float lon, string name)
@@ -165,7 +165,8 @@ namespace WorldEngine
         
         protected override void OnUpdate(float timeStep)
         {
-            SimpleMoveCamera3D(timeStep);
+            Debug.WriteLine("Test");
+            //SimpleMoveCamera3D(timeStep);
             base.OnUpdate(timeStep);
         }
 
