@@ -137,6 +137,7 @@ namespace Spawner
 
         private void HandleRequestSpawnFromMaster(Message message)
         {
+            Console.WriteLine("New spawn request from master");
             var data = message.Deserialize<SpawnRequestPacket>();
             if (data != null)
             {
@@ -156,10 +157,10 @@ namespace Spawner
                                 $"{ArgNames.AssignedPort}={port} " +
                                 $"{ArgNames.MachineIp}={SpawnerIpAddress} " +
                                 $"{ArgNames.SpawnCode}=\"{data.SpawnCode}\" " +
-                                $"{ArgNames.WorldName}={data.WorldName} " +
-                                $"{ArgNames.RoomName}={data.RoomName} " +
-                                $"{ArgNames.MaxPlayers}={data.MaxPlayers} " +
-                                $"{ArgNames.IsPublic}={data.IsPublic} "
+                                $"{ArgNames.WorldName}={data.Options.WorldName} " +
+                                $"{ArgNames.RoomName}={data.Options.RoomName} " +
+                                $"{ArgNames.MaxPlayers}={data.Options.MaxPlayers} " +
+                                $"{ArgNames.IsPublic}={data.Options.IsPublic} "
                 };
                 var processStarted = false;
                 try

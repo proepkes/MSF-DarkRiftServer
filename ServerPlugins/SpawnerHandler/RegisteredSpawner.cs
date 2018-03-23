@@ -88,10 +88,7 @@ namespace ServerPlugins.SpawnerHandler
                 SpawnerId = ID,
                 SpawnTaskID = task.ID,
                 SpawnCode = task.UniqueCode,
-                WorldName = task.World,
-                RoomName = task.Room,
-                IsPublic = task.IsPublic,
-                MaxPlayers = task.MaxPlayers
+                Options = task.Options
             };
 
             Client.SendMessage(Message.Create(MessageTags.RequestSpawnFromMasterToSpawner, data), SendMode.Reliable);

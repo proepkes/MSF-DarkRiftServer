@@ -18,10 +18,6 @@ namespace ServerPlugins.SpawnerHandler
 
         public RegisteredSpawner Spawner { get; }
         public RoomOptions Options { get; }
-        public string World { get; }
-        public string Room { get; }
-        public int MaxPlayers { get; }
-        public bool IsPublic { get; }
 
         public int ID { get; }
 
