@@ -22,7 +22,7 @@ namespace Spawner
         private static void Main(string[] args)
         {
             var client = new SpawnerClient();
-            Console.WriteLine("1: Request Room");
+            Console.WriteLine("1: Request Room (ONLY FOR TESTING!)");
             Console.WriteLine("X: Exit");
             var input = "";
             while (input != null && input.ToLower() != "x")
