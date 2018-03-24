@@ -1,15 +1,10 @@
 ﻿using System;
-using System.IO;
-using System.Net;
-using System.Reflection;
 using DarkRift;
-using DarkRift.Client;
 using DarkRift.Server;
-using ServerPlugins;
 using Utils;
 using Utils.Packets;
 
-namespace WorldPlugins.Time
+namespace ServerPlugins.Time
 {
     /// <summary>
     ///     This Plugin goes to the spawned server

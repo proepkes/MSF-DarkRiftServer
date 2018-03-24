@@ -4,22 +4,19 @@ namespace Utils.Packets
 {
     public class RoomAccessProvideCheckPacket : IDarkRiftSerializable
     {
-        public int PeerId;
-        public int RoomId;
-        public string Username = "";
+        public int ClientID;
+        public int RoomID;
 
         public void Deserialize(DeserializeEvent e)
         {
-            PeerId = e.Reader.ReadInt32();
-            RoomId = e.Reader.ReadInt32();
-            Username = e.Reader.ReadString();
+            ClientID = e.Reader.ReadInt32();
+            RoomID = e.Reader.ReadInt32();
         }
 
         public void Serialize(SerializeEvent e)
         {
-            e.Writer.Write(PeerId);
-            e.Writer.Write(RoomId);
-            e.Writer.Write(Username);
+            e.Writer.Write(ClientID);
+            e.Writer.Write(RoomID);
         }
     }
 }

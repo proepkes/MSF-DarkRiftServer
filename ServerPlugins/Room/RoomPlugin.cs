@@ -1,18 +1,18 @@
 ﻿using System;
-using System.IO;
+using System.Collections.Generic;
 using System.Net;
-using System.Reflection;
 using DarkRift;
 using DarkRift.Client;
 using DarkRift.Server;
-using ServerPlugins;
+using ServerPlugins.Game;
 using Utils;
 using Utils.Messages.Notifications;
 using Utils.Messages.Requests;
 using Utils.Messages.Responses;
 using Utils.Packets;
+using MessageReceivedEventArgs = DarkRift.Client.MessageReceivedEventArgs;
 
-namespace WorldPlugins.Room
+namespace ServerPlugins.Room
 {
     public delegate void RoomAccessProviderCallback(RoomAccessPacket access, string error);
     public delegate void RoomAccessProvider(UsernameAndPeerIdPacket requester, RoomAccessProviderCallback giveAccess);
@@ -23,17 +23,21 @@ namespace WorldPlugins.Room
     public class RoomPlugin : ServerPluginBase
     {
         // ReSharper disable InconsistentNaming
+        private int RoomID;
+
         private readonly int SpawnTaskID;
 
         private readonly string SpawnCode;
         // ReSharper restore InconsistentNaming
 
+        //Connection to master
         private readonly DarkRiftClient _client;
 
         public override Version Version => new Version(1, 0, 0);
 
         public override bool ThreadSafe => true;
 
+        
         public IPAddress MasterIpAddress { get; set; }
         public int MasterPort { get; set; }
         public int MaxPlayers { get; set; }
@@ -42,8 +46,12 @@ namespace WorldPlugins.Room
         public string RoomName { get; set; }
         public string Region { get; set; }
         public bool IsRoomRegistered { get; protected set; }
+        public int AssignedPort { get; set; }
+        public string MachineIp { get; set; }
 
+        private Dictionary<int, IClient> _pendingAccessValidations;
         private RoomAccessProvider _accessProvider;
+        private GamePlugin game;
 
         public RoomPlugin(PluginLoadData pluginLoadData) : base(pluginLoadData)
         {
@@ -57,32 +65,156 @@ namespace WorldPlugins.Room
             WorldName = pluginLoadData.Settings.Get(nameof(WorldName));
             RoomName = pluginLoadData.Settings.Get(nameof(RoomName));
             Region = pluginLoadData.Settings.Get(nameof(Region));
+            AssignedPort = Convert.ToInt32(pluginLoadData.Settings.Get(nameof(AssignedPort)));
+            MachineIp = pluginLoadData.Settings.Get(nameof(MachineIp));
 
             _client = new DarkRiftClient();
+            _pendingAccessValidations = new Dictionary<int, IClient>();
         }
 
-        protected override void Loaded(LoadedEventArgs args)
+        protected override void Loaded(LoadedEventArgs loadedArgs)
         {
-            base.Loaded(args);
+            base.Loaded(loadedArgs);
+
+            game = PluginManager.GetPluginByType<GamePlugin>();
 
             WriteEvent("Connecting to " + MasterIpAddress + ":" + MasterPort, LogType.Info);
+            _client.MessageReceived += OnMessageFromMaster;
             _client.ConnectInBackground(MasterIpAddress, MasterPort, IPVersion.IPv4, OnConnectedToMaster);
-            _client.MessageReceived += (client, message) =>
+            
+            ClientManager.ClientConnected += OnPlayerConnected;
+        }
+
+        private void OnPlayerConnected(object sender, ClientConnectedEventArgs e)
+        {
+            e.Client.MessageReceived += OnMessageFromPlayer;
+        }
+
+        private void OnMessageFromPlayer(object sender, DarkRift.Server.MessageReceivedEventArgs e)
+        {
+            var message = e.GetMessage();
+            if (message != null)
             {
-                var data = message.GetMessage();
-                if (data != null)
+                switch (message.Tag)
                 {
-                    switch (data.Tag)
-                    {
-                        case MessageTags.RegisterRoomSuccess:
-                            HandleRegisterRoomSuccess(data);
-                            break;
-                        case MessageTags.RegisterSpawnedProcessSuccess:
-                            HandleRegisterSpawnedProcessSuccess(data);
-                            break;
-                    }
+                    case MessageTags.AccessRoom:
+                        HandleAccessRoom(e.Client, message);
+                        break;
                 }
-            };
+            }
+        }
+
+        private void OnMessageFromMaster(object client, MessageReceivedEventArgs args)
+        {
+            var message = args.GetMessage();
+            if (message != null)
+            {
+                switch (message.Tag)
+                {
+                    case MessageTags.RegisterRoomSuccess:
+                        HandleRegisterRoomSuccess(message);
+                        break;
+                    case MessageTags.RegisterSpawnedProcessSuccess:
+                        HandleRegisterSpawnedProcessSuccess(message);
+                        break;
+                    case MessageTags.CompleteSpawnProcessSuccess:
+                        WriteEvent("Ready for players.", LogType.Info);
+                        break;
+                    case MessageTags.CompleteSpawnProcessFailed:
+                        var msg = message.Deserialize<FailedMessage>();
+                        WriteEvent("CompleteSpawnProcess failed: " + msg.Status + "(" + msg.Reason + ")", LogType.Warning);
+                        break;
+                    case MessageTags.ProvideRoomAccessCheck:
+                        HandleProvideRoomAccessCheck(message);
+                        break;
+                    case MessageTags.ValidateRoomAccessSuccess:
+                        HandleValidateRoomAccessSuccess(message);
+                        break;
+                    case MessageTags.ValidateRoomAccessFailed:
+                        HandleValidateRoomAccessFailed(message);
+                        break;
+                }
+            }
+        }
+
+        private void HandleValidateRoomAccessSuccess(Message message)
+        {
+            var data = message.Deserialize<RoomAccessValidatedPacket>();
+            if (data != null)
+            {
+                if (_pendingAccessValidations.ContainsKey(data.ClientID))
+                {
+                    var validatedClient = _pendingAccessValidations[data.ClientID];
+                    _pendingAccessValidations.Remove(data.ClientID);
+
+                    WriteEvent("Confirmed token access for client: " + validatedClient.ID, LogType.Info);
+
+                    //// Get account info
+                    //Msf.Server.Auth.GetPeerAccountInfo(validatedClient.PeerId, (info, errorMsg) =>
+                    //{
+                    //    if (info == null)
+                    //    {
+                    //        Logger.Error("Failed to get account info of peer " + validatedClient.PeerId + "" +
+                    //                     ". Error: " + errorMsg);
+                    //        return;
+                    //    }
+
+                    //    Logger.Debug("Got peer account info: " + info);
+
+                    //    var player = new UnetMsfPlayer(netmsg.conn, info);
+
+                    //    OnPlayerJoined(player);
+                    //});
+                }
+            }
+        }
+
+        private void HandleValidateRoomAccessFailed(Message message)
+        {
+            var data = message.Deserialize<IntPacket>();
+            if (data != null)
+            {
+                if (_pendingAccessValidations.ContainsKey(data.Data))
+                {
+                    _pendingAccessValidations[data.Data].Disconnect();
+                }
+            }
+        }
+
+        private void HandleAccessRoom(IClient client, Message message)
+        {
+            if(_pendingAccessValidations.ContainsKey(client.ID))
+                return;
+            
+            var data = message.Deserialize<StringPacket>();
+            if (data != null)
+            {
+                var token = data.Data;
+
+                _pendingAccessValidations[client.ID] = client;
+
+                //Ask master for validation
+                _client.SendMessage(Message.Create(MessageTags.ValidateRoomAccess, new RoomAccessValidatePacket {ClientID = client.ID, RoomID = RoomID, Token = token}), SendMode.Reliable);
+            }
+        }
+
+        private void HandleProvideRoomAccessCheck(Message message)
+        {
+            var data = message.Deserialize<RoomAccessProvideCheckPacket>();
+            if (data != null)
+            {
+                //We accept every client
+                _client.SendMessage(Message.Create(MessageTags.ProvideRoomAccessCheckSuccess,
+                    new RoomAccessPacket
+                {
+                    ClientID = data.ClientID,
+                    RoomIp = MachineIp,
+                    RoomPort = AssignedPort,
+                    RoomID = RoomID,
+                    Token = Guid.NewGuid().ToString(),
+                    RoomName = RoomName
+                }),SendMode.Reliable);
+            }
         }
 
         private void OnConnectedToMaster(Exception exception)
@@ -99,7 +231,7 @@ namespace WorldPlugins.Room
             {
                 IsRoomRegistered = true;
 
-                _accessProvider = CreateAccess;
+                RoomID = data.RoomID;
 
 
                 var packet = new SpawnFinalizedMessage
@@ -114,28 +246,28 @@ namespace WorldPlugins.Room
 
         private void HandleRegisterSpawnedProcessSuccess(Message message)
         {
-            WriteEvent("We've registered this process to the master. Starting room...", LogType.Info);
-            
-            // 1. Create options object
-            var options = new RoomOptions
+            WriteEvent("Starting room...", LogType.Info);
+
+            game.Started += () =>
             {
-                RoomName = RoomName,
-                WorldName = WorldName,
-                MaxPlayers = MaxPlayers,
-                IsPublic = IsPublic,
-                Region = Region,
+                // 1. Create options object
+                var options = new RoomOptions
+                {
+                    RoomName = RoomName,
+                    WorldName = WorldName,
+                    MaxPlayers = MaxPlayers,
+                    IsPublic = IsPublic,
+                    Region = Region,
+                };
+
+                // 2. Send a request to create a room
+                _client.SendMessage(Message.Create(MessageTags.RegisterRoom, options), SendMode.Reliable);
             };
 
-            // 2. Send a request to create a room
-            _client.SendMessage(Message.Create(MessageTags.RegisterRoom, options), SendMode.Reliable);
-        }
-        
-        public virtual void CreateAccess(UsernameAndPeerIdPacket requester, RoomAccessProviderCallback callback)
-        {
-            callback.Invoke(new RoomAccessPacket()
-            {
-                Token = Guid.NewGuid().ToString()
-            }, null);
+            //Run game logic here before the room will be registered and opened for players
+            //Example: generate a seed for procedural levels, generate navmeshes, load essential gamedata
+            game.Start();
+            
         }
     }
 }

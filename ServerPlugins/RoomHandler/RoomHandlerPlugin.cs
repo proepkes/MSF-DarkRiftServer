@@ -6,6 +6,7 @@ using DarkRift;
 using DarkRift.Server;
 using Utils;
 using Utils.Messages.Responses;
+using Utils.Packets;
 
 namespace ServerPlugins.RoomHandler
 {
@@ -14,8 +15,7 @@ namespace ServerPlugins.RoomHandler
         private int _nextRoomID;
         private readonly List<RegisteredRoom> _rooms;
 
-        public override Version Version => new Version(1, 0, 0);
-        public override bool ThreadSafe => true;
+        public override bool ThreadSafe => false;
 
         public RoomHandlerPlugin(PluginLoadData pluginLoadData) : base(pluginLoadData)
         {
@@ -25,24 +25,89 @@ namespace ServerPlugins.RoomHandler
 
         private void OnClientDisconnected(object sender, ClientDisconnectedEventArgs e)
         {
-            lock (_rooms)
+            foreach (var room in _rooms.Where(registeredRoom => registeredRoom.Client.ID == e.Client.ID))
             {
-                foreach (var room in _rooms.Where(registeredRoom => registeredRoom.Client.ID == e.Client.ID))
-                {
-                    room.Destroy();
-                }
-                // Remove the room from all rooms
-                _rooms.RemoveAll(room => room.Client.ID == e.Client.ID);
+                room.Destroy();
             }
-
+            // Remove the room from all rooms
+            _rooms.RemoveAll(room => room.Client.ID == e.Client.ID);
         }
 
         protected override void Loaded(LoadedEventArgs args)
         {
             base.Loaded(args);
             SetHandler(MessageTags.RegisterRoom, HandleRegisterRoom);
+            SetHandler(MessageTags.GetRoomAccess, HandleGetRoomAccess);
+            SetHandler(MessageTags.ValidateRoomAccess, HandleValidateRoomAccess);
         }
-        
+
+        private void HandleValidateRoomAccess(IClient client, Message message)
+        {
+            var data = message.Deserialize<RoomAccessValidatePacket>();
+            if (data != null)
+            {
+                var room = _rooms.FirstOrDefault(registeredRoom => registeredRoom.ID == data.RoomID);
+                
+                if (room == null)
+                {
+                    client.SendMessage(Message.Create(MessageTags.ValidateRoomAccessFailed, new IntPacket {Data = data.ClientID }), SendMode.Reliable);
+                    return;
+                }
+
+                if (client != room.Client)
+                {
+                    client.SendMessage(Message.Create(MessageTags.ValidateRoomAccessFailed, new IntPacket { Data = data.ClientID }), SendMode.Reliable);
+                    return;
+                }
+
+
+                if (!room.ValidateAccess(data.Token, out var playerClient))
+                {
+                    client.SendMessage(Message.Create(MessageTags.ValidateRoomAccessFailed, new IntPacket { Data = data.ClientID }), SendMode.Reliable);
+                    return;
+                }
+
+                // Respond with success and player's peer id
+                client.SendMessage(Message.Create(MessageTags.ValidateRoomAccessSuccess,
+                    new RoomAccessValidatedPacket
+                    {
+                        ClientID = data.ClientID,
+                        MasterClientID = playerClient.ID,
+                        
+                    }), SendMode.Reliable);
+            }
+        }
+
+        private void HandleGetRoomAccess(IClient client, Message message)
+        {
+            var data = message.Deserialize<RoomAccessRequestPacket>();
+            if (data != null)
+            {
+                var room = _rooms.FirstOrDefault(registeredRoom => registeredRoom.ID == data.RoomId);
+
+                if (room == null)
+                {
+                    client.SendMessage(
+                        Message.Create(MessageTags.GetRoomAccessFailed,
+                            new FailedMessage {Reason = "Room does not exist", Status = ResponseStatus.Failed}),
+                        SendMode.Reliable);
+                    return;
+                }
+                
+                // Send room access request to peer who owns it
+                room.GetAccess(client, (packet, error) =>
+                {
+                    if (packet == null)
+                    {
+                        client.SendMessage(Message.Create(MessageTags.GetRoomAccessFailed, new FailedMessage {Reason = "Access denied", Status = ResponseStatus.Unauthorized}), SendMode.Reliable);
+                        return;
+                    }
+                    
+                    client.SendMessage(Message.Create(MessageTags.GetRoomAccessSuccess, packet), SendMode.Reliable);
+                });
+            }
+        }
+
         private void HandleRegisterRoom(IClient client, Message message)
         {
             if (!HasRoomRegistrationPermissions(client))
@@ -63,7 +128,6 @@ namespace ServerPlugins.RoomHandler
                 // Respond with a room id
                 client.SendMessage(Message.Create(MessageTags.RegisterRoomSuccess, new RegisterRoomSuccessMessage { Status = ResponseStatus.Success, RoomID = room.ID }),
                     SendMode.Reliable);
-
             }
             else
             {
@@ -88,17 +152,15 @@ namespace ServerPlugins.RoomHandler
 
 
             // Add the room to a list of all rooms
-            lock (_rooms)
-            {
-                _rooms.Add(room);
-            }
+            _rooms.Add(room);
 
             return room;
         }
 
         private int GenerateRoomId()
         {
-            return Interlocked.Increment(ref _nextRoomID);
+            //return Interlocked.Increment(ref _nextRoomID);
+            return _nextRoomID++;
         }
     }
 }

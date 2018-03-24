@@ -125,11 +125,10 @@ namespace Spawner
                         break;
                     //FIXME: ONLY FOR TESTING; SPAWNS ARE REQUESTED BY CLIENTS AND NOT THE SPAWNER ITSELF
                     case MessageTags.RequestSpawnFromClientToMasterSuccess:
-                        Console.WriteLine("MasterServer has created a task!");
+                        Console.WriteLine("Spawnrequest accepted from master!");
                         break;
                     case MessageTags.RequestSpawnFromClientToMasterFailed:
-                        Console.WriteLine("Spawning room failed: " +
-                                          message.Deserialize<FailedMessage>().Reason);
+                        Console.WriteLine("Master denied our spawn request: " + message.Deserialize<FailedMessage>().Reason);
                         break;
                 }
             }

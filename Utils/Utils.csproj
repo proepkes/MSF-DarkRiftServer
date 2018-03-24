@@ -57,6 +57,9 @@
     <Compile Include="IO\EndianBinaryReader.cs" />
     <Compile Include="IO\EndianBinaryWriter.cs" />
     <Compile Include="Packets\BytesPacket.cs" />
+    <Compile Include="Packets\RoomAccessValidatedPacket.cs" />
+    <Compile Include="Packets\StringPacket.cs" />
+    <Compile Include="Packets\IntPacket.cs" />
     <Compile Include="Packets\KillSpawnedProcessPacket.cs" />
     <Compile Include="Messages\Notifications\ProcessKilledMessage .cs" />
     <Compile Include="Messages\NotificationMessage.cs" />
@@ -82,7 +85,7 @@
     <Compile Include="Packets\RoomAccessRequestPacket.cs" />
     <Compile Include="Packets\RoomAccessValidatePacket.cs" />
     <Compile Include="Packets\SaveRoomOptionsPacket.cs" />
-    <Compile Include="Packets\TimePacket.cs" />
+    <Compile Include="Packets\FloatPacket.cs" />
     <Compile Include="Packets\UsernameAndPeerIdPacket.cs" />
     <Compile Include="ResponseStatus.cs" />
     <Compile Include="RoomOptions.cs" />

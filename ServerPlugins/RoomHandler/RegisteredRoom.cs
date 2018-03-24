@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DarkRift;
 using DarkRift.Server;
 using Utils;
+using Utils.Messages.Responses;
 using Utils.Packets;
 
 namespace ServerPlugins.RoomHandler
@@ -12,19 +14,36 @@ namespace ServerPlugins.RoomHandler
     /// </summary>
     public class RegisteredRoom
     {
+        private class ClientEquality : IEqualityComparer<IClient>
+        {
+            public bool Equals(IClient x, IClient y)
+            {
+                return x.ID == y.ID;
+            }
+
+            public int GetHashCode(IClient obj)
+            {
+                return obj.ID;
+            }
+        }
+
         public delegate void GetAccessCallback(RoomAccessPacket access, string error);
 
         private readonly Dictionary<int, RoomAccessPacket> _accessesInUse;
-        private readonly HashSet<int> _pendingRequests;
+        private readonly Dictionary<IClient, GetAccessCallback> _pendingRequests;
 
         private readonly Dictionary<int, IClient> _players;
         private readonly Dictionary<string, RoomAccessData> _unconfirmedAccesses;
 
-        public RoomOptions Options { get; private set; }
         public int ID { get; }
         public IClient Client { get; }
+        public RoomOptions Options { get; private set; }
 
         public int OnlineCount => _accessesInUse.Count;
+
+        public event Action<IClient> PlayerJoined;
+        public event Action<IClient> PlayerLeft;
+        public event Action<RegisteredRoom> Destroyed;
 
         public RegisteredRoom(int id, IClient client, RoomOptions options)
         {
@@ -35,41 +54,78 @@ namespace ServerPlugins.RoomHandler
             _unconfirmedAccesses = new Dictionary<string, RoomAccessData>();
             _players = new Dictionary<int, IClient>();
             _accessesInUse = new Dictionary<int, RoomAccessPacket>();
-            _pendingRequests = new HashSet<int>();
+            _pendingRequests = new Dictionary<IClient, GetAccessCallback>(new ClientEquality());
+
+            //Connection from masterserver to room
+            Client.MessageReceived += OnMessageReceived;
         }
 
-        public event Action<IClient> PlayerJoined;
-        public event Action<IClient> PlayerLeft;
-
-        public event Action<RegisteredRoom> Destroyed;
-
-        public void ChangeOptions(RoomOptions options)
+        private void OnMessageReceived(object sender, MessageReceivedEventArgs e)
         {
-            Options = options;
+            var message = e.GetMessage();
+            if (message != null)
+            {
+                switch (message.Tag)
+                {
+                    case MessageTags.ProvideRoomAccessCheckSuccess:
+                        HandleProvideRoomAccessCheckSuccess(message);
+                        break;
+                }
+            }
         }
 
+        private void HandleProvideRoomAccessCheckSuccess(Message message)
+        {
+            var data = message.Deserialize<RoomAccessPacket>();
+            if (data != null)
+            {
+                var client = _pendingRequests.Keys.FirstOrDefault(key => key.ID == data.ClientID);
+                if (client != null)
+                {
+                    //call the callback
+                    _pendingRequests[client](data, null);
+
+                    var access = new RoomAccessData
+                    {
+                        Access = data,
+                        Client = client,
+                        Timeout = DateTime.Now.AddSeconds(20)
+                    };
+                    _unconfirmedAccesses[data.Token] = access;
+                    _pendingRequests.Remove(client);
+                }
+            }
+        }
 
         /// <summary>
         ///     Sends a request to room, to retrieve an access to it for a specified peer,
         ///     with some extra properties
         /// </summary>
-        public void GetAccess(IClient client)
+        public void GetAccess(IClient client, GetAccessCallback callback)
         {
             // If request is already pending
-            if (_pendingRequests.Contains(client.ID)) return;
+            if (_pendingRequests.ContainsKey(client))
+            {
+                callback.Invoke(null, "You've already requested an access to this room");
+                return;
+            }
 
             // If player is already in the game
-            if (_players.ContainsKey(client.ID)) return;
+            if (_players.ContainsKey(client.ID))
+            {
+                callback.Invoke(null, "You are already in this room");
+                return;
+            }
 
             // If player has already received an access and didn't claim it
             // but is requesting again - send him the old one
-            var currentAccess = _unconfirmedAccesses.Values.FirstOrDefault(v => v.Peer == client);
+            var currentAccess = _unconfirmedAccesses.Values.FirstOrDefault(v => v.Client.ID == client.ID);
             if (currentAccess != null)
             {
                 // Restore the timeout //TODO: Timeout-Setting (no fixed value of 20)
                 currentAccess.Timeout = DateTime.Now.AddSeconds(20);
 
-                //callback.Invoke(currentAccess.Access, null);
+                callback.Invoke(currentAccess.Access, null);
                 return;
             }
 
@@ -80,50 +136,23 @@ namespace ServerPlugins.RoomHandler
                                        + _accessesInUse.Count
                                        + _unconfirmedAccesses.Count;
 
-                if (playerSlotsTaken >= Options.MaxPlayers) return;
+                if (playerSlotsTaken >= Options.MaxPlayers)
+                {
+                    callback.Invoke(null, "Room is already full");
+                    return;
+                }
             }
 
             var packet = new RoomAccessProvideCheckPacket
             {
-                PeerId = client.ID,
-                RoomId = ID
+                ClientID = client.ID,
+                RoomID = ID
             };
-
-            //// Add the username if available
-            //var userExt = peer.GetExtension<IUserExtension>();
-            //if (userExt != null && !string.IsNullOrEmpty(userExt.Username))
-            //{
-            //    packet.Username = userExt.Username;
-            //}
-
+            
             // Add to pending list
-            _pendingRequests.Add(client.ID);
+            _pendingRequests[client] = callback;
 
-            //Peer.SendMessage((short) MsfOpCodes.ProvideRoomAccessCheck, packet, (status, response) =>
-            //{
-            //    // Remove from pending list
-            //    _pendingRequests.Remove(peer.Id);
-
-            //    if (status != ResponseStatus.Success)
-            //    {
-            //        callback.Invoke(null, response.AsString("Unknown Error"));
-            //        return;
-            //    }
-
-            //    var accessData = response.Deserialize(new RoomAccessPacket());
-
-            //    var access = new RoomAccessData()
-            //    {
-            //        Access = accessData,
-            //        Peer = peer,
-            //        Timeout = DateTime.Now.AddSeconds(Options.AccessTimeoutPeriod)
-            //    };
-
-            //    // Save the access
-            //    _unconfirmedAccesses[access.Access.Token] = access;
-
-            //    callback.Invoke(access.Access, null);
-            //});
+            Client.SendMessage(Message.Create(MessageTags.ProvideRoomAccessCheck, packet), SendMode.Reliable);
         }
 
         /// <summary>
@@ -147,17 +176,16 @@ namespace ServerPlugins.RoomHandler
             _unconfirmedAccesses.Remove(token);
 
             // If player is no longer connected
-            if (!data.Peer.IsConnected)
+            if (!data.Client.IsConnected)
                 return false;
 
             // Set access as used
-            _accessesInUse.Add(data.Peer.ID, data.Access);
+            _accessesInUse.Add(data.Client.ID, data.Access);
 
-            peer = data.Peer;
+            peer = data.Client;
 
             // Invoke the event
-            if (PlayerJoined != null)
-                PlayerJoined.Invoke(peer);
+            PlayerJoined?.Invoke(peer);
 
             return true;
         }
@@ -202,7 +230,7 @@ namespace ServerPlugins.RoomHandler
         private class RoomAccessData
         {
             public RoomAccessPacket Access;
-            public IClient Peer;
+            public IClient Client;
             public DateTime Timeout;
         }
     }

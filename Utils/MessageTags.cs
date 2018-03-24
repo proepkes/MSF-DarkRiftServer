@@ -44,13 +44,26 @@
         public const ushort CompleteSpawnProcess = 2260; //6.) Spawn.NotifyCompleteTo -> Master
         public const ushort CompleteSpawnProcessFailed = 2261;
         public const ushort CompleteSpawnProcessSuccess = 2262;
-        public const ushort KillSpawn = 2263;
-        public const ushort NotifySpawnerKilledProcess = 2264;
+        public const ushort GetFinalizationData = 2263; //7.) Client -> GetSpawnDataFromMaster
+        public const ushort GetFinalizationDataFailed = 2264; 
+        public const ushort GetFinalizationDataSuccess = 2265; 
+        public const ushort KillSpawn = 2270;
+        public const ushort NotifySpawnerKilledProcess = 2271;
 
         //Rooms
         public const ushort RegisterRoom = 2300;
         public const ushort RegisterRoomFailed = 2301;
         public const ushort RegisterRoomSuccess = 2302;
+        public const ushort GetRoomAccess = 2303;
+        public const ushort GetRoomAccessFailed = 2304;
+        public const ushort GetRoomAccessSuccess = 2305;
+        public const ushort ProvideRoomAccessCheck = 2350;
+        public const ushort ProvideRoomAccessCheckFailed = 2351;
+        public const ushort ProvideRoomAccessCheckSuccess = 2352;
+        public const ushort ValidateRoomAccess = 2353;
+        public const ushort ValidateRoomAccessFailed = 2354;
+        public const ushort ValidateRoomAccessSuccess = 2355;
+        public const ushort AccessRoom = 2360; //Call from client
 
         //Game-reated
         public const ushort GetNetworkTime = 3000;

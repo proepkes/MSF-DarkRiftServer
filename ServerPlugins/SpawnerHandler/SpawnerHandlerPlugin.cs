@@ -78,6 +78,40 @@ namespace ServerPlugins.SpawnerHandler
             SetHandler(MessageTags.RequestSpawnFromMasterToSpawnerFailed, HandleRequestSpawnFromMasterToSpawnerFailed);
             SetHandler(MessageTags.NotifySpawnerKilledProcess, HandleNotifySpawnerKilledProcess);
             SetHandler(MessageTags.CompleteSpawnProcess, HandleCompleteSpawnProcess);
+            SetHandler(MessageTags.GetFinalizationData, HandleGetFinalizationData);
+        }
+
+        private void HandleGetFinalizationData(IClient client, Message message)
+        {
+            var data = message.Deserialize<IntPacket>();
+            if (data != null)
+            {
+               var task = _spawnTasks.FirstOrDefault(spawnTask => spawnTask.ID == data.Data);
+
+                if (task == null)
+                {
+                    client.SendMessage(Message.Create(MessageTags.GetFinalizationDataFailed,
+                        new FailedMessage {Reason = "Invalid request", Status = ResponseStatus.Failed}), SendMode.Reliable);
+                    return;
+                }
+
+                if (task.Requester != client)
+                {
+                    client.SendMessage(Message.Create(MessageTags.GetFinalizationDataFailed,
+                        new FailedMessage { Reason = "Invalid request", Status = ResponseStatus.Unauthorized }), SendMode.Reliable);
+                    return;
+                }
+
+                if (task.FinalizationMessage == null)
+                {
+                    client.SendMessage(Message.Create(MessageTags.GetFinalizationDataFailed,
+                        new FailedMessage { Reason = "Task has no completion data", Status = ResponseStatus.Failed }), SendMode.Reliable);
+                    return;
+                }
+
+
+                client.SendMessage(Message.Create(MessageTags.GetFinalizationDataSuccess, task.FinalizationMessage), SendMode.Reliable);
+            }
         }
 
 
@@ -108,9 +142,10 @@ namespace ServerPlugins.SpawnerHandler
                     return;
                 }
 
+                client.SendMessage(Message.CreateEmpty(MessageTags.CompleteSpawnProcessSuccess), SendMode.Reliable);
+
                 task.OnFinalized(data);
 
-                client.SendMessage(Message.CreateEmpty(MessageTags.CompleteSpawnProcessSuccess), SendMode.Reliable);
             }
         }
 
