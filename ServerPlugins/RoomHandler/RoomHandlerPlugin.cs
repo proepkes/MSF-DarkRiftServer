@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using DarkRift;
 using DarkRift.Server;
 using Utils;
@@ -22,6 +23,28 @@ namespace ServerPlugins.RoomHandler
             _rooms = new List<RegisteredRoom>();
             ClientManager.ClientDisconnected += OnClientDisconnected;
         }
+        protected override void Loaded(LoadedEventArgs args)
+        {
+            base.Loaded(args);
+            SetHandler(MessageTags.RegisterRoom, HandleRegisterRoom);
+            SetHandler(MessageTags.GetRoomAccess, HandleGetRoomAccess);
+            SetHandler(MessageTags.ValidateRoomAccess, HandleValidateRoomAccess);
+
+            Task.Run(() => CleanUnconfirmedAccesses());
+        }
+
+        private void CleanUnconfirmedAccesses()
+        {
+            while (true)
+            {
+                Thread.Sleep(TimeSpan.FromSeconds(1));
+
+                foreach (var registeredRoom in _rooms)
+                {
+                    registeredRoom.ClearTimedOutAccesses();
+                }
+            }
+        }
 
         private void OnClientDisconnected(object sender, ClientDisconnectedEventArgs e)
         {
@@ -31,14 +54,6 @@ namespace ServerPlugins.RoomHandler
             }
             // Remove the room from all rooms
             _rooms.RemoveAll(room => room.Client.ID == e.Client.ID);
-        }
-
-        protected override void Loaded(LoadedEventArgs args)
-        {
-            base.Loaded(args);
-            SetHandler(MessageTags.RegisterRoom, HandleRegisterRoom);
-            SetHandler(MessageTags.GetRoomAccess, HandleGetRoomAccess);
-            SetHandler(MessageTags.ValidateRoomAccess, HandleValidateRoomAccess);
         }
 
         private void HandleValidateRoomAccess(IClient client, Message message)

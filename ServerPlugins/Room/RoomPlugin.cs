@@ -32,10 +32,8 @@ namespace ServerPlugins.Room
 
         //Connection to master
         private readonly DarkRiftClient _client;
-
-        public override Version Version => new Version(1, 0, 0);
-
-        public override bool ThreadSafe => true;
+        
+        public override bool ThreadSafe => false;
 
         
         public IPAddress MasterIpAddress { get; set; }
@@ -49,9 +47,10 @@ namespace ServerPlugins.Room
         public int AssignedPort { get; set; }
         public string MachineIp { get; set; }
 
-        private Dictionary<int, IClient> _pendingAccessValidations;
+
+        private GamePlugin _game;
         private RoomAccessProvider _accessProvider;
-        private GamePlugin game;
+        private readonly Dictionary<int, IClient> _pendingAccessValidations;
 
         public RoomPlugin(PluginLoadData pluginLoadData) : base(pluginLoadData)
         {
@@ -70,13 +69,14 @@ namespace ServerPlugins.Room
 
             _client = new DarkRiftClient();
             _pendingAccessValidations = new Dictionary<int, IClient>();
+
         }
 
         protected override void Loaded(LoadedEventArgs loadedArgs)
         {
             base.Loaded(loadedArgs);
 
-            game = PluginManager.GetPluginByType<GamePlugin>();
+            _game = PluginManager.GetPluginByType<GamePlugin>();
 
             WriteEvent("Connecting to " + MasterIpAddress + ":" + MasterPort, LogType.Info);
             _client.MessageReceived += OnMessageFromMaster;
@@ -165,6 +165,8 @@ namespace ServerPlugins.Room
 
                     //    OnPlayerJoined(player);
                     //});
+
+                    _game.AddEntity(new Entity(validatedClient));
                 }
             }
         }
@@ -248,7 +250,7 @@ namespace ServerPlugins.Room
         {
             WriteEvent("Starting room...", LogType.Info);
 
-            game.Started += () =>
+            _game.Started += () =>
             {
                 // 1. Create options object
                 var options = new RoomOptions
@@ -266,7 +268,7 @@ namespace ServerPlugins.Room
 
             //Run game logic here before the room will be registered and opened for players
             //Example: generate a seed for procedural levels, generate navmeshes, load essential gamedata
-            game.Start();
+            _game.Start();
             
         }
     }

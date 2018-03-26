@@ -41,9 +41,6 @@ namespace ServerPlugins.RoomHandler
 
         public int OnlineCount => _accessesInUse.Count;
 
-        public event Action<IClient> PlayerJoined;
-        public event Action<IClient> PlayerLeft;
-        public event Action<RegisteredRoom> Destroyed;
 
         public RegisteredRoom(int id, IClient client, RoomOptions options)
         {
@@ -155,76 +152,49 @@ namespace ServerPlugins.RoomHandler
             Client.SendMessage(Message.Create(MessageTags.ProvideRoomAccessCheck, packet), SendMode.Reliable);
         }
 
-        /// <summary>
-        ///     Checks if access token is valid
-        /// </summary>
-        /// <param name="token"></param>
-        /// <param name="peer"></param>
-        /// <returns></returns>
-        public bool ValidateAccess(string token, out IClient peer)
+        public bool ValidateAccess(string token, out IClient client)
         {
-            RoomAccessData data;
-            _unconfirmedAccesses.TryGetValue(token, out data);
+            _unconfirmedAccesses.TryGetValue(token, out var data);
 
-            peer = null;
+            client = null;
 
-            // If there's no data
             if (data == null)
                 return false;
 
-            // Remove unconfirmed
             _unconfirmedAccesses.Remove(token);
 
-            // If player is no longer connected
             if (!data.Client.IsConnected)
                 return false;
 
-            // Set access as used
             _accessesInUse.Add(data.Client.ID, data.Access);
 
-            peer = data.Client;
-
-            // Invoke the event
-            PlayerJoined?.Invoke(peer);
+            client = data.Client;
 
             return true;
         }
 
-        /// <summary>
-        ///     Clears all of the accesses that have not been confirmed in time
-        /// </summary>
         public void ClearTimedOutAccesses()
         {
             var timedOut = _unconfirmedAccesses.Values.Where(u => u.Timeout < DateTime.Now).ToList();
 
-            foreach (var access in timedOut) _unconfirmedAccesses.Remove(access.Access.Token);
+            foreach (var access in timedOut)
+                _unconfirmedAccesses.Remove(access.Access.Token);
         }
 
         public void OnPlayerLeft(int peerId)
         {
             _accessesInUse.Remove(peerId);
 
-            IClient playerPeer;
-            _players.TryGetValue(peerId, out playerPeer);
+            _players.TryGetValue(peerId, out var playerPeer);
 
             if (playerPeer == null)
                 return;
-
-            if (PlayerLeft != null)
-                PlayerLeft.Invoke(playerPeer);
         }
 
         public void Destroy()
         {
-            if (Destroyed != null)
-                Destroyed.Invoke(this);
-
             _unconfirmedAccesses.Clear();
 
-            // Clear listeners
-            PlayerJoined = null;
-            PlayerLeft = null;
-            Destroyed = null;
         }
 
         private class RoomAccessData

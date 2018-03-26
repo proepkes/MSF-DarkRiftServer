@@ -70,7 +70,11 @@
     <Compile Include="Database\MySQLPlugin.cs" />
     <Compile Include="Database\PasswordResetData.cs" />
     <Compile Include="Database\SqlAccountData.cs" />
+    <Compile Include="Game\Components\Component.cs" />
+    <Compile Include="Game\Components\SpawnComponent.cs" />
+    <Compile Include="Game\Entity.cs" />
     <Compile Include="Game\GamePlugin.cs" />
+    <Compile Include="Game\EntityController.cs" />
     <Compile Include="ServerPluginBase.cs" />
     <Compile Include="Mail\MailPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
