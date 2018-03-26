@@ -166,7 +166,7 @@ namespace ServerPlugins.Room
                     //    OnPlayerJoined(player);
                     //});
 
-                    _game.AddEntity(new Entity(validatedClient));
+                    _game.AddEntity(new Player(validatedClient) { Game = _game });
                 }
             }
         }

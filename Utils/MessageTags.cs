@@ -69,6 +69,6 @@
         public const ushort GetNetworkTime = 3000;
         public const ushort SpawnEntity = 3010;
         public const ushort DespawnPlayer = 3011;
-        public const ushort MovePlayer = 3012;
+        public const ushort NavigateTo = 3012;
     }
 }

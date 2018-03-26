@@ -53,11 +53,13 @@
     <Compile Include="Conversion\EndianBitConverter.cs" />
     <Compile Include="Conversion\Endianness.cs" />
     <Compile Include="Conversion\LittleEndianBitConverter.cs" />
+    <Compile Include="EntityState.cs" />
     <Compile Include="Extensions\SerializationExtensions.cs" />
     <Compile Include="Game\TundraNetPosition.cs" />
     <Compile Include="IO\EndianBinaryReader.cs" />
     <Compile Include="IO\EndianBinaryWriter.cs" />
     <Compile Include="Packets\BytesPacket.cs" />
+    <Compile Include="Packets\NavigateToPacket.cs" />
     <Compile Include="Packets\PositionPacket.cs" />
     <Compile Include="Packets\RoomAccessValidatedPacket.cs" />
     <Compile Include="Packets\SpawnEntityPacket.cs" />

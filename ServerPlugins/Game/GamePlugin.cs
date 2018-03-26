@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using DarkRift;
 using DarkRift.Server;
@@ -16,8 +18,8 @@ namespace ServerPlugins.Game
     {
         private uint _nextEntityID;
 
-        private readonly Queue<Entity> _spawnQueue;
-        private readonly Queue<Entity> _despawnQueue;
+        private readonly ConcurrentQueue<Entity> _spawnQueue;
+        private readonly ConcurrentQueue<Entity> _despawnQueue;
 
         public override bool ThreadSafe => false;
         public bool Running { get; set; }
@@ -33,8 +35,8 @@ namespace ServerPlugins.Game
         {
             Tickrate = Convert.ToInt32(pluginLoadData.Settings.Get(nameof(Tickrate)));
 
-            _spawnQueue = new Queue<Entity>();
-            _despawnQueue = new Queue<Entity>();
+            _spawnQueue = new ConcurrentQueue<Entity>();
+            _despawnQueue = new ConcurrentQueue<Entity>();
         }
 
         protected override void Loaded(LoadedEventArgs args)
@@ -47,6 +49,7 @@ namespace ServerPlugins.Game
         {
             entity.ID = _nextEntityID++;
             entity.AddComponent<SpawnComponent>();
+            entity.AddComponent<NavigationComponent>();
             _spawnQueue.Enqueue(entity);
         }
 
@@ -63,29 +66,46 @@ namespace ServerPlugins.Game
             int updateTime = (int) (1 / (float)Tickrate * 1000);
             while (Running)
             {
-                while (_spawnQueue.Count > 0)
-                {
-                    var entity = _spawnQueue.Dequeue();
-                    //TODO: replace foreach with area-of-interest
-                    foreach (var unit in _entities)
-                    {
-                        entity.Observers.Add(unit);
-                    }
-                    _entities.Add(entity);
+                var time = DateTime.Now.Ticks;
 
+                while (_spawnQueue.Count > 0 && _spawnQueue.TryDequeue(out var entity))
+                {
+                    //TODO: replace foreach-over-all-entites with foreach-entity-in-AREA-OF-INTERESET
+                    lock (_entities)
+                    {
+                        
+                        //let all players observe this unit 
+                        foreach (Player player in _entities.Where(e => e is Player))
+                        {
+                            entity.Observers.Add(player);
+                        }
+
+                        _entities.Add(entity);
+                        if (entity is Player newPlayer)
+                        {
+                            //register the player to all units (around him), so they send him notifications when something updates (player observes himself too)
+                            foreach (var unit in _entities)
+                            {
+                                unit.Observers.Add(newPlayer);
+                            }
+                        }
+                    }
                     entity.Start();
                 }
 
-                while (_despawnQueue.Count > 0)
+                while (_despawnQueue.Count > 0 && _despawnQueue.TryDequeue(out var entity))
                 {
-                    var entity = _despawnQueue.Dequeue();
-                    _entities.Remove(entity);
+                    lock (_entities)
+                    {
+                        _entities.Remove(entity);
+                    }
+                    entity.Destroy();
                 }
 
-                var time = DateTime.Now.Ticks;
+                int deltaT = (int)(DateTime.Now.Ticks - time);
+
                 UpdateGame();
 
-                int deltaT = (int) (DateTime.Now.Ticks - time);
                 if (deltaT < updateTime)
                 {
                     Thread.Sleep(updateTime - deltaT);
@@ -97,7 +117,7 @@ namespace ServerPlugins.Game
 
         private void UpdateGame()
         {
-            if (_frameCounter % Tickrate == 0) //Send position every second
+            if (_frameCounter % Tickrate == 0) //~1 second elapsed
             {
                 WriteEvent("Seconds elapsed (approx.): " + _frameCounter / Tickrate, LogType.Info);
             }
@@ -111,6 +131,12 @@ namespace ServerPlugins.Game
         public void Stop()
         {
             Running = false;
+        }
+
+        public void Log(string message, LogType logType)
+        {
+
+            WriteEvent(message, logType);
         }
     }
 }

@@ -1,4 +1,7 @@
-﻿using DarkRift.Server;
+﻿using System;
+using System.Collections.Generic;
+using DarkRift;
+using DarkRift.Server;
 using Utils.Game;
 
 namespace ServerPlugins.Game.Components
@@ -9,5 +12,6 @@ namespace ServerPlugins.Game.Components
 
         public virtual void Start() { }
         public virtual void Update() { }
+        public virtual void Destroy() { }
     }
 }
