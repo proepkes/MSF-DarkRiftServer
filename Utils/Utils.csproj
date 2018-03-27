@@ -98,6 +98,7 @@
     <Compile Include="Packets\FloatPacket.cs" />
     <Compile Include="Packets\UsernameAndPeerIdPacket.cs" />
     <Compile Include="ResponseStatus.cs" />
+    <Compile Include="WorldOptions.cs" />
     <Compile Include="RoomOptions.cs" />
     <Compile Include="Security.cs" />
     <Compile Include="MessageTags.cs" />
