@@ -80,13 +80,7 @@ namespace Utils.Conversion
         #endregion
 
         #region Factory properties
-
-        /// <summary>
-        ///     Returns a little-endian bit converter instance. The same instance is
-        ///     always returned.
-        /// </summary>
-        public static LittleEndianBitConverter Little { get; } = new LittleEndianBitConverter();
-
+        
         /// <summary>
         ///     Returns a big-endian bit converter instance. The same instance is
         ///     always returned.
@@ -357,39 +351,6 @@ namespace Utils.Conversion
         #endregion
 
         #region	Decimal conversions
-
-        /// <summary>
-        ///     Returns a decimal value converted from sixteen bytes
-        ///     at a specified position in a byte array.
-        /// </summary>
-        /// <param name="value">An array of bytes.</param>
-        /// <param name="startIndex">The starting position within value.</param>
-        /// <returns>A decimal  formed by sixteen bytes beginning at startIndex.</returns>
-        public decimal ToDecimal(byte[] value, int startIndex)
-        {
-            // HACK: This always assumes four parts, each in their own endianness,
-            // starting with the first part at the start of the byte array.
-            // On the other hand, there's no real format specified...
-            var parts = new int[4];
-            for (var i = 0; i < 4; i++)
-                parts[i] = ToInt32(value, startIndex + i * 4);
-            return new decimal(parts);
-        }
-
-        /// <summary>
-        ///     Returns the specified decimal value as an array of bytes.
-        /// </summary>
-        /// <param name="value">The number to convert.</param>
-        /// <returns>An array of bytes with length 16.</returns>
-        public byte[] GetBytes(decimal value)
-        {
-            var bytes = new byte[16];
-            var parts = decimal.GetBits(value);
-            for (var i = 0; i < 4; i++)
-                CopyBytesImpl(parts[i], 4, bytes, i * 4);
-            return bytes;
-        }
-
         /// <summary>
         ///     Copies the specified decimal value into the specified byte array,
         ///     beginning at the specified index.

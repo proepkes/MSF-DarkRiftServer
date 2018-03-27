@@ -198,8 +198,8 @@ namespace ServerPlugins.Authentication
         {
             if (!_encryptionData.ContainsKey(client) || _encryptionData[client] == null)
             {
-                client.SendMessage(
-                    Message.Create(MessageTags.RegisterAccountFailed,
+                
+                client.SendMessage(Message.Create(MessageTags.RegisterAccountFailed,
                         new FailedMessage {Status = ResponseStatus.Error, Reason = "Insecure request"}),
                     SendMode.Reliable);
                 return;
@@ -236,6 +236,7 @@ namespace ServerPlugins.Authentication
                                 Status = ResponseStatus.Error,
                                 Reason = "Invalid or forbidden words in email"
                             }), SendMode.Reliable);
+
                     return;
                 }
 
@@ -259,6 +260,7 @@ namespace ServerPlugins.Authentication
                     SendEmailConfirmationCode(account);
 
                     client.SendMessage(Message.CreateEmpty(MessageTags.RegisterAccountSuccess), SendMode.Reliable);
+                    WriteEvent("Registered a new account: " + account.Email, LogType.Info);
                 }
                 catch (Exception e)
                 {

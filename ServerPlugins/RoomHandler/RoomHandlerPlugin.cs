@@ -29,8 +29,27 @@ namespace ServerPlugins.RoomHandler
             SetHandler(MessageTags.RegisterRoom, HandleRegisterRoom);
             SetHandler(MessageTags.GetRoomAccess, HandleGetRoomAccess);
             SetHandler(MessageTags.ValidateRoomAccess, HandleValidateRoomAccess);
+            SetHandler(MessageTags.GetRooms, HandleGetRooms);
 
             Task.Run(() => CleanUnconfirmedAccesses());
+        }
+
+        private void HandleGetRooms(IClient client, Message message)
+        {
+            var publicGames = _rooms.Where(r => r.Options.IsPublic)
+                .GroupBy(room => room.Options.WorldName, room => room, (s, rooms) => new { WorldName = s, Rooms = rooms})
+                .Select(worldInfo => new GameInfo
+            {
+                //TODO: multiple rooms per world
+                Name = worldInfo.WorldName,
+                ID = worldInfo.Rooms.First().ID,
+                OnlinePlayers = worldInfo.Rooms.First().OnlineCount,
+                MaxPlayers = worldInfo.Rooms.First().Options.MaxPlayers,
+                }).ToList();
+            client.SendMessage(Message.Create(MessageTags.GetRooms, new GameInfoPacket()
+            {
+                Games = publicGames
+            }), SendMode.Reliable);
         }
 
         private void CleanUnconfirmedAccesses()
@@ -146,7 +165,6 @@ namespace ServerPlugins.RoomHandler
             }
             else
             {
-
                 client.SendMessage(
                     Message.Create(MessageTags.RegisterRoomFailed,
                         new FailedMessage { Reason = "Unable to read data", Status = ResponseStatus.Failed }),

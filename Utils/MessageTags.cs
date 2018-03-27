@@ -63,10 +63,12 @@
         public const ushort ValidateRoomAccess = 2353;
         public const ushort ValidateRoomAccessFailed = 2354;
         public const ushort ValidateRoomAccessSuccess = 2355;
-        public const ushort AccessRoom = 2360; //Call from client
+        public const ushort GetRooms = 2360; //Call from client
+        public const ushort AccessRoom = 2370; //Call from client
 
-        //Game-reated
+        //Game-related
         public const ushort GetNetworkTime = 3000;
+        //Entity-related
         public const ushort SpawnEntity = 3010;
         public const ushort DespawnPlayer = 3011;
         public const ushort NavigateTo = 3012;

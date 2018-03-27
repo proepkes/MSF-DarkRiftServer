@@ -7,7 +7,10 @@ using DarkRift;
 using DarkRift.Server;
 using ServerPlugins.Game.Components;
 using ServerPlugins.Game.Entities;
+using ServerPlugins.Game.Levels;
 using ServerPlugins.Room;
+using ServerPlugins.SharpNav.Crowds;
+using ServerPlugins.SharpNav.Geometry;
 using Utils;
 using Utils.Game;
 
@@ -33,6 +36,13 @@ namespace ServerPlugins.Game
 
         private long _frameCounter = 0;
 
+        private ObjModel level;
+        public Crowd Crowd;
+        public SharpNav.PolyMesh PolyMesh;
+        public SharpNav.PolyMeshDetail PolyMeshDetail;
+        public SharpNav.NavMeshQuery NavMeshQuery;
+
+
 
         public GamePlugin(PluginLoadData pluginLoadData) : base(pluginLoadData)
         {
@@ -46,7 +56,20 @@ namespace ServerPlugins.Game
 
         public void LoadLevel(string levelName)
         {
-            AddEntity(new Monster { Name = "Monster", Position = TundraNetPosition.Create(1f, 0f, 1f)});
+            level = new ObjModel("Levels/" + levelName + ".obj");
+
+            var settings = SharpNav.NavMeshGenerationSettings.Default;
+            settings.AgentHeight = 2;
+            settings.AgentRadius = .5f;
+            settings.MaxClimb = 0.5f;
+            settings.CellSize = .2f;
+            var navMesh = SharpNav.NavMesh.Generate(level.GetTriangles(), settings, out PolyMesh, out PolyMeshDetail);
+
+            SharpNav.TiledNavMesh tiledMesh = navMesh;
+            NavMeshQuery = new SharpNav.NavMeshQuery(navMesh, 2048);
+            Crowd = new Crowd(300, settings.AgentRadius, ref tiledMesh);
+
+            AddEntity(new Monster { Name = "Monster", Position = new Vector3(1f, 0f, 1f)});
         }
 
         public void AddEntity(Entity entity)
@@ -140,7 +163,6 @@ namespace ServerPlugins.Game
 
         public void Log(string message, LogType logType)
         {
-
             WriteEvent(message, logType);
         }
     }

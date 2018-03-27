@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using DarkRift;
 using DarkRift.Server;
-using ServerPlugins.Game.Components;
+using ServerPlugins.SharpNav.Geometry;
 using Utils;
 using Utils.Packets;
 
@@ -14,8 +14,6 @@ namespace ServerPlugins.Game.Entities
 
         readonly Dictionary<ushort, Message> _messages = new Dictionary<ushort, Message>();
         readonly Dictionary<ushort, Action<Message>> _handlers = new Dictionary<ushort, Action<Message>>();
-
-        private NavigationComponent agent;
 
         public Player(IClient client)
         {
@@ -39,7 +37,6 @@ namespace ServerPlugins.Game.Entities
         public override void Start()
         {
             base.Start();
-            agent = GetComponent<NavigationComponent>();
             _handlers.Add(MessageTags.NavigateTo, HandleNavigateTo);
         }
 
@@ -48,9 +45,9 @@ namespace ServerPlugins.Game.Entities
             var data = message.Deserialize<NavigateToPacket>();
             if (data != null)
             {
-                agent.Destination = data.Destination;
+                var destination = data.Destination;
+                agent.SetDestination(new Vector3(destination.X, destination.Y, destination.Z));
                 agent.StoppingDistance = data.StoppingDistance;
-                agent.IsDirty = true;
             }
         }
 

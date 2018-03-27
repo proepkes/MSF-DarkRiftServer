@@ -11,7 +11,8 @@ namespace Utils
         public string Name = "Unknown";
 
         public EntityState State = EntityState.Idle;
-        public TundraNetPosition Position { get; set; } = TundraNetPosition.Create(0f, 0f, 0f);
+
+        public float X, Y, Z;
 
         public int Health = 100;
 
@@ -22,7 +23,9 @@ namespace Utils
             TargetID = e.Reader.ReadUInt32();
             Name = e.Reader.ReadString(Encoding.Unicode);
             State = (EntityState)e.Reader.ReadByte();
-            Position = e.Reader.ReadSerializable<TundraNetPosition>();
+            X = e.Reader.ReadSingle();
+            Y = e.Reader.ReadSingle();
+            Z = e.Reader.ReadSingle();
             Health = e.Reader.ReadInt32();
         }
 
@@ -32,7 +35,9 @@ namespace Utils
             e.Writer.Write(TargetID);
             e.Writer.Write(Name, Encoding.Unicode);
             e.Writer.Write((byte)State);
-            e.Writer.Write(Position);
+            e.Writer.Write(X);
+            e.Writer.Write(Y);
+            e.Writer.Write(Z);
             e.Writer.Write(Health);
         }
     }
