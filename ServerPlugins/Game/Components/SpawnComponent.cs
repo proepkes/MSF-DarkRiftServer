@@ -1,4 +1,6 @@
-﻿using DarkRift;
+﻿using System.Collections.Generic;
+using System.Linq;
+using DarkRift;
 using Utils;
 using Utils.Packets;
 
@@ -6,19 +8,22 @@ namespace ServerPlugins.Game.Components
 {
     public class SpawnComponent : Component
     {
-        public override void Start()
+        private readonly HashSet<uint> _currentObservers = new HashSet<uint>();
+        public override void Update()
         {
-            foreach (var observer in Entity.Observers)
+            //Send Spawn-notification when an observer was added
+            foreach (var observer in Entity.Observers.Where(player => !_currentObservers.Contains(player.ID)))
             {
                 observer.Client.SendMessage(Message.Create(MessageTags.SpawnEntity,
-                    new SpawnEntityPacket
+                    new EntityPacket
                     {
-                        ID = Entity.ID,
-                        Position = Entity.Position,
+                        NetworkEntity = Entity,
                         //if the observer is the player himself, he has authority, 
                         //check this field on client-side to either spawn player-prefab or networkview-prefab
                         HasAuthority = observer.ID == Entity.ID
                     }), SendMode.Reliable);
+
+                _currentObservers.Add(observer.ID);
             }
         }
     }

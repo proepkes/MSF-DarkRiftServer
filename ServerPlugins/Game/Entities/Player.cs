@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using DarkRift;
 using DarkRift.Server;
 using ServerPlugins.Game.Components;
 using Utils;
 using Utils.Packets;
 
-namespace ServerPlugins.Game
+namespace ServerPlugins.Game.Entities
 {
     public class Player : Entity
     {
@@ -131,7 +129,7 @@ namespace ServerPlugins.Game
         void Die()
         {
             agent.Reset();
-            Target = null;
+            SetTarget(null);
         }
     }
 }

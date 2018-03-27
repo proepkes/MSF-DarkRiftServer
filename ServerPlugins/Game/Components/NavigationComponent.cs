@@ -16,6 +16,9 @@ namespace ServerPlugins.Game.Components
         public void Navigate()
         {
             //TODO: Authoritative Destination
+            //Currently we just relay the current destination
+            //The idea is to just send a destination and let client & server use the same pathfinding
+            //So we don't need to sync & lerp position and rotations
             foreach (var observer in Entity.Observers)
             {
                 observer.Client.SendMessage(Message.Create(MessageTags.NavigateTo,
@@ -30,7 +33,7 @@ namespace ServerPlugins.Game.Components
             IsDirty = false;
         }
 
-        //TODO: Big todo.. pathfinding D:
+        //TODO: Big todo.. pathfinding, (SharpNav?)
         public override void Update()
         {
             

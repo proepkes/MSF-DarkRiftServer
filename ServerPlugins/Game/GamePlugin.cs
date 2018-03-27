@@ -6,8 +6,10 @@ using System.Threading;
 using DarkRift;
 using DarkRift.Server;
 using ServerPlugins.Game.Components;
+using ServerPlugins.Game.Entities;
 using ServerPlugins.Room;
 using Utils;
+using Utils.Game;
 
 namespace ServerPlugins.Game
 {
@@ -16,8 +18,10 @@ namespace ServerPlugins.Game
     /// </summary>
     public class GamePlugin : ServerPluginBase
     {
-        private uint _nextEntityID;
+        //Reserve EntityID 0 for null, (example: no target selected)
+        private uint _nextEntityID = 1;
 
+        public readonly Dictionary<uint, Entity> Entities;
         private readonly ConcurrentQueue<Entity> _spawnQueue;
         private readonly ConcurrentQueue<Entity> _despawnQueue;
 
@@ -29,20 +33,20 @@ namespace ServerPlugins.Game
 
         private long _frameCounter = 0;
 
-        private List<Entity> _entities;
 
         public GamePlugin(PluginLoadData pluginLoadData) : base(pluginLoadData)
         {
             Tickrate = Convert.ToInt32(pluginLoadData.Settings.Get(nameof(Tickrate)));
 
+            Entities = new Dictionary<uint, Entity>();
             _spawnQueue = new ConcurrentQueue<Entity>();
             _despawnQueue = new ConcurrentQueue<Entity>();
         }
 
-        protected override void Loaded(LoadedEventArgs args)
+
+        public void LoadLevel(string levelName)
         {
-            base.Loaded(args);
-            _entities = new List<Entity>();
+            AddEntity(new Monster { Name = "Monster", Position = TundraNetPosition.Create(1f, 0f, 1f)});
         }
 
         public void AddEntity(Entity entity)
@@ -71,36 +75,31 @@ namespace ServerPlugins.Game
                 while (_spawnQueue.Count > 0 && _spawnQueue.TryDequeue(out var entity))
                 {
                     //TODO: replace foreach-over-all-entites with foreach-entity-in-AREA-OF-INTERESET
-                    lock (_entities)
-                    {
-                        
-                        //let all players observe this unit 
-                        foreach (Player player in _entities.Where(e => e is Player))
-                        {
-                            WriteEvent("Adding " + player.ID + " as observer to " + entity.ID, LogType.Info);
-                            entity.Observers.Add(player);
-                        }
 
-                        _entities.Add(entity);
-                        if (entity is Player newPlayer)
+                    //let all players observe this unit 
+                    foreach (Player player in Entities.Values.Where(e => e is Player))
+                    {
+                        WriteEvent("Adding " + player.ID + " as observer to " + entity.ID, LogType.Info);
+                        entity.Observers.Add(player);
+                    }
+
+                    Entities.Add(entity.ID, entity);
+                    if (entity is Player newPlayer)
+                    {
+                        //register the player to all units (around him, including himself), so they send him notifications when something updates
+                        foreach (var unit in Entities.Values)
                         {
-                            //register the player to all units (around him), so they send him notifications when something updates (player observes himself too)
-                            foreach (var unit in _entities)
-                            {
-                                WriteEvent("Adding " + newPlayer.ID + " as observer to " + unit.ID, LogType.Info);
-                                unit.Observers.Add(newPlayer);
-                            }
+                            WriteEvent("Adding new Player " + newPlayer.ID + " as observer to " + unit.ID, LogType.Info);
+                            unit.Observers.Add(newPlayer);
                         }
                     }
+                    
                     entity.Start();
                 }
 
                 while (_despawnQueue.Count > 0 && _despawnQueue.TryDequeue(out var entity))
                 {
-                    lock (_entities)
-                    {
-                        _entities.Remove(entity);
-                    }
+                    Entities.Remove(entity.ID);
                     entity.Destroy();
                 }
 
@@ -124,14 +123,14 @@ namespace ServerPlugins.Game
                 WriteEvent("Seconds elapsed (approx.): " + _frameCounter / Tickrate, LogType.Info);
             }
 
-            foreach (var entity in _entities)
+            foreach (var entity in Entities.Values)
             {
                 entity.Update();
             }
-            foreach (var entity in _entities)
+            foreach (var entity in Entities.Values)
             {
                 entity.LateUpdate();
-            }
+            }  
         }
 
         public void Stop()

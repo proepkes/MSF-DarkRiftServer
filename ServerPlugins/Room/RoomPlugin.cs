@@ -5,6 +5,7 @@ using DarkRift;
 using DarkRift.Client;
 using DarkRift.Server;
 using ServerPlugins.Game;
+using ServerPlugins.Game.Entities;
 using Utils;
 using Utils.Messages.Notifications;
 using Utils.Messages.Requests;
@@ -166,7 +167,7 @@ namespace ServerPlugins.Room
                     //    OnPlayerJoined(player);
                     //});
 
-                    _game.AddEntity(new Player(validatedClient) { Game = _game });
+                    _game.AddEntity(new Player(validatedClient) { Game = _game, Name = "Player"});
                 }
             }
         }
@@ -268,6 +269,7 @@ namespace ServerPlugins.Room
 
             //Run game logic here before the room will be registered and opened for players
             //Example: generate a seed for procedural levels, generate navmeshes, load essential gamedata
+            _game.LoadLevel(RoomName);
             _game.Start();
             
         }

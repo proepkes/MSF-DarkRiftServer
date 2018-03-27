@@ -58,6 +58,7 @@
     <Compile Include="Game\TundraNetPosition.cs" />
     <Compile Include="IO\EndianBinaryReader.cs" />
     <Compile Include="IO\EndianBinaryWriter.cs" />
+    <Compile Include="NetworkEntity.cs" />
     <Compile Include="Packets\ChangStatePacket.cs" />
     <Compile Include="Packets\BytePacket.cs" />
     <Compile Include="Packets\BytesPacket.cs" />
@@ -65,7 +66,7 @@
     <Compile Include="Packets\NavigateToPacket.cs" />
     <Compile Include="Packets\PositionPacket.cs" />
     <Compile Include="Packets\RoomAccessValidatedPacket.cs" />
-    <Compile Include="Packets\SpawnEntityPacket.cs" />
+    <Compile Include="Packets\EntityPacket.cs" />
     <Compile Include="Packets\StringPacket.cs" />
     <Compile Include="Packets\IntPacket.cs" />
     <Compile Include="Packets\KillSpawnedProcessPacket.cs" />

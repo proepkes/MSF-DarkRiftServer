@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using DarkRift;
 using DarkRift.Server;
+using ServerPlugins.Game.Entities;
 using Utils.Game;
 
 namespace ServerPlugins.Game.Components

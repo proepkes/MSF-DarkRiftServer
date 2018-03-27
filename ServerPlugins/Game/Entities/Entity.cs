@@ -1,33 +1,26 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using DarkRift;
-using DarkRift.Server;
 using ServerPlugins.Game.Components;
 using Utils;
-using Utils.Game;
 using Utils.Packets;
 
-namespace ServerPlugins.Game
+namespace ServerPlugins.Game.Entities
 {
-    public class Entity
+    public class Entity : NetworkEntity
     {
         private EntityState tmpState;
-        public readonly List<Player> Observers = new List<Player>();
         private readonly List<Component> _components = new List<Component>();
 
-        public uint ID;
-
+        private Entity Target;
         public GamePlugin Game;
+        public readonly List<Player> Observers = new List<Player>();
 
-        public Entity Target;
-
-        public EntityState State = EntityState.Idle;
-
-        public int Health = 100;
-
-        public TundraNetPosition Position { get; set; } = TundraNetPosition.Create(0f, 0f, 0f);
+        public void SetTarget(Entity target)
+        {
+            Target = target;
+            TargetID = target == null ? 0 : target.ID; //for network sync.
+        }
 
         public T AddComponent<T>() where T: Component, new()
         {
@@ -50,6 +43,10 @@ namespace ServerPlugins.Game
         }
         public virtual void Update()
         {
+            //TODO: area of interest
+            //if (Target != null && !Target.Visible)
+            //    SetTarget(null);
+
             tmpState = State;
             foreach (var component in _components)
             {
@@ -64,8 +61,7 @@ namespace ServerPlugins.Game
             {
                 foreach (var observer in Observers)
                 {
-                    observer.Client.SendMessage(
-                        Message.Create(MessageTags.ChangeState, new ChangStatePacket {EntityID = ID, State = State}),
+                    observer.Client.SendMessage(Message.Create(MessageTags.ChangeState, new ChangStatePacket {EntityID = ID, State = State}),
                         SendMode.Reliable);
                 }
             }
@@ -77,7 +73,6 @@ namespace ServerPlugins.Game
             {
                 component.Destroy();
             }
-
         }
     }
 }
