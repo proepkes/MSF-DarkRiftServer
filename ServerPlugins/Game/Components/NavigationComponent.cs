@@ -1,6 +1,5 @@
-﻿using DarkRift;
-using ServerPlugins.SharpNav.Crowds;
-using ServerPlugins.SharpNav.Geometry;
+﻿using System.Numerics;
+using DarkRift;
 using Utils;
 using Utils.Game;
 using Utils.Packets;
@@ -10,7 +9,6 @@ namespace ServerPlugins.Game.Components
     public class NavigationComponent : Component
     {
         private int agentID;
-        private Agent agent;
 
         public float StoppingDistance = 0;
 
@@ -26,27 +24,6 @@ namespace ServerPlugins.Game.Components
 
         public override void Start()
         {
-            var agentParams = new AgentParams
-            {
-                Radius = .5f,
-                Height = 1f,
-                MaxAcceleration = 8,
-                MaxSpeed = 3f,
-                CollisionQueryRange = 4f,
-                PathOptimizationRange = 15f,
-                SeparationWeight = 3f,
-                UpdateFlags = UpdateFlags.Separation | UpdateFlags.OptimizeTopo
-            };
-
-            agentID = Entity.Game.Crowd.AddAgent(Entity.Position, agentParams);
-            if (agentID >= 0)
-            {
-                agent = Entity.Game.Crowd.GetAgent(agentID);
-            }
-            else
-            {
-                Entity.Game.Log("Failed to create a Nav-Agent for Entity " + Entity, LogType.Info);
-            }
         }
 
         public void Navigate()
@@ -82,7 +59,7 @@ namespace ServerPlugins.Game.Components
 
         }
 
-        public Vector3 Velocity => agent.Vel;
+        public Vector3 Velocity => Vector3.Zero;
 
         public float RemainingDistance 
         {

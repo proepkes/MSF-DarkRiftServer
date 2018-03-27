@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Numerics;
 using DarkRift;
 using DarkRift.Server;
-using ServerPlugins.SharpNav.Geometry;
 using Utils;
 using Utils.Packets;
 

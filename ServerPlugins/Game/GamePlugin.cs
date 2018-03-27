@@ -2,16 +2,12 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Threading;
 using DarkRift;
 using DarkRift.Server;
 using ServerPlugins.Game.Components;
 using ServerPlugins.Game.Entities;
-using ServerPlugins.Game.Levels;
-using ServerPlugins.SharpNav;
-using ServerPlugins.SharpNav.Crowds;
-using ServerPlugins.SharpNav.Geometry;
-using ServerPlugins.SharpNav.Pathfinding;
 
 namespace ServerPlugins.Game
 {
@@ -35,15 +31,6 @@ namespace ServerPlugins.Game
 
         private long _frameCounter = 0;
 
-        private NavPoint startPt;
-        private Heightfield heightfield;
-        private ObjModel level;
-        public Crowd Crowd;
-        public PolyMesh PolyMesh;
-        public PolyMeshDetail PolyMeshDetail;
-        public NavMeshQuery NavMeshQuery;
-
-
 
         public GamePlugin(PluginLoadData pluginLoadData) : base(pluginLoadData)
         {
@@ -57,10 +44,6 @@ namespace ServerPlugins.Game
 
         public void LoadLevel(string levelName)
         {
-            level = new ObjModel("Levels/" + levelName + ".obj");
-           
-            GenerateNavMesh();
-            WriteEvent("Adding Monster at " + startPt.Position + " on polygon " + startPt.Polygon, LogType.Info);
             AddEntity(new Monster {Name = "Monster", Position = Vector3.Zero});
         }
 
@@ -161,80 +144,5 @@ namespace ServerPlugins.Game
         {
             WriteEvent(message, logType);
         }
-
-        #region NavMesh
-
-        private void GenerateNavMesh()
-        {
-            WriteEvent("Generating NavMesh", LogType.Info);
-
-            //level.SetBoundingBoxOffset(new SVector3(settings.CellSize * 0.5f, settings.CellHeight * 0.5f, settings.CellSize * 0.5f));
-            var levelTris = level.GetTriangles();
-            var triEnumerable = TriangleEnumerable.FromTriangle(levelTris, 0, levelTris.Length);
-            BBox3 bounds = triEnumerable.GetBoundingBox();
-
-            var settings = NavMeshGenerationSettings.Default;
-            settings.AgentHeight = 2;
-            settings.AgentRadius = .5f;
-            settings.MaxClimb = 0.5f;
-            settings.CellSize = .2f;
-            heightfield = new Heightfield(bounds, NavMeshGenerationSettings.Default);
-            
-            heightfield.RasterizeTriangles(levelTris, Area.Default);
-            heightfield.FilterLedgeSpans(settings.VoxelAgentHeight, settings.VoxelMaxClimb);
-
-
-            heightfield.FilterLowHangingWalkableObstacles(settings.VoxelMaxClimb);
-
-
-            heightfield.FilterWalkableLowHeightSpans(settings.VoxelAgentHeight);
-
-
-            var compactHeightfield = new CompactHeightfield(heightfield, settings);
-
-
-            compactHeightfield.Erode(settings.VoxelAgentRadius);
-
-
-            compactHeightfield.BuildDistanceField();
-
-
-            compactHeightfield.BuildRegions(0, settings.MinRegionSize, settings.MergedRegionSize);
-
-
-            var contourSet = compactHeightfield.BuildContourSet(settings);
-
-
-            PolyMesh = new PolyMesh(contourSet, settings);
-
-
-            PolyMeshDetail = new PolyMeshDetail(PolyMesh, compactHeightfield, settings);
-            
-            //Generate Pathfinding
-            var buildData = new NavMeshBuilder(PolyMesh, PolyMeshDetail, new SharpNav.Pathfinding.OffMeshConnection[0], settings);
-
-            var tiledNavMesh = new TiledNavMesh(buildData);
-            NavMeshQuery = new NavMeshQuery(tiledNavMesh, 2048);
-
-            //Find random start and end points on the poly mesh
-            /*int startRef;
-			navMeshQuery.FindRandomPoint(out startRef, out startPos);*/
-
-            //Pathfinding with multiple units
-            Crowd = new Crowd(300, 0.6f, ref tiledNavMesh);
-
-
-            WriteEvent("Navmesh generated.", LogType.Info);
-            WriteEvent("Rasterized " + level.GetTriangles().Length + " triangles.", LogType.Info);
-            WriteEvent("Generated " + contourSet.Count + " regions.", LogType.Info);
-            WriteEvent("PolyMesh contains " + PolyMesh.VertCount + " vertices in " + PolyMesh.PolyCount +" polys.", LogType.Info);
-            WriteEvent("PolyMeshDetail contains " + PolyMeshDetail.VertCount + " vertices and " +
-                       PolyMeshDetail.TrisCount + " tris in " + PolyMeshDetail.MeshCount + " meshes.", LogType.Info);
-
-
-        }
-
-
-        #endregion
     }
 }
