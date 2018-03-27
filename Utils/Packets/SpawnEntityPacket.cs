@@ -11,7 +11,7 @@ namespace Utils.Packets
 
         public void Deserialize(DeserializeEvent e)
         {
-            ID = e.Reader.ReadUInt16();
+            ID = e.Reader.ReadUInt32();
             Position = e.Reader.ReadSerializable<TundraNetPosition>();
             HasAuthority = e.Reader.ReadBoolean();
         }

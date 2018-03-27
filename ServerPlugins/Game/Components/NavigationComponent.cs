@@ -1,4 +1,7 @@
-﻿using Utils.Game;
+﻿using DarkRift;
+using Utils;
+using Utils.Game;
+using Utils.Packets;
 
 namespace ServerPlugins.Game.Components
 {
@@ -12,9 +15,22 @@ namespace ServerPlugins.Game.Components
 
         public void Navigate()
         {
+            //TODO: Authoritative Destination
+            foreach (var observer in Entity.Observers)
+            {
+                observer.Client.SendMessage(Message.Create(MessageTags.NavigateTo,
+                    new AckNavigateToPacket
+                    {
+                        EntityID = Entity.ID,
+                        Destination = Destination,
+                        StoppingDistance = StoppingDistance
+                    }), SendMode.Reliable);
+            }
 
+            IsDirty = false;
         }
 
+        //TODO: Big todo.. pathfinding D:
         public override void Update()
         {
             

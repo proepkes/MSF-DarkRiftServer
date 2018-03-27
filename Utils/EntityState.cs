@@ -2,7 +2,7 @@
 
 namespace Utils
 {
-    public enum EntityState 
+    public enum EntityState : byte
     {
         Idle,
         Moving,

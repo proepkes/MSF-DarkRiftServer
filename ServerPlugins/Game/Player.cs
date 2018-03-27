@@ -18,8 +18,6 @@ namespace ServerPlugins.Game
         readonly Dictionary<ushort, Action<Message>> _handlers = new Dictionary<ushort, Action<Message>>();
 
         private NavigationComponent agent;
-        
-        private bool destinationChanged;
 
         public Player(IClient client)
         {
@@ -60,6 +58,7 @@ namespace ServerPlugins.Game
 
         public override void Update()
         {
+            base.Update();
             lock (_messages)
             {
                 foreach (var tag in _messages.Keys)
@@ -88,7 +87,6 @@ namespace ServerPlugins.Game
                     break;
 
             }
-            base.Update();
         }
 
 
@@ -100,17 +98,25 @@ namespace ServerPlugins.Game
                 Die();
                 State = EntityState.Dead;
             }
-            if (agent.IsDirty)
+            else if (agent.IsDirty)
             {
-                //TODO: Validate destination
                 agent.Navigate();
-                agent.IsDirty = false;
                 State = EntityState.Moving;
             }
         }
 
         private void UpdateMoving()
         {
+            if (Health == 0)
+            {
+                Die();
+                State = EntityState.Dead;
+            }
+            else if (agent.IsDirty)
+            {
+                agent.Navigate();
+                State = EntityState.Moving;
+            }
         }
         private void UpdateCasting()
         {

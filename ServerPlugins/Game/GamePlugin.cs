@@ -77,6 +77,7 @@ namespace ServerPlugins.Game
                         //let all players observe this unit 
                         foreach (Player player in _entities.Where(e => e is Player))
                         {
+                            WriteEvent("Adding " + player.ID + " as observer to " + entity.ID, LogType.Info);
                             entity.Observers.Add(player);
                         }
 
@@ -86,6 +87,7 @@ namespace ServerPlugins.Game
                             //register the player to all units (around him), so they send him notifications when something updates (player observes himself too)
                             foreach (var unit in _entities)
                             {
+                                WriteEvent("Adding " + newPlayer.ID + " as observer to " + unit.ID, LogType.Info);
                                 unit.Observers.Add(newPlayer);
                             }
                         }
@@ -125,6 +127,10 @@ namespace ServerPlugins.Game
             foreach (var entity in _entities)
             {
                 entity.Update();
+            }
+            foreach (var entity in _entities)
+            {
+                entity.LateUpdate();
             }
         }
 

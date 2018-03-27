@@ -15,7 +15,9 @@ namespace ServerPlugins.Game.Components
                     {
                         ID = Entity.ID,
                         Position = Entity.Position,
-                        HasAuthority = observer == Entity //if the observer is the player himself, he has authority
+                        //if the observer is the player himself, he has authority, 
+                        //check this field on client-side to either spawn player-prefab or networkview-prefab
+                        HasAuthority = observer.ID == Entity.ID
                     }), SendMode.Reliable);
             }
         }

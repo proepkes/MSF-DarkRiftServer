@@ -13,21 +13,21 @@ namespace ServerPlugins.Game
 {
     public class Entity
     {
-        public uint ID;
+        private EntityState tmpState;
+        public readonly List<Player> Observers = new List<Player>();
+        private readonly List<Component> _components = new List<Component>();
 
-        public EntityState State = EntityState.Idle;
+        public uint ID;
 
         public GamePlugin Game;
 
-        public readonly List<Player> Observers = new List<Player>();
-
-        private readonly List<Component> _components = new List<Component>();
-
-        public TundraNetPosition Position { get; set; } = TundraNetPosition.Create(0f, 0f, 0f);
-
         public Entity Target;
 
+        public EntityState State = EntityState.Idle;
+
         public int Health = 100;
+
+        public TundraNetPosition Position { get; set; } = TundraNetPosition.Create(0f, 0f, 0f);
 
         public T AddComponent<T>() where T: Component, new()
         {
@@ -50,9 +50,24 @@ namespace ServerPlugins.Game
         }
         public virtual void Update()
         {
+            tmpState = State;
             foreach (var component in _components)
             {
                 component.Update();
+            }
+        }
+
+        public void LateUpdate()
+        {
+            //Send update with state has changed in Update
+            if (tmpState != State)
+            {
+                foreach (var observer in Observers)
+                {
+                    observer.Client.SendMessage(
+                        Message.Create(MessageTags.ChangeState, new ChangStatePacket {EntityID = ID, State = State}),
+                        SendMode.Reliable);
+                }
             }
         }
 

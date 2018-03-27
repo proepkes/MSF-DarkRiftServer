@@ -58,7 +58,10 @@
     <Compile Include="Game\TundraNetPosition.cs" />
     <Compile Include="IO\EndianBinaryReader.cs" />
     <Compile Include="IO\EndianBinaryWriter.cs" />
+    <Compile Include="Packets\ChangStatePacket.cs" />
+    <Compile Include="Packets\BytePacket.cs" />
     <Compile Include="Packets\BytesPacket.cs" />
+    <Compile Include="Packets\AckNavigateToPacket.cs" />
     <Compile Include="Packets\NavigateToPacket.cs" />
     <Compile Include="Packets\PositionPacket.cs" />
     <Compile Include="Packets\RoomAccessValidatedPacket.cs" />
