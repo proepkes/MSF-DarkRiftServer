@@ -37,6 +37,7 @@ namespace ServerPlugins.Game.Components
                 SeparationWeight = 3f,
                 UpdateFlags = UpdateFlags.Separation | UpdateFlags.OptimizeTopo
             };
+
             agentID = Entity.Game.Crowd.AddAgent(Entity.Position, agentParams);
             if (agentID >= 0)
             {

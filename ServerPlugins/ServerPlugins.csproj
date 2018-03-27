@@ -167,13 +167,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="Game\Levels\Act1.obj" />
+    <None Include="Game\Levels\Act1.obj">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy /d /y  $(ProjectDir)bin\$(ConfigurationName) $(SolutionDir)\Deploy\Plugins\
-</PostBuildEvent>
+xcopy /d /y  $(ProjectDir)bin\$(ConfigurationName)\Game\Levels $(SolutionDir)\Deploy\Levels\</PostBuildEvent>
   </PropertyGroup>
 </Project>
