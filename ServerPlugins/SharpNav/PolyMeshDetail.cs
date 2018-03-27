@@ -860,7 +860,6 @@ namespace ServerPlugins.SharpNav
 			int ntris = tris.Count;
 			if (ntris > MAX_TRIS)
 			{
-				//TODO we're using lists... let the user have super detailed meshes?
 				//Perhaps just a warning saying there's a lot of tris?
 				//tris.RemoveRange(MAX_TRIS + 1, tris.Count - MAX_TRIS);
 				//Console.WriteLine("WARNING: shrinking number of triangles.");

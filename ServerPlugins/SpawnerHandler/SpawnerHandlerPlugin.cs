@@ -419,7 +419,6 @@ namespace ServerPlugins.SpawnerHandler
 
         private bool CanClientSpawn(IClient client, RoomOptions data)
         {
-            //TODO: Setting: Only allow logged in clients to request a spawn & check here
             return EnableClientSpawnRequests;
         }
 

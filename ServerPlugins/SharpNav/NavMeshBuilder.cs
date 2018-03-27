@@ -177,7 +177,6 @@ namespace ServerPlugins.SharpNav
 			offMeshConnections = new OffMeshConnection[storedOffMeshConCount];
 
 			//store header
-			//HACK TiledNavMesh should figure out the X/Y/layer instead of the user maybe?
 			header.X = 0;
 			header.Y = 0;
 			header.Layer = 0;
@@ -274,7 +273,7 @@ namespace ServerPlugins.SharpNav
 					navPolys[offMeshPolyBase + n].Verts[0] = offMeshVertsBase + (n * 2 + 0);
 					navPolys[offMeshPolyBase + n].Verts[1] = offMeshVertsBase + (n * 2 + 1);
 					navPolys[offMeshPolyBase + n].Flags = (int)offMeshCons[i].Flags;
-					navPolys[offMeshPolyBase + n].Area = polyMesh.Polys[offMeshCons[i].Poly].Area; //HACK is this correct?
+					navPolys[offMeshPolyBase + n].Area = polyMesh.Polys[offMeshCons[i].Poly].Area;
 					navPolys[offMeshPolyBase + n].PolyType = PolygonType.OffMeshConnection;
 					n++;
 				}

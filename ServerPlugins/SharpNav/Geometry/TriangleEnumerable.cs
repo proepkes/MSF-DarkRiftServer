@@ -13,9 +13,6 @@ using Vector3 = SharpDX.Vector3;
 
 namespace ServerPlugins.SharpNav.Geometry
 {
-	//TODO array bounds checking to catch out of bounds exceptions early.
-	//TODO index arrays of other integral types (byte, sbyte, short, ushort, uint) - possibly make generic?
-
 	/// <summary>
 	/// A static class that generates an <see cref="IEnumerable{T}"/> of <see cref="Triangle3"/> using iterator blocks.
 	/// </summary>

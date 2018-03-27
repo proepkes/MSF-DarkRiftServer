@@ -9,40 +9,32 @@ namespace ServerPlugins.SharpNav
 	public class NavMeshGenerationSettings
 	{
 		/// <summary>
-		/// Prevents a default instance of the <see cref="NavMeshGenerationSettings"/> class from being created.
-		/// Use <see cref="Default"/> instead.
-		/// </summary>
-		public NavMeshGenerationSettings()
-		{
-			//TODO now that this is public set reasonable defaults.
-		}
-
-		/// <summary>
 		/// Gets the "default" generation settings for a model where 1 unit represents 1 meter.
 		/// </summary>
 		public static NavMeshGenerationSettings Default
 		{
 			get
 			{
-				//TODO rename this property to something more descriptive.
-				var settings = new NavMeshGenerationSettings();
+			    var settings = new NavMeshGenerationSettings
+			    {
+			        CellSize = 0.3f,
+			        CellHeight = 0.2f,
+			        MaxClimb = 0.9f,
+			        AgentHeight = 2.0f,
+			        AgentRadius = 0.6f,
+			        MinRegionSize = 8,
+			        MergedRegionSize = 20,
+			        MaxEdgeLength = 12,
+			        MaxEdgeError = 1.8f,
+			        VertsPerPoly = 6,
+			        SampleDistance = 6,
+			        MaxSampleError = 1,
+			        BuildBoundingVolumeTree = true
+			    };
 
-				settings.CellSize = 0.3f;
-				settings.CellHeight = 0.2f;
-				settings.MaxClimb = 0.9f;
-				settings.AgentHeight = 2.0f;
-				settings.AgentRadius = 0.6f;
-				settings.MinRegionSize = 8;
-				settings.MergedRegionSize = 20;
-				settings.MaxEdgeLength = 12;
-				settings.MaxEdgeError = 1.8f;
-				settings.VertsPerPoly = 6;
-				settings.SampleDistance = 6;
-				settings.MaxSampleError = 1;
 
-				settings.BuildBoundingVolumeTree = true;
 
-				return settings;
+			    return settings;
 			}
 		}
 

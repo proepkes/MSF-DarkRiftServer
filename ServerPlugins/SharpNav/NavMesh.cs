@@ -6,8 +6,6 @@ using ServerPlugins.SharpNav.Geometry;
 
 namespace ServerPlugins.SharpNav
 {
-	//TODO right now this is basically an alias for TiledNavMesh. Fix this in the future.
-
 	/// <summary>
 	/// A TiledNavMesh generated from a collection of triangles and some settings
 	/// </summary>

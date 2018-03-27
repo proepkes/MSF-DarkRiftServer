@@ -75,7 +75,6 @@ namespace ServerPlugins.SharpNav.Geometry
 		/// <returns>A hash code.</returns>
 		public override int GetHashCode()
 		{
-			//TODO generate a good hashcode.
 			return base.GetHashCode();
 		}
 

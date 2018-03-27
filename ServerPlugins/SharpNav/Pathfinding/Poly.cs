@@ -27,9 +27,7 @@ namespace ServerPlugins.SharpNav.Pathfinding
 		/// Gets or sets packed data representing neighbor polygons references and flags for each edge
 		/// </summary>
 		public int[] Neis { get; set; }
-
-		//TODO turn flags into a Tag object, which is more standard for C#
-
+        
 		/// <summary>
 		/// Gets or sets a user defined polygon flags
 		/// </summary>

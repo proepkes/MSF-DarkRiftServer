@@ -36,7 +36,6 @@ namespace ServerPlugins.SharpNav
 		private float cellHeight;
 		private int borderSize;
 
-		//HACK borderSize is 0 here. Fix with borderSize.
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="PolyMesh"/> class.
@@ -65,7 +64,6 @@ namespace ServerPlugins.SharpNav
 			this.borderSize = borderSize;
 
 			//get maximum limits
-			//TODO move to ContourSet?
 			int maxVertices = 0;
 			int maxTris = 0;
 			int maxVertsPerCont = 0;
@@ -115,7 +113,7 @@ namespace ServerPlugins.SharpNav
 
 				//Form triangles inside the area bounded by the contours
 				int ntris = Triangulate(vertices, indices, tris);
-				if (ntris <= 0) //TODO notify user when this happens. Logging?
+				if (ntris <= 0)
 					ntris = -ntris;
 
 				//add and merge vertices
@@ -1088,7 +1086,6 @@ namespace ServerPlugins.SharpNav
 		/// <param name="edgeB">Starting edge for polygon B</param>
 		private void MergePolys(List<Polygon> polys, int polyA, int polyB, int edgeA, int edgeB)
 		{
-			//TODO replace with Polygon.Merge()
 			int numA = polys[polyA].VertexCount;
 			int numB = polys[polyB].VertexCount;
 			int[] temp = new int[numA + numB];

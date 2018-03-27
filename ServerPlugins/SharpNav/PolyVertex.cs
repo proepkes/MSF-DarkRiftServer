@@ -285,7 +285,6 @@ namespace ServerPlugins.SharpNav
 		/// <returns>A hash code.</returns>
 		public override int GetHashCode()
 		{
-			//TODO write a better hashcode
 			return X.GetHashCode() ^ Y.GetHashCode() ^ Z.GetHashCode();
 		}
 

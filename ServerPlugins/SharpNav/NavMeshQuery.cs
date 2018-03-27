@@ -116,7 +116,6 @@ namespace ServerPlugins.SharpNav
 
 			PathfindingCommon.RandomPointInConvexPoly(verts, poly.VertCount, areas, s, t, out randomPt);
 
-			//TODO bad state again.
 			float h = 0.0f;
 			if (!GetPolyHeight(polyRef, randomPt, ref h))
 				throw new InvalidOperationException("Outside bounds?");
@@ -141,9 +140,8 @@ namespace ServerPlugins.SharpNav
 		/// <param name="randomPoint">Resulting random point.</param>
 		public void FindRandomPoint(out NavPoint randomPoint)
 		{
-			//TODO we're object-oriented, can prevent this state from ever happening.
 			if (nav == null)
-				throw new InvalidOperationException("TODO prevent this state from ever occuring");
+				throw new InvalidOperationException("nav is null");
 
 			//randomly pick one tile
 			//assume all tiles cover roughly the same area
@@ -165,7 +163,6 @@ namespace ServerPlugins.SharpNav
 					tile = t;
 			}
 
-			//TODO why?
 			if (tile == null)
 				throw new InvalidOperationException("No tiles?");
 
@@ -204,7 +201,6 @@ namespace ServerPlugins.SharpNav
 				}
 			}
 
-			//TODO why?
 			if (poly == null)
 				throw new InvalidOperationException("No polys?");
 
@@ -236,7 +232,6 @@ namespace ServerPlugins.SharpNav
 		/// <param name="randomPoint">A random point within the specified circle.</param>
 		public void FindRandomPointAroundCircle(NavPoint center, float radius, out NavPoint randomPoint)
 		{
-			//TODO fix state
 			if (nav == null || nodePool == null || openList == null)
 				throw new InvalidOperationException("Something null");
 
@@ -373,7 +368,6 @@ namespace ServerPlugins.SharpNav
 				}
 			}
 
-			//TODO invalid state.
 			if (randomPoly == null)
 				throw new InvalidOperationException("Poly null?");
 
@@ -2269,8 +2263,6 @@ namespace ServerPlugins.SharpNav
 		public void FindNearestPoly(ref Vector3 center, ref Vector3 extents, out NavPoint nearestPt)
 		{
 			nearestPt = NavPoint.Null;
-
-			//TODO error state?
 
 			// Get nearby polygons from proximity grid.
 			List<int> polys = new List<int>(128);

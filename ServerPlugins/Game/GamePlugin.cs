@@ -61,7 +61,7 @@ namespace ServerPlugins.Game
            
             GenerateNavMesh();
             WriteEvent("Adding Monster at " + startPt.Position + " on polygon " + startPt.Polygon, LogType.Info);
-            AddEntity(new Monster {Name = "Monster", Position = startPt.Position});
+            AddEntity(new Monster {Name = "Monster", Position = Vector3.Zero});
         }
 
         public void AddEntity(Entity entity)
@@ -214,16 +214,11 @@ namespace ServerPlugins.Game
             var buildData = new NavMeshBuilder(PolyMesh, PolyMeshDetail, new SharpNav.Pathfinding.OffMeshConnection[0], settings);
 
             var tiledNavMesh = new TiledNavMesh(buildData);
-            var navMeshQuery = new NavMeshQuery(tiledNavMesh, 2048);
+            NavMeshQuery = new NavMeshQuery(tiledNavMesh, 2048);
 
             //Find random start and end points on the poly mesh
             /*int startRef;
 			navMeshQuery.FindRandomPoint(out startRef, out startPos);*/
-
-            var center = new Vector3(10, 0, 0);
-            var extents = new Vector3(5, 5, 5);
-            navMeshQuery.FindNearestPoly(ref center, ref extents, out startPt);
-
 
             //Pathfinding with multiple units
             Crowd = new Crowd(300, 0.6f, ref tiledNavMesh);

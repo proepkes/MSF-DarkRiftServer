@@ -360,7 +360,6 @@ namespace ServerPlugins.SharpNav.Crowds
 
 		public bool Equals(Agent other)
 		{
-			//TODO find a way to actually compare for equality.
 			//return object.ReferenceEquals(this, other);
 
 			if (Object.ReferenceEquals(other, null)) return false;
@@ -379,12 +378,6 @@ namespace ServerPlugins.SharpNav.Crowds
 		public override int GetHashCode()
 		{
 			return agentIndex;
-		}
-
-		public override string ToString()
-		{
-			//TODO write an actual ToString.
-			return base.ToString();
 		}
 
 		#endregion
