@@ -268,6 +268,7 @@ __pycache__/
 /Deploy/DarkRift.Server.Console.exe.config
 /Deploy/DarkRift.Server.Console.exe
 /Lib
+/Deploy/Lib
 /Deploy/DarkRift.Server.dll
 /Deploy/DarkRift.dll
 /Deploy/DarkRift.Client.dll
