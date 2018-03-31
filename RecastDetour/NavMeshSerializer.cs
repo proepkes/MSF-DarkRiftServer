@@ -1,22 +1,23 @@
 ﻿using System.IO;
 using Newtonsoft.Json;
+using RecastDetour.Detour;
 using dtStatus = System.UInt32;
 
 namespace RecastDetour
 {
     public static class NavMeshSerializer 
     {
-        public static void Serialize(string path, Detour.Detour.dtNavMeshCreateParams mesh)
+        public static void Serialize(string path, NavMeshCreateParams mesh)
         {
             File.WriteAllText(path, JsonConvert.SerializeObject(mesh));
         }
 
-        public static Detour.Detour.dtNavMeshCreateParams Deserialize(string path)
+        public static NavMeshCreateParams Deserialize(string path)
         {
-            return JsonConvert.DeserializeObject<Detour.Detour.dtNavMeshCreateParams>(File.ReadAllText(path));
+            return JsonConvert.DeserializeObject<NavMeshCreateParams>(File.ReadAllText(path));
         }
 
-        public static Detour.Detour.dtNavMeshQuery CreateMeshQuery(Detour.Detour.dtNavMeshCreateParams meshCreateParams)
+        public static NavMeshQuery CreateMeshQuery(NavMeshCreateParams meshCreateParams)
         {
             Detour.Detour.dtRawTileData navData;
             if (!Detour.Detour.dtCreateNavMeshData(meshCreateParams, out navData))
@@ -24,7 +25,7 @@ namespace RecastDetour
                 return null;
             }
 
-            var m_navMesh = new Detour.Detour.dtNavMesh();
+            var m_navMesh = new NavMesh();
             dtStatus status;
 
             status = m_navMesh.init(navData, (int)Detour.Detour.dtTileFlags.DT_TILE_FREE_DATA);
@@ -33,7 +34,7 @@ namespace RecastDetour
                 return null;
             }
 
-            var m_navQuery = new Detour.Detour.dtNavMeshQuery();
+            var m_navQuery = new NavMeshQuery();
             status = m_navQuery.init(m_navMesh, 2048);
             if (Detour.Detour.dtStatusFailed(status))
             {

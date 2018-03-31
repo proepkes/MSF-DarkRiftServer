@@ -35,7 +35,7 @@ namespace ServerPlugins.Game.Entities
         public void SetTarget(Entity target)
         {
             Target = target;
-            TargetID = target == null ? 0 : target.ID; //for network sync.
+            TargetID = target?.ID ?? 0; //for network sync.
         }
 
         public T AddComponent<T>() where T: Component, new()

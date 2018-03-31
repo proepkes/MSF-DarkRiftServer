@@ -26,7 +26,7 @@ namespace ServerPlugins.Navigation
             return (dx * dx + dz * dz) < r * r && MathF.Abs(dy) < h;
         }
 
-        public static SmoothPath ComputeSmoothPath(Detour.dtNavMeshQuery navQuery, float[] startWorldPos, float[] endWorldPos)
+        public static SmoothPath ComputeSmoothPath(NavMeshQuery navQuery, float[] startWorldPos, float[] endWorldPos)
         {
             SmoothPath smoothPath = new SmoothPath();
 
@@ -202,7 +202,7 @@ namespace ServerPlugins.Navigation
             return smoothPath;
         }
 
-        static bool getSteerTarget(Detour.dtNavMeshQuery navQuery, float[] startPos, float[] endPos,
+        static bool getSteerTarget(NavMeshQuery navQuery, float[] startPos, float[] endPos,
             float minTargetDist,
             uint[] path, int pathSize,
             float[] steerPos, ref byte steerPosFlag, ref uint steerPosRef,
@@ -252,7 +252,7 @@ namespace ServerPlugins.Navigation
         }
 
 
-        static bool getSteerTarget(Detour.dtNavMeshQuery navQuery, float[] startPos, float[] endPos,
+        static bool getSteerTarget(NavMeshQuery navQuery, float[] startPos, float[] endPos,
                                    float minTargetDist,
                                    uint[] path, int pathSize,
                                    float[] steerPos, ref byte steerPosFlag, ref uint steerPosRef)
@@ -363,7 +363,7 @@ namespace ServerPlugins.Navigation
         //  +-S-+-T-+
         //  |:::|   | <-- the step can end up in here, resulting U-turn path.
         //  +---+---+
-        static int fixupShortcuts(uint[] path, int npath, Detour.dtNavMeshQuery navQuery)
+        static int fixupShortcuts(uint[] path, int npath, NavMeshQuery navQuery)
         {
             if (npath < 3)
                 return npath;

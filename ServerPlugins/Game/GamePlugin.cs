@@ -32,7 +32,7 @@ namespace ServerPlugins.Game
         public event Action Started;
 
         private long _frameCounter = 0;
-        public Detour.dtNavMeshQuery NavMeshQuery;
+        public NavMeshQuery NavMeshQuery;
 
 
         public GamePlugin(PluginLoadData pluginLoadData) : base(pluginLoadData)

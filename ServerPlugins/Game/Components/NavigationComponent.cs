@@ -18,7 +18,7 @@ namespace ServerPlugins.Game.Components
 
         public bool IsDirty { get; set; }
 
-        public Detour.dtNavMeshQuery NavMeshQuery;
+        public NavMeshQuery NavMeshQuery;
 
         public void SetDestination(Vector3 destination)
         {

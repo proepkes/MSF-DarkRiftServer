@@ -436,7 +436,7 @@ namespace RecastDetour.Detour
         /// Swaps the values of the two parameters.
         ///  @param[in,out]	a	Value A
         ///  @param[in,out]	b	Value B
-        static void dtSwap<T>(ref T lhs, ref T rhs) {
+        public static void dtSwap<T>(ref T lhs, ref T rhs) {
             T temp = lhs;
             lhs = rhs;
             rhs = temp;
