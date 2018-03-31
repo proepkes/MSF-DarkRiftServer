@@ -17,21 +17,7 @@ namespace ServerPlugins.Game.Entities
         public GamePlugin Game;
         public NavigationComponent agent;
         public readonly List<Player> Observers = new List<Player>();
-
-        public Vector3 Position
-        {
-            get
-            {
-                return new Vector3(X, Y, Z);
-            }
-            set
-            {
-                X = value.X;
-                Y = value.Y;
-                Z = value.Z;
-            }
-        }
-
+        
         public void SetTarget(Entity target)
         {
             Target = target;
@@ -93,18 +79,18 @@ namespace ServerPlugins.Game.Entities
             }
         } 
         
-        public bool IsMoving()
-        {
-            // -> agent.hasPath will be true if stopping distance > 0, so we can't
-            //    really rely on that.
-            // -> IsDirty is true while calculating the path, which is good
-            // -> remainingDistance is the distance to the last path point, so it
-            //    also works when clicking somewhere onto a obstacle that isn'
-            //    directly reachable.
-            return agent.IsDirty ||
-                   agent.RemainingDistance > agent.StoppingDistance ||
-                   agent.Velocity != Vector3.Zero;
-        }
+        //public bool IsMoving()
+        //{
+        //    // -> agent.hasPath will be true if stopping distance > 0, so we can't
+        //    //    really rely on that.
+        //    // -> IsDirty is true while calculating the path, which is good
+        //    // -> remainingDistance is the distance to the last path point, so it
+        //    //    also works when clicking somewhere onto a obstacle that isn'
+        //    //    directly reachable.
+        //    return agent.IsDirty ||
+        //           agent.RemainingDistance > agent.StoppingDistance ||
+        //           agent.Velocity != Vector3.Zero;
+        //}
 
         public override string ToString()
         {

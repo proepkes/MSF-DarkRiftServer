@@ -4,6 +4,7 @@ using System.Numerics;
 using DarkRift;
 using DarkRift.Server;
 using Utils;
+using Utils.Game;
 using Utils.Packets;
 
 namespace ServerPlugins.Game.Entities
@@ -46,7 +47,7 @@ namespace ServerPlugins.Game.Entities
             if (data != null)
             {
                 var destination = data.Destination;
-                agent.SetDestination(new Vector3(destination.X, destination.Y, destination.Z));
+                agent.SetDestination(TundraNetPosition.Create(destination.X, destination.Y, destination.Z));
                 agent.StoppingDistance = data.StoppingDistance;
             }
         }

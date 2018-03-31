@@ -10,6 +10,7 @@ using RecastDetour;
 using RecastDetour.Detour;
 using ServerPlugins.Game.Components;
 using ServerPlugins.Game.Entities;
+using Utils.Game;
 
 namespace ServerPlugins.Game
 {
@@ -33,6 +34,7 @@ namespace ServerPlugins.Game
 
         private long _frameCounter = 0;
         public NavMeshQuery NavMeshQuery;
+        public float YOffset;
 
 
         public GamePlugin(PluginLoadData pluginLoadData) : base(pluginLoadData)
@@ -45,15 +47,17 @@ namespace ServerPlugins.Game
         }
 
         public void LoadLevel(string levelName)
-        { 
+        {
+            YOffset = Pathfinder.GetClosestPointOnNavMesh(NavMeshQuery, TundraNetPosition.Create(0f, 0f, 0f)).Y;
             NavMeshQuery = NavMeshSerializer.CreateMeshQuery(NavMeshSerializer.Deserialize("Levels/" + levelName + ".nav"));
-            AddEntity(new Monster {Name = "Monster", Position = Vector3.Zero});
+            AddEntity(new Monster {Name = "Monster", Position = TundraNetPosition.Zero});
         }
 
         public void AddEntity(Entity entity)
         {
             entity.ID = _nextEntityID++;
             entity.Game = this;
+            entity.Position = TundraNetPosition.Zero;
             entity.AddComponent<SpawnComponent>();
             var navComponent = entity.AddComponent<NavigationComponent>();
             navComponent.NavMeshQuery = NavMeshQuery;

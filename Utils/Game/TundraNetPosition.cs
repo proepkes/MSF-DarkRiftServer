@@ -1,9 +1,12 @@
-﻿using DarkRift;
+﻿using System;
+using DarkRift;
 
 namespace Utils.Game
 {
     public class TundraNetPosition : IDarkRiftSerializable
     {
+        public static TundraNetPosition Zero => TundraNetPosition.Create(0f, 0f ,0f);
+
         public static TundraNetPosition Create(float x, float y, float z)
         {
             return new TundraNetPosition { X = x, Y = y, Z = z};

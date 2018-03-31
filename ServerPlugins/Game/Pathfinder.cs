@@ -1,15 +1,26 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Numerics;
 using MathFloat;
 using RecastDetour.Detour;
 using Utils;
+using Utils.Game;
 
-namespace ServerPlugins.Navigation
+#if DT_POLYREF64
+using dtPolyRef = System.UInt64;
+#else
+using dtPolyRef = System.UInt32;
+#endif
+
+namespace ServerPlugins.Game
 {
-    public class Pathfinder
+    public static class Pathfinder
     {
-        public static float[] Vector3ToArray(Vector3 vec)
+        private static TundraNetPosition ArrayToPosition(float[] pos, int start = 0)
+        {
+            return TundraNetPosition.Create(pos[start], pos[start + 1], pos[start + 2]);
+        }
+
+        private static float[] PositionToArray(TundraNetPosition vec)
         {
             float[] arr = new float[3];
             arr[0] = vec.X;
@@ -26,8 +37,10 @@ namespace ServerPlugins.Navigation
             return (dx * dx + dz * dz) < r * r && MathF.Abs(dy) < h;
         }
 
-        public static SmoothPath ComputeSmoothPath(NavMeshQuery navQuery, float[] startWorldPos, float[] endWorldPos)
+        public static SmoothPath ComputeSmoothPath(NavMeshQuery navQuery, TundraNetPosition start, TundraNetPosition end)
         {
+            var startWorldPos = PositionToArray(start);
+            var endWorldPos = PositionToArray(end);
             SmoothPath smoothPath = new SmoothPath();
 
             if (navQuery == null)
@@ -412,6 +425,24 @@ namespace ServerPlugins.Navigation
             }
 
             return npath;
+        }
+
+        public static TundraNetPosition GetClosestPointOnNavMesh(NavMeshQuery navQuery, TundraNetPosition pos)
+        {
+
+            float[] extents = new float[3];
+            for (int i = 0; i < 3; ++i)
+            {
+                extents[i] = 10.0f;
+            }
+
+            Detour.dtQueryFilter filter = new Detour.dtQueryFilter();
+            dtPolyRef startRef = 0;
+            float[] res = new float[3];
+
+            navQuery.findNearestPoly(PositionToArray(pos), extents, filter, ref startRef, ref res);
+
+            return ArrayToPosition(res);
         }
 
     }

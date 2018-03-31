@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using DarkRift;
 using Utils.Game;
 
@@ -12,7 +13,7 @@ namespace Utils
 
         public EntityState State = EntityState.Idle;
 
-        public float X, Y, Z;
+        public TundraNetPosition Position;
 
         public int Health = 100;
 
@@ -23,10 +24,10 @@ namespace Utils
             TargetID = e.Reader.ReadUInt32();
             Name = e.Reader.ReadString(Encoding.Unicode);
             State = (EntityState)e.Reader.ReadByte();
-            X = e.Reader.ReadSingle();
-            Y = e.Reader.ReadSingle();
-            Z = e.Reader.ReadSingle();
+            Position = e.Reader.ReadSerializable<TundraNetPosition>();
             Health = e.Reader.ReadInt32();
+
+
         }
 
         public void Serialize(SerializeEvent e)
@@ -35,9 +36,7 @@ namespace Utils
             e.Writer.Write(TargetID);
             e.Writer.Write(Name, Encoding.Unicode);
             e.Writer.Write((byte)State);
-            e.Writer.Write(X);
-            e.Writer.Write(Y);
-            e.Writer.Write(Z);
+            e.Writer.Write(Position);
             e.Writer.Write(Health);
         }
     }
