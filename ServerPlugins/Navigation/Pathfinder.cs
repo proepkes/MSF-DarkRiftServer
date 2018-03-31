@@ -2,7 +2,8 @@
 using System.Diagnostics;
 using System.Numerics;
 using MathFloat;
-using Pathfinding.Serialization;
+using RecastDetour.Detour;
+using Utils;
 
 namespace ServerPlugins.Navigation
 {
@@ -58,7 +59,7 @@ namespace ServerPlugins.Navigation
 
             navQuery.findPath(startRef, endRef, startPt, endPt, filter, path, ref pathCount, maxPath);
 
-            smoothPath.m_nsmoothPath = 0;
+            smoothPath.PointsCount = 0;
 
             if (pathCount > 0)
             {
@@ -79,14 +80,14 @@ namespace ServerPlugins.Navigation
                 const float STEP_SIZE = 0.5f;
                 const float SLOP = 0.01f;
 
-                smoothPath.m_nsmoothPath = 0;
+                smoothPath.PointsCount = 0;
 
-                Detour.dtVcopy(smoothPath.m_smoothPath, smoothPath.m_nsmoothPath * 3, iterPos, 0);
-                smoothPath.m_nsmoothPath++;
+                Detour.dtVcopy(smoothPath.Points, smoothPath.PointsCount * 3, iterPos, 0);
+                smoothPath.PointsCount++;
 
                 // Move towards target a small advancement at a time until target reached or
                 // when ran out of memory to store the path.
-                while (npolys != 0 && smoothPath.m_nsmoothPath < SmoothPath.MAX_SMOOTH)
+                while (npolys != 0 && smoothPath.PointsCount < SmoothPath.MAX_SMOOTH)
                 {
                     // Find location to steer towards.
                     float[] steerPos = new float[3];
@@ -139,10 +140,10 @@ namespace ServerPlugins.Navigation
                     {
                         // Reached end of path.
                         Detour.dtVcopy(iterPos, targetPos);
-                        if (smoothPath.m_nsmoothPath < SmoothPath.MAX_SMOOTH)
+                        if (smoothPath.PointsCount < SmoothPath.MAX_SMOOTH)
                         {
-                            Detour.dtVcopy(smoothPath.m_smoothPath, smoothPath.m_nsmoothPath * 3, iterPos, 0);
-                            smoothPath.m_nsmoothPath++;
+                            Detour.dtVcopy(smoothPath.Points, smoothPath.PointsCount * 3, iterPos, 0);
+                            smoothPath.PointsCount++;
                         }
                         break;
                     }
@@ -171,15 +172,15 @@ namespace ServerPlugins.Navigation
                         var status = navQuery.getAttachedNavMesh().getOffMeshConnectionPolyEndPoints(prevRef, polyRef, startPos, endPos);
                         if (Detour.dtStatusSucceed(status))
                         {
-                            if (smoothPath.m_nsmoothPath < SmoothPath.MAX_SMOOTH)
+                            if (smoothPath.PointsCount < SmoothPath.MAX_SMOOTH)
                             {
-                                Detour.dtVcopy(smoothPath.m_smoothPath, smoothPath.m_nsmoothPath * 3, startPos, 0);
-                                smoothPath.m_nsmoothPath++;
+                                Detour.dtVcopy(smoothPath.Points, smoothPath.PointsCount * 3, startPos, 0);
+                                smoothPath.PointsCount++;
                                 // Hack to make the dotted path not visible during off-mesh connection.
-                                if ((smoothPath.m_nsmoothPath & 1) != 0)
+                                if ((smoothPath.PointsCount & 1) != 0)
                                 {
-                                    Detour.dtVcopy(smoothPath.m_smoothPath, smoothPath.m_nsmoothPath * 3, startPos, 0);
-                                    smoothPath.m_nsmoothPath++;
+                                    Detour.dtVcopy(smoothPath.Points, smoothPath.PointsCount * 3, startPos, 0);
+                                    smoothPath.PointsCount++;
                                 }
                             }
                             // Move position at the other side of the off-mesh link.
@@ -191,10 +192,10 @@ namespace ServerPlugins.Navigation
                     }
 
                     // Store results.
-                    if (smoothPath.m_nsmoothPath < SmoothPath.MAX_SMOOTH)
+                    if (smoothPath.PointsCount < SmoothPath.MAX_SMOOTH)
                     {
-                        Detour.dtVcopy(smoothPath.m_smoothPath, smoothPath.m_nsmoothPath * 3, iterPos, 0);
-                        smoothPath.m_nsmoothPath++;
+                        Detour.dtVcopy(smoothPath.Points, smoothPath.PointsCount * 3, iterPos, 0);
+                        smoothPath.PointsCount++;
                     }
                 }
             }

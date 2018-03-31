@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using DarkRift;
+using RecastDetour.Detour;
 using ServerPlugins.Navigation;
 using Utils;
 using Utils.Game;

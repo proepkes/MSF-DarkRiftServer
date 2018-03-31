@@ -1,24 +1,30 @@
 ﻿using DarkRift;
 
-namespace Pathfinding.Serialization
+namespace Utils
 {
     public class SmoothPath : IDarkRiftSerializable
     {
         public const int MAX_POLYS = 256;
         public const int MAX_SMOOTH = 2048;
 
-        public int m_nsmoothPath = 0;
-        public float[] m_smoothPath = new float[MAX_SMOOTH * 3];
+        public int PointsCount = 0;
+        public readonly float[] Points = new float[MAX_SMOOTH * 3];
         public void Deserialize(DeserializeEvent e)
         {
-            m_nsmoothPath = e.Reader.ReadInt32();
-            m_smoothPath = e.Reader.ReadSingles();
+            PointsCount = e.Reader.ReadInt32();
+            for (int i = 0; i < PointsCount*3; i+=3)
+            {
+                Points[i] = e.Reader.ReadSingle();
+            }
         }
 
         public void Serialize(SerializeEvent e)
         {
-            e.Writer.Write(m_nsmoothPath);
-            e.Writer.Write(m_smoothPath);
+            e.Writer.Write(PointsCount);
+            for (int i = 0; i < PointsCount * 3; i += 3)
+            {
+                e.Writer.Write(Points[i]);
+            }
         }
     }
 }

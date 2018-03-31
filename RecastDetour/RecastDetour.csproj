@@ -52,7 +52,7 @@
     <Compile Include="Detour\DetourNavMeshQuery.cs" />
     <Compile Include="Detour\DetourNode.cs" />
     <Compile Include="Detour\DetourStatus.cs" />
-    <Compile Include="NavMeshIO.cs" />
+    <Compile Include="NavMeshSerializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Recast\BuildContext.cs" />
     <Compile Include="Recast\Recast.cs" />

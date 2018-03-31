@@ -1,5 +1,4 @@
 ﻿using DarkRift;
-using Pathfinding.Serialization;
 using Utils.Game;
 
 namespace Utils.Packets

@@ -6,7 +6,8 @@ using System.Numerics;
 using System.Threading;
 using DarkRift;
 using DarkRift.Server;
-using Pathfinding.Serialization;
+using RecastDetour;
+using RecastDetour.Detour;
 using ServerPlugins.Game.Components;
 using ServerPlugins.Game.Entities;
 
