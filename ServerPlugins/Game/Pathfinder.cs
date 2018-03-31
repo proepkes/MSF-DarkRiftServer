@@ -15,16 +15,18 @@ namespace ServerPlugins.Game
 {
     public static class Pathfinder
     {
+        public static float YOffset;
+
         private static TundraNetPosition ArrayToPosition(float[] pos, int start = 0)
         {
-            return TundraNetPosition.Create(pos[start], pos[start + 1], pos[start + 2]);
+            return TundraNetPosition.Create(pos[start], pos[start + 1] - YOffset, pos[start + 2]);
         }
 
         private static float[] PositionToArray(TundraNetPosition vec)
         {
             float[] arr = new float[3];
             arr[0] = vec.X;
-            arr[1] = vec.Y;
+            arr[1] = vec.Y + YOffset;
             arr[2] = vec.Z;
             return arr;
         }
@@ -95,7 +97,8 @@ namespace ServerPlugins.Game
 
                 smoothPath.PointsCount = 0;
 
-                Detour.dtVcopy(smoothPath.Points, smoothPath.PointsCount * 3, iterPos, 0);
+                smoothPath.Points.Add(ArrayToPosition(iterPos));
+                //Detour.dtVcopy(smoothPath.Points, smoothPath.PointsCount * 3, iterPos, 0);
                 smoothPath.PointsCount++;
 
                 // Move towards target a small advancement at a time until target reached or
@@ -155,7 +158,8 @@ namespace ServerPlugins.Game
                         Detour.dtVcopy(iterPos, targetPos);
                         if (smoothPath.PointsCount < SmoothPath.MAX_SMOOTH)
                         {
-                            Detour.dtVcopy(smoothPath.Points, smoothPath.PointsCount * 3, iterPos, 0);
+                            smoothPath.Points.Add(ArrayToPosition(iterPos));
+                            //Detour.dtVcopy(smoothPath.Points, smoothPath.PointsCount * 3, iterPos, 0);
                             smoothPath.PointsCount++;
                         }
                         break;
@@ -187,12 +191,14 @@ namespace ServerPlugins.Game
                         {
                             if (smoothPath.PointsCount < SmoothPath.MAX_SMOOTH)
                             {
-                                Detour.dtVcopy(smoothPath.Points, smoothPath.PointsCount * 3, startPos, 0);
+                                smoothPath.Points.Add(ArrayToPosition(startPos));
+                                //Detour.dtVcopy(smoothPath.Points, smoothPath.PointsCount * 3, startPos, 0);
                                 smoothPath.PointsCount++;
                                 // Hack to make the dotted path not visible during off-mesh connection.
                                 if ((smoothPath.PointsCount & 1) != 0)
                                 {
-                                    Detour.dtVcopy(smoothPath.Points, smoothPath.PointsCount * 3, startPos, 0);
+                                    smoothPath.Points.Add(ArrayToPosition(startPos));
+                                    //Detour.dtVcopy(smoothPath.Points, smoothPath.PointsCount * 3, startPos, 0);
                                     smoothPath.PointsCount++;
                                 }
                             }
@@ -207,7 +213,8 @@ namespace ServerPlugins.Game
                     // Store results.
                     if (smoothPath.PointsCount < SmoothPath.MAX_SMOOTH)
                     {
-                        Detour.dtVcopy(smoothPath.Points, smoothPath.PointsCount * 3, iterPos, 0);
+                        smoothPath.Points.Add(ArrayToPosition(iterPos));
+                        //Detour.dtVcopy(smoothPath.Points, smoothPath.PointsCount * 3, iterPos, 0);
                         smoothPath.PointsCount++;
                     }
                 }
@@ -441,7 +448,6 @@ namespace ServerPlugins.Game
             float[] res = new float[3];
 
             navQuery.findNearestPoly(PositionToArray(pos), extents, filter, ref startRef, ref res);
-
             return ArrayToPosition(res);
         }
 

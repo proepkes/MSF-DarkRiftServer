@@ -1,4 +1,6 @@
-﻿using DarkRift;
+﻿using System.Collections.Generic;
+using DarkRift;
+using Utils.Game;
 
 namespace Utils
 {
@@ -8,22 +10,22 @@ namespace Utils
         public const int MAX_SMOOTH = 2048;
 
         public int PointsCount = 0;
-        public readonly float[] Points = new float[MAX_SMOOTH * 3];
+        public readonly List<TundraNetPosition> Points = new List<TundraNetPosition>();
         public void Deserialize(DeserializeEvent e)
         {
             PointsCount = e.Reader.ReadInt32();
-            for (int i = 0; i < PointsCount*3; ++i)
+            for (int i = 0; i < PointsCount; ++i)
             {
-                Points[i] = e.Reader.ReadSingle();
+                Points.Add(e.Reader.ReadSerializable<TundraNetPosition>());
             }
         }
 
         public void Serialize(SerializeEvent e)
         {
-            e.Writer.Write(PointsCount);
-            for (int i = 0; i < PointsCount * 3; ++i)
+            e.Writer.Write(Points.Count);
+            foreach (var point in Points)
             {
-                e.Writer.Write(Points[i]);
+                e.Writer.Write(point);
             }
         }
     }

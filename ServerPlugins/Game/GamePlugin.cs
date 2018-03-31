@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
+using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Threading;
 using DarkRift;
 using DarkRift.Server;
@@ -34,7 +33,6 @@ namespace ServerPlugins.Game
 
         private long _frameCounter = 0;
         public NavMeshQuery NavMeshQuery;
-        public float YOffset;
 
 
         public GamePlugin(PluginLoadData pluginLoadData) : base(pluginLoadData)
@@ -48,8 +46,8 @@ namespace ServerPlugins.Game
 
         public void LoadLevel(string levelName)
         {
-            YOffset = Pathfinder.GetClosestPointOnNavMesh(NavMeshQuery, TundraNetPosition.Create(0f, 0f, 0f)).Y;
             NavMeshQuery = NavMeshSerializer.CreateMeshQuery(NavMeshSerializer.Deserialize("Levels/" + levelName + ".nav"));
+            Pathfinder.YOffset = Pathfinder.GetClosestPointOnNavMesh(NavMeshQuery, TundraNetPosition.Create(0f, 0f, 0f)).Y;
             AddEntity(new Monster {Name = "Monster", Position = TundraNetPosition.Zero});
         }
 
@@ -57,7 +55,7 @@ namespace ServerPlugins.Game
         {
             entity.ID = _nextEntityID++;
             entity.Game = this;
-            entity.Position = TundraNetPosition.Zero;
+            entity.Position = TundraNetPosition.Create(0f, 0f, 0f);
             entity.AddComponent<SpawnComponent>();
             var navComponent = entity.AddComponent<NavigationComponent>();
             navComponent.NavMeshQuery = NavMeshQuery;
