@@ -1,10 +1,17 @@
+
 using System;
 using System.Diagnostics;
+using dtStatus = System.UInt32;
+using dtNodeIndex = System.UInt16;
+#if DT_POLYREF64
+using dtPolyRef = System.UInt64;
+//using dtTileRef = System.UInt64;
+#else
+using dtPolyRef = System.UInt32;
+#endif
 
 namespace RecastDetour.Detour
 {
-//using dtTileRef = System.UInt32;
-#endif
 
 #if DT_POLYREF64
 // From Thomas Wang, https://gist.github.com/badboy/6267743

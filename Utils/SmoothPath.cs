@@ -12,7 +12,7 @@ namespace Utils
         public void Deserialize(DeserializeEvent e)
         {
             PointsCount = e.Reader.ReadInt32();
-            for (int i = 0; i < PointsCount*3; i+=3)
+            for (int i = 0; i < PointsCount*3; ++i)
             {
                 Points[i] = e.Reader.ReadSingle();
             }
@@ -21,7 +21,7 @@ namespace Utils
         public void Serialize(SerializeEvent e)
         {
             e.Writer.Write(PointsCount);
-            for (int i = 0; i < PointsCount * 3; i += 3)
+            for (int i = 0; i < PointsCount * 3; ++i)
             {
                 e.Writer.Write(Points[i]);
             }
