@@ -6,6 +6,7 @@ using System.Numerics;
 using System.Threading;
 using DarkRift;
 using DarkRift.Server;
+using Pathfinding.Serialization;
 using ServerPlugins.Game.Components;
 using ServerPlugins.Game.Entities;
 
@@ -30,6 +31,7 @@ namespace ServerPlugins.Game
         public event Action Started;
 
         private long _frameCounter = 0;
+        public Detour.dtNavMeshQuery NavMeshQuery;
 
 
         public GamePlugin(PluginLoadData pluginLoadData) : base(pluginLoadData)
@@ -41,9 +43,9 @@ namespace ServerPlugins.Game
             _despawnQueue = new ConcurrentQueue<Entity>();
         }
 
-
         public void LoadLevel(string levelName)
-        {
+        { 
+            NavMeshQuery = NavMeshSerializer.CreateMeshQuery(NavMeshSerializer.Deserialize("Levels/" + levelName + ".nav"));
             AddEntity(new Monster {Name = "Monster", Position = Vector3.Zero});
         }
 
@@ -52,7 +54,8 @@ namespace ServerPlugins.Game
             entity.ID = _nextEntityID++;
             entity.Game = this;
             entity.AddComponent<SpawnComponent>();
-            entity.AddComponent<NavigationComponent>();
+            var navComponent = entity.AddComponent<NavigationComponent>();
+            navComponent.NavMeshQuery = NavMeshQuery;
             _spawnQueue.Enqueue(entity);
         }
 
@@ -89,8 +92,7 @@ namespace ServerPlugins.Game
                         //register the player to all units (around him, including himself), so they send him notifications when something updates
                         foreach (var unit in Entities.Values)
                         {
-                            WriteEvent("Adding new Player " + newPlayer.ID + " as observer to " + unit.ID,
-                                LogType.Info);
+                            WriteEvent("Adding new Player " + newPlayer.ID + " as observer to " + unit.ID, LogType.Info);
                             unit.Observers.Add(newPlayer);
                         }
                     }

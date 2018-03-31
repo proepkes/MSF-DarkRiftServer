@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spawner", "Spawner\Spawner.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerPlugins", "ServerPlugins\ServerPlugins.csproj", "{3F3234EE-ED0E-44E3-8024-05CC293F568E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecastDetour", "RecastDetour\RecastDetour.csproj", "{6C4BEDD5-F000-4994-B000-2F5F310F6E3A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{3F3234EE-ED0E-44E3-8024-05CC293F568E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3F3234EE-ED0E-44E3-8024-05CC293F568E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3F3234EE-ED0E-44E3-8024-05CC293F568E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C4BEDD5-F000-4994-B000-2F5F310F6E3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C4BEDD5-F000-4994-B000-2F5F310F6E3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C4BEDD5-F000-4994-B000-2F5F310F6E3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C4BEDD5-F000-4994-B000-2F5F310F6E3A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

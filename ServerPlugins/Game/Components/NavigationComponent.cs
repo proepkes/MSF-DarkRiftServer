@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using DarkRift;
+using ServerPlugins.Navigation;
 using Utils;
 using Utils.Game;
 using Utils.Packets;
@@ -16,47 +17,29 @@ namespace ServerPlugins.Game.Components
 
         public bool IsDirty { get; set; }
 
+        public Detour.dtNavMeshQuery NavMeshQuery;
+
         public void SetDestination(Vector3 destination)
         {
             IsDirty = true;
             Destination = destination;
         }
 
-        public override void Start()
-        {
-        }
-
         public void Navigate()
         {
-            //TODO: Authoritative Destination
-            //Currently we just relay the current destination
-            //The idea is to just send a destination and let client & server use the same pathfinding
-            //So we don't need to sync & lerp position and rotations
-
-            var destination = TundraNetPosition.Create(Destination.X, Destination.Y, Destination.Z);
+            var path = Pathfinder.ComputeSmoothPath(NavMeshQuery, Pathfinder.Vector3ToArray(Entity.Position), Pathfinder.Vector3ToArray(Destination));
             foreach (var observer in Entity.Observers)
             {
                 observer.Client.SendMessage(Message.Create(MessageTags.NavigateTo,
                     new AckNavigateToPacket
                     {
                         EntityID = Entity.ID,
-                        Destination = destination,
+                        Path = path,
                         StoppingDistance = StoppingDistance
                     }), SendMode.Reliable);
             }
 
             IsDirty = false;
-        }
-
-        //TODO: Big todo.. pathfinding (SharpNav)
-        public override void Update()
-        {
-            
-        }
-
-        public void Reset()
-        {
-
         }
 
         public Vector3 Velocity => Vector3.Zero;
@@ -69,6 +52,10 @@ namespace ServerPlugins.Game.Components
                 direction.Y = 0;
                 return direction.Length();
             }
+        }
+
+        public void Reset()
+        {
         }
     }
 }
