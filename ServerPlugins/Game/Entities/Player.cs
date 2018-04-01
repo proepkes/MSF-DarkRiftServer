@@ -46,15 +46,14 @@ namespace ServerPlugins.Game.Entities
             var data = message.Deserialize<NavigateToPacket>();
             if (data != null)
             {
-                var destination = data.Destination;
-                agent.SetDestination(TundraNetPosition.Create(destination.X, destination.Y, destination.Z));
                 agent.StoppingDistance = data.StoppingDistance;
+                agent.Navigate(TundraNetPosition.Create(data.Destination.X, data.Destination.Y, data.Destination.Z));
             }
         }
 
-        public override void Update()
+        public override void Update(float delta)
         {
-            base.Update();
+            base.Update(delta);
             lock (_messages)
             {
                 foreach (var tag in _messages.Keys)
@@ -94,9 +93,8 @@ namespace ServerPlugins.Game.Entities
                 Die();
                 State = EntityState.Dead;
             }
-            else if (agent.IsDirty)
+            else if (agent.HasPath)
             {
-                agent.Navigate();
                 State = EntityState.Moving;
             }
         }
@@ -108,9 +106,8 @@ namespace ServerPlugins.Game.Entities
                 Die();
                 State = EntityState.Dead;
             }
-            else if (agent.IsDirty)
+            else if (agent.HasPath)
             {
-                agent.Navigate();
                 State = EntityState.Moving;
             }
         }

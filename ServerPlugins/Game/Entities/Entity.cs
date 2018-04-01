@@ -45,7 +45,7 @@ namespace ServerPlugins.Game.Entities
                 component.Start();
             }
         }
-        public virtual void Update()
+        public virtual void Update(float delta)
         {
             //TODO: area of interest
             //if (Target != null && !Target.Visible)
@@ -54,7 +54,7 @@ namespace ServerPlugins.Game.Entities
             tmpState = State;
             foreach (var component in _components)
             {
-                component.Update();
+                component.Update(delta);
             }
         }
 

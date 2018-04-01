@@ -12,7 +12,7 @@ namespace ServerPlugins.Game.Components
         public Entity Entity;
 
         public virtual void Start() { }
-        public virtual void Update() { }
+        public virtual void Update(float delta) { }
         public virtual void Destroy() { }
     }
 }

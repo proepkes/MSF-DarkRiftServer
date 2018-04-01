@@ -29,5 +29,10 @@ namespace Utils.Game
             e.Writer.Write(Y);
             e.Writer.Write(Z);
         }
+
+        public override string ToString()
+        {
+            return X + ", " + Y + ", " + Z;
+        }
     }
 }

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Threading;
 using DarkRift;
 using DarkRift.Server;
@@ -18,6 +19,8 @@ namespace ServerPlugins.Game
     /// </summary>
     public class GamePlugin : ServerPluginBase
     {
+        public readonly int Tickrate;
+
         //Reserve EntityID 0 for null, (example: no target selected)
         private uint _nextEntityID = 1;
 
@@ -27,10 +30,10 @@ namespace ServerPlugins.Game
 
         public override bool ThreadSafe => false;
         public bool Running { get; set; }
-        public int Tickrate { get; set; }
 
         public event Action Started;
 
+        private long tick, tock;
         private long _frameCounter = 0;
         public NavMeshQuery NavMeshQuery;
 
@@ -47,6 +50,7 @@ namespace ServerPlugins.Game
         public void LoadLevel(string levelName)
         {
             NavMeshQuery = NavMeshSerializer.CreateMeshQuery(NavMeshSerializer.Deserialize("Levels/" + levelName + ".nav"));
+            //The YOffset requires the world to has a valid NavMesh-Position at (0,0,0) 
             Pathfinder.YOffset = Pathfinder.GetClosestPointOnNavMesh(NavMeshQuery, TundraNetPosition.Create(0f, 0f, 0f)).Y;
             AddEntity(new Monster {Name = "Monster", Position = TundraNetPosition.Zero});
         }
@@ -55,7 +59,7 @@ namespace ServerPlugins.Game
         {
             entity.ID = _nextEntityID++;
             entity.Game = this;
-            entity.Position = TundraNetPosition.Create(0f, 0f, 0f);
+            entity.Position = TundraNetPosition.Zero;
             entity.AddComponent<SpawnComponent>();
             var navComponent = entity.AddComponent<NavigationComponent>();
             navComponent.NavMeshQuery = NavMeshQuery;
@@ -73,10 +77,14 @@ namespace ServerPlugins.Game
 
             Started?.Invoke();
 
-            int updateTime = (int) (1 / (float) Tickrate * 1000);
+            float updateTime = 1000 / (float)Tickrate;
+            long lastTime = DateTime.Now.Ticks;
+
             while (Running)
             {
-                var time = DateTime.Now.Ticks;
+                long now = DateTime.Now.Ticks;
+                var delta = (float)TimeSpan.FromTicks(now - lastTime).TotalSeconds;
+                lastTime = now;
 
                 while (_spawnQueue.Count > 0 && _spawnQueue.TryDequeue(out var entity))
                 {
@@ -101,6 +109,7 @@ namespace ServerPlugins.Game
                     }
 
                     entity.Start();
+                    //entity.GetComponent<NavigationComponent>().Navigate(TundraNetPosition.Create(5f, 0f, 5f));
                 }
 
                 while (_despawnQueue.Count > 0 && _despawnQueue.TryDequeue(out var entity))
@@ -108,35 +117,21 @@ namespace ServerPlugins.Game
                     Entities.Remove(entity.ID);
                     entity.Destroy();
                 }
-
-                int deltaT = (int) (DateTime.Now.Ticks - time);
-
-                UpdateGame();
-
-                if (deltaT < updateTime)
+                
+                foreach (var entity in Entities.Values)
                 {
-                    Thread.Sleep(updateTime - deltaT);
+                    entity.Update(delta);
+
                 }
 
-                ++_frameCounter;
-            }
-        }
+                foreach (var entity in Entities.Values)
+                {
+                    entity.LateUpdate();
+                }
 
-        private void UpdateGame()
-        {
-            if (_frameCounter % Tickrate == 0) //~1 second elapsed
-            {
-                WriteEvent("Seconds elapsed (approx.): " + _frameCounter / Tickrate, LogType.Info);
-            }
-
-            foreach (var entity in Entities.Values)
-            {
-                entity.Update();
-            }
-
-            foreach (var entity in Entities.Values)
-            {
-                entity.LateUpdate();
+                var elapsed = (float) TimeSpan.FromTicks(DateTime.Now.Ticks - now).TotalMilliseconds;
+                if (elapsed < updateTime)
+                    Thread.Sleep((int) (updateTime - elapsed));
             }
         }
 

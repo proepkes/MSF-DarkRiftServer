@@ -9,7 +9,7 @@ namespace ServerPlugins.Game.Components
     public class SpawnComponent : Component
     {
         private readonly HashSet<uint> _currentObservers = new HashSet<uint>();
-        public override void Update()
+        public override void Update(float delta)
         {
             //Send Spawn-notification when an observer was added
             foreach (var observer in Entity.Observers.Where(player => !_currentObservers.Contains(player.ID)))

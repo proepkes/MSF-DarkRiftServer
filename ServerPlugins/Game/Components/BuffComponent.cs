@@ -2,7 +2,7 @@
 {
     public class BuffComponent : Component
     {
-        public override void Update()
+        public override void Update(float delta)
         {
             //check if any buffs have expired
         }
