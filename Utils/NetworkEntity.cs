@@ -13,7 +13,7 @@ namespace Utils
 
         public EntityState State = EntityState.Idle;
 
-        public TundraNetPosition Position;
+        public TundraVector3 Position;
 
         public int Health = 100;
 
@@ -24,7 +24,7 @@ namespace Utils
             TargetID = e.Reader.ReadUInt32();
             Name = e.Reader.ReadString(Encoding.Unicode);
             State = (EntityState)e.Reader.ReadByte();
-            Position = e.Reader.ReadSerializable<TundraNetPosition>();
+            Position = e.Reader.ReadSerializable<TundraVector3>();
             Health = e.Reader.ReadInt32();
 
 

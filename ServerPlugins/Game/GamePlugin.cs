@@ -51,15 +51,15 @@ namespace ServerPlugins.Game
         {
             NavMeshQuery = NavMeshSerializer.CreateMeshQuery(NavMeshSerializer.Deserialize("Levels/" + levelName + ".nav"));
             //The YOffset requires the world to has a valid NavMesh-Position at (0,0,0) 
-            Pathfinder.YOffset = Pathfinder.GetClosestPointOnNavMesh(NavMeshQuery, TundraNetPosition.Create(0f, 0f, 0f)).Y;
-            AddEntity(new Monster {Name = "Monster", Position = TundraNetPosition.Zero});
+            Pathfinder.YOffset = Pathfinder.GetClosestPointOnNavMesh(NavMeshQuery, TundraVector3.Create(0f, 0f, 0f)).Y;
+            AddEntity(new Monster {Name = "Monster", Position = TundraVector3.Zero});
         }
 
         public void AddEntity(Entity entity)
         {
             entity.ID = _nextEntityID++;
             entity.Game = this;
-            entity.Position = TundraNetPosition.Zero;
+            entity.Position = TundraVector3.Zero;
             entity.AddComponent<SpawnComponent>();
             var navComponent = entity.AddComponent<NavigationComponent>();
             navComponent.NavMeshQuery = NavMeshQuery;
@@ -109,7 +109,7 @@ namespace ServerPlugins.Game
                     }
 
                     entity.Start();
-                    //entity.GetComponent<NavigationComponent>().Navigate(TundraNetPosition.Create(5f, 0f, 5f));
+                    entity.GetComponent<NavigationComponent>().Navigate(TundraVector3.Create(5f, 0f, 5f));
                 }
 
                 while (_despawnQueue.Count > 0 && _despawnQueue.TryDequeue(out var entity))

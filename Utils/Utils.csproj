@@ -55,7 +55,7 @@
     <Compile Include="Conversion\LittleEndianBitConverter.cs" />
     <Compile Include="EntityState.cs" />
     <Compile Include="Extensions\SerializationExtensions.cs" />
-    <Compile Include="Game\TundraNetPosition.cs" />
+    <Compile Include="Game\TundraVector3.cs" />
     <Compile Include="IO\EndianBinaryReader.cs" />
     <Compile Include="IO\EndianBinaryWriter.cs" />
     <Compile Include="NetworkEntity.cs" />

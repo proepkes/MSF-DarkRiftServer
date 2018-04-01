@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Numerics;
 using DarkRift;
 using DarkRift.Server;
 using Utils;
@@ -47,7 +46,7 @@ namespace ServerPlugins.Game.Entities
             if (data != null)
             {
                 agent.StoppingDistance = data.StoppingDistance;
-                agent.Navigate(TundraNetPosition.Create(data.Destination.X, data.Destination.Y, data.Destination.Z));
+                agent.Navigate(TundraVector3.Create(data.Destination.X, data.Destination.Y, data.Destination.Z));
             }
         }
 

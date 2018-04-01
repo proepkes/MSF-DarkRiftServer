@@ -5,12 +5,12 @@ namespace Utils.Packets
 {
     public class NavigateToPacket : IDarkRiftSerializable
     {
-        public TundraNetPosition Destination;
+        public TundraVector3 Destination;
         public float StoppingDistance;
 
         public void Deserialize(DeserializeEvent e)
         {
-            Destination = e.Reader.ReadSerializable<TundraNetPosition>();
+            Destination = e.Reader.ReadSerializable<TundraVector3>();
             StoppingDistance = e.Reader.ReadSingle();
         }
 

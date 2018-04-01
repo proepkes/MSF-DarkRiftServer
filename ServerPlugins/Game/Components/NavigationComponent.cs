@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Numerics;
 using DarkRift;
 using RecastDetour.Detour;
 using Utils;
@@ -24,9 +23,9 @@ namespace ServerPlugins.Game.Components
 
         private int currentPathIndex;
         private SmoothPath currentPath;
-        private TundraNetPosition currentDestination;
+        private TundraVector3 currentDestination;
 
-        public void Navigate(TundraNetPosition to)
+        public void Navigate(TundraVector3 to)
         {
             currentPath = Pathfinder.ComputeSmoothPath(NavMeshQuery, Entity.Position, to);
             if (currentPath.Points.Count > 0)
@@ -34,7 +33,7 @@ namespace ServerPlugins.Game.Components
                 currentPathIndex = 0;
                 currentDestination = currentPath.Points[0];
                 Entity.Game.Log("Destination: " + currentPath.Last(), LogType.Info);
-                Entity.Position = currentPath.Last();
+                //Entity.Position = currentPath.Last();
                 foreach (var observer in Entity.Observers)
                 {
                     observer.Client.SendMessage(Message.Create(MessageTags.NavigateTo,
@@ -48,7 +47,7 @@ namespace ServerPlugins.Game.Components
             }
         }
 
-        public Vector3 Velocity => Vector3.Zero;
+       // public Vector3 Velocity => Vector3.Zero;
 
         //public float RemainingDistance 
         //{
@@ -63,20 +62,14 @@ namespace ServerPlugins.Game.Components
         public override void Update(float deltaT)
         {
             base.Update(deltaT);
-            //if (currentPath != null)
-            //{
-            //    var dest = currentPath.Points.Last();
-            //    var maxDistance = Speed * deltaT;
+            if (currentPath != null)
+            {
+                
+                var dest = currentPath.Points.Last();
+                var maxDistance = Speed * deltaT;
+                Entity.Position = TundraVector3.MoveTowards(Entity.Position, dest, maxDistance);
+            }
 
-            //    Entity.Game.Log("Before: " + Entity.Position + " (MD: " + maxDistance + ")", LogType.Info);
-
-            //    Entity.Position.X = dest.X + maxDistance;
-            //    Entity.Position.Y = dest.Y + maxDistance;
-            //    Entity.Position.Z = dest.Z + maxDistance;
-
-            //    Entity.Game.Log("After: " + Entity.Position, LogType.Info);
-            //}
-            
         }
         
         public void Reset()

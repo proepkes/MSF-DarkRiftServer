@@ -17,12 +17,12 @@ namespace ServerPlugins.Game
     {
         public static float YOffset;
 
-        private static TundraNetPosition ArrayToPosition(float[] pos, int start = 0)
+        private static TundraVector3 ArrayToPosition(float[] pos, int start = 0)
         {
-            return TundraNetPosition.Create(pos[start], pos[start + 1] - YOffset, pos[start + 2]);
+            return TundraVector3.Create(pos[start], pos[start + 1] - YOffset, pos[start + 2]);
         }
 
-        private static float[] PositionToArray(TundraNetPosition vec)
+        private static float[] PositionToArray(TundraVector3 vec)
         {
             float[] arr = new float[3];
             arr[0] = vec.X;
@@ -39,7 +39,7 @@ namespace ServerPlugins.Game
             return (dx * dx + dz * dz) < r * r && MathF.Abs(dy) < h;
         }
 
-        public static SmoothPath ComputeSmoothPath(NavMeshQuery navQuery, TundraNetPosition start, TundraNetPosition end)
+        public static SmoothPath ComputeSmoothPath(NavMeshQuery navQuery, TundraVector3 start, TundraVector3 end)
         {
             var startWorldPos = PositionToArray(start);
             var endWorldPos = PositionToArray(end);
@@ -434,7 +434,7 @@ namespace ServerPlugins.Game
             return npath;
         }
 
-        public static TundraNetPosition GetClosestPointOnNavMesh(NavMeshQuery navQuery, TundraNetPosition pos)
+        public static TundraVector3 GetClosestPointOnNavMesh(NavMeshQuery navQuery, TundraVector3 pos)
         {
 
             float[] extents = new float[3];
