@@ -55,6 +55,10 @@ namespace Utils.Game
                 return target;
             return current + (toVector / dist) * maxDistanceDelta;
         }
+        public static float Distance(TundraVector3 a, TundraVector3 b)
+        {
+            return (a-b).Magnitude;
+        }
 
         public static TundraVector3 operator -(TundraVector3 a, TundraVector3 b) { return Create(a.X - b.X, a.Y - b.Y, a.Z - b.Z); }
         public static TundraVector3 operator +(TundraVector3 a, TundraVector3 b) { return Create(a.X + b.X, a.Y + b.Y, a.Z + b.Z); }

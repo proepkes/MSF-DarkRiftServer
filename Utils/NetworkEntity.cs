@@ -17,6 +17,8 @@ namespace Utils
 
         public int Health = 100;
 
+        public float Speed = 5f;
+
 
         public void Deserialize(DeserializeEvent e)
         {

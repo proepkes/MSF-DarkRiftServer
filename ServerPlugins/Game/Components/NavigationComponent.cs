@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using DarkRift;
+﻿using DarkRift;
+using RecastDetour;
 using RecastDetour.Detour;
 using Utils;
 using Utils.Game;
@@ -9,67 +9,59 @@ namespace ServerPlugins.Game.Components
 {
     public class NavigationComponent : Component
     {
-        private int agentID;
+        private readonly NavMeshAgent _agent = new NavMeshAgent();
+        TundraVector3 lastDestination; 
 
-        public float Speed = 3f;
-        public float StoppingDistance = 0;
-        
-        public NavMeshQuery NavMeshQuery;
-
-        public bool HasPath
+        public NavMeshQuery NavMeshQuery
         {
-            get { return currentPath != null; }
+            get => _agent.NavMeshQuery;
+            set => _agent.NavMeshQuery = value;
         }
 
-        private int currentPathIndex;
-        private SmoothPath currentPath;
-        private TundraVector3 currentDestination;
-
-        public void Navigate(TundraVector3 to)
+        public float Speed
         {
-            currentPath = Pathfinder.ComputeSmoothPath(NavMeshQuery, Entity.Position, to);
-            if (currentPath.Points.Count > 0)
-            {
-                currentPathIndex = 0;
-                currentDestination = currentPath.Points[0];
-                Entity.Game.Log("Destination: " + currentPath.Last(), LogType.Info);
-                //Entity.Position = currentPath.Last();
-                foreach (var observer in Entity.Observers)
-                {
-                    observer.Client.SendMessage(Message.Create(MessageTags.NavigateTo,
-                        new AckNavigateToPacket
-                        {
-                            EntityID = Entity.ID,
-                            Path = currentPath,
-                            StoppingDistance = StoppingDistance
-                        }), SendMode.Reliable);
-                }
-            }
+            get => _agent.Speed;
+            set => _agent.Speed = value;
         }
 
-       // public Vector3 Velocity => Vector3.Zero;
+        public bool HasPath => _agent.HasPath;
 
-        //public float RemainingDistance 
-        //{
-        //    get
-        //    {
-        //        var direction = Destination - Entity.Position;
-        //        direction.Y = 0;
-        //        return direction.Length();
-        //    }
-        //}
+        public void Warp(TundraVector3 position)
+        {
+            _agent.Position = position;
+        }
+
+        public void SetDestination(TundraVector3 destination)
+        {
+            _agent.SetDestination(destination);
+        }
 
         public override void Update(float deltaT)
         {
-            base.Update(deltaT);
-            if (currentPath != null)
+            if (_agent.Destination != lastDestination)
             {
-                
-                var dest = currentPath.Points.Last();
-                var maxDistance = Speed * deltaT;
-                Entity.Position = TundraVector3.MoveTowards(Entity.Position, dest, maxDistance);
+                var packet = new AckNavigateToPacket
+                {
+                    EntityID = Entity.ID,
+                    Path = _agent.CurrentPath,
+                    Speed = _agent.Speed,
+                    StoppingDistance = _agent.StoppingDistance
+                };
+
+                foreach (var observer in Entity.Observers)
+                {
+                    observer.Client.SendMessage(Message.Create(MessageTags.NavigateTo, packet), SendMode.Unreliable);
+                }
+
+                lastDestination = _agent.Destination;
+
+                Entity.Game.Log("Published: " + packet, LogType.Info);
             }
 
+            if (_agent.CurrentPath != null)
+            {
+                _agent.Integrate(deltaT);
+            }
         }
         
         public void Reset()

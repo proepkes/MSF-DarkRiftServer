@@ -55,7 +55,6 @@
     <Compile Include="Conversion\LittleEndianBitConverter.cs" />
     <Compile Include="EntityState.cs" />
     <Compile Include="Extensions\SerializationExtensions.cs" />
-    <Compile Include="Game\TundraVector3.cs" />
     <Compile Include="IO\EndianBinaryReader.cs" />
     <Compile Include="IO\EndianBinaryWriter.cs" />
     <Compile Include="NetworkEntity.cs" />
@@ -99,6 +98,7 @@
     <Compile Include="Packets\UsernameAndPeerIdPacket.cs" />
     <Compile Include="ResponseStatus.cs" />
     <Compile Include="SmoothPath.cs" />
+    <Compile Include="Game\TundraVector3.cs" />
     <Compile Include="WorldOptions.cs" />
     <Compile Include="RoomOptions.cs" />
     <Compile Include="Security.cs" />

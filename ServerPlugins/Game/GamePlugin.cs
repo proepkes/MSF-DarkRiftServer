@@ -50,7 +50,7 @@ namespace ServerPlugins.Game
         public void LoadLevel(string levelName)
         {
             NavMeshQuery = NavMeshSerializer.CreateMeshQuery(NavMeshSerializer.Deserialize("Levels/" + levelName + ".nav"));
-            //The YOffset requires the world to has a valid NavMesh-Position at (0,0,0) 
+            //The YOffset requires the world to have a valid NavMesh-Position at (0,0,0) 
             Pathfinder.YOffset = Pathfinder.GetClosestPointOnNavMesh(NavMeshQuery, TundraVector3.Create(0f, 0f, 0f)).Y;
             AddEntity(new Monster {Name = "Monster", Position = TundraVector3.Zero});
         }
@@ -63,6 +63,7 @@ namespace ServerPlugins.Game
             entity.AddComponent<SpawnComponent>();
             var navComponent = entity.AddComponent<NavigationComponent>();
             navComponent.NavMeshQuery = NavMeshQuery;
+            navComponent.Speed = 3f;
             _spawnQueue.Enqueue(entity);
         }
 
@@ -109,7 +110,6 @@ namespace ServerPlugins.Game
                     }
 
                     entity.Start();
-                    entity.GetComponent<NavigationComponent>().Navigate(TundraVector3.Create(5f, 0f, 5f));
                 }
 
                 while (_despawnQueue.Count > 0 && _despawnQueue.TryDequeue(out var entity))

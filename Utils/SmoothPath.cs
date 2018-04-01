@@ -10,7 +10,7 @@ namespace Utils
         public const int MAX_POLYS = 256;
         public const int MAX_SMOOTH = 2048;
 
-        public int PointsCount = 0;
+        public int PointsCount;
         public readonly List<TundraVector3> Points = new List<TundraVector3>();
         public void Deserialize(DeserializeEvent e)
         {

@@ -81,7 +81,6 @@
     <Compile Include="Game\Entities\Monster.cs" />
     <Compile Include="Game\GamePlugin.cs" />
     <Compile Include="Game\Entities\Player.cs" />
-    <Compile Include="Game\Pathfinder.cs" />
     <Compile Include="ServerPluginBase.cs" />
     <Compile Include="Mail\MailPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

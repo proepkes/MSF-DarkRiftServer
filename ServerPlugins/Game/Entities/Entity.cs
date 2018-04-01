@@ -14,7 +14,7 @@ namespace ServerPlugins.Game.Entities
 
         private Entity Target;
         public GamePlugin Game;
-        public NavigationComponent agent;
+        public NavigationComponent navComponent;
         public readonly List<Player> Observers = new List<Player>();
         
         public void SetTarget(Entity target)
@@ -37,7 +37,7 @@ namespace ServerPlugins.Game.Entities
 
         public virtual void Start()
         {
-            agent = GetComponent<NavigationComponent>();
+            navComponent = GetComponent<NavigationComponent>();
 
             foreach (var component in _components)
             {
@@ -93,7 +93,7 @@ namespace ServerPlugins.Game.Entities
 
         public override string ToString()
         {
-            return Name + "(" + ID + ")";
+            return Name + "(ID: " + ID + ")";
         }
     }
 }

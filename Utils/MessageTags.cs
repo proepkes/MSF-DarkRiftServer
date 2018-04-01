@@ -73,5 +73,9 @@
         public const ushort DespawnPlayer = 3011;
         public const ushort NavigateTo = 3012;
         public const ushort ChangeState = 3013;
+
+
+        //Debug
+        public const ushort DebugPath = 60000;
     }
 }

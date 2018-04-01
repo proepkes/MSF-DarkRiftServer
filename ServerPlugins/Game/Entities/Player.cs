@@ -45,8 +45,7 @@ namespace ServerPlugins.Game.Entities
             var data = message.Deserialize<NavigateToPacket>();
             if (data != null)
             {
-                agent.StoppingDistance = data.StoppingDistance;
-                agent.Navigate(TundraVector3.Create(data.Destination.X, data.Destination.Y, data.Destination.Z));
+                navComponent.SetDestination(TundraVector3.Create(data.Destination.X, data.Destination.Y, data.Destination.Z));
             }
         }
 
@@ -92,7 +91,7 @@ namespace ServerPlugins.Game.Entities
                 Die();
                 State = EntityState.Dead;
             }
-            else if (agent.HasPath)
+            else if (navComponent.HasPath)
             {
                 State = EntityState.Moving;
             }
@@ -105,9 +104,13 @@ namespace ServerPlugins.Game.Entities
                 Die();
                 State = EntityState.Dead;
             }
-            else if (agent.HasPath)
+            else if (navComponent.HasPath)
             {
                 State = EntityState.Moving;
+            }
+            else
+            {
+                State = EntityState.Idle;
             }
         }
         private void UpdateCasting()
@@ -122,7 +125,7 @@ namespace ServerPlugins.Game.Entities
 
         void Die()
         {
-            agent.Reset();
+            navComponent.Reset();
             SetTarget(null);
         }
     }
