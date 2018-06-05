@@ -1,3 +1,6 @@
+## Obsolete
+As https://github.com/proepkes/SpeedDate is now open for public, this repository is rendered obsolete.
+
 # MSF-DarkRiftServer
 
 [![Discord](https://img.shields.io/discord/413156098993029120.svg)](https://discord.gg/F9hJhcX) 
